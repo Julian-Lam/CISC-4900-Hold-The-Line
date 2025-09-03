@@ -6,8 +6,11 @@ CISC 4900, Fall 2025 semester project.
 
 # Unity and Third-Party Assets
 
-TBD
+[StarterAssets - ThirdPerson](https://assetstore.unity.com/packages/essentials/starter-assets-thirdperson-updates-in-new-charactercontroller-pa-196526#content)
+[Particle Pack](https://assetstore.unity.com/packages/vfx/particles/particle-pack-127325#content)
+[UniVRM](https://vrm.dev/en/univrm/)
 
 # Custom-made avatars and assets
 
-TBD
+Charlie.vrm
+Renske.vrm
