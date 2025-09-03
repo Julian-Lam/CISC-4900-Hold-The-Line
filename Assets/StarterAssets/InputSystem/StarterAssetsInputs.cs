@@ -50,6 +50,41 @@ namespace StarterAssets
 		{
 			SprintInput(value.isPressed);
 		}
+
+		public void OnInteract(InputValue value)
+		{
+			InteractInput(value.isPressed);
+		}
+
+		public void OnFire(InputValue value)
+		{
+			FireInput(value.isPressed);
+		}
+
+		public void OnAim(InputValue value)
+		{
+			AimInput(value.isPressed);
+		}
+
+		public void OnReload(InputValue value)
+		{
+			ReloadInput(value.isPressed);
+		}
+
+		public void OnSelectFireMode(InputValue value)
+		{
+			SelectFireModeInput(value.isPressed);
+		}
+
+		public void OnStrafe(InputValue value)
+		{
+			StrafeInput(value.Get<float>());
+		}
+
+		public void OnWalkBackwards(InputValue value)
+		{
+			WalkBackwardsInput(value.isPressed);
+		}
 #endif
 
 

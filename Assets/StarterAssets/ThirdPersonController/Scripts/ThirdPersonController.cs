@@ -37,7 +37,7 @@ namespace StarterAssets
         public float JumpHeight = 1.2f;
 
         [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
-        public float Gravity = -15.0f;
+        public float Gravity = -9.81f;
 
         [Space(10)]
         [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
@@ -159,6 +159,8 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
+            OnInteract();
+
         }
 
         private void LateUpdate()
@@ -388,5 +390,35 @@ namespace StarterAssets
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
         }
+
+        //START CUSTOM ADDITION
+
+        private void OnInteract()
+        {
+            if (_input.interact)
+            {
+                float range = 8.0f;
+                Ray r = new Ray(_mainCamera.transform.position, _mainCamera.transform.TransformDirection(Vector3.forward));
+                RaycastHit hit;
+                if (Physics.Raycast(r, out hit, range))
+                {
+                    Debug.DrawRay(_mainCamera.transform.position, _mainCamera.transform.TransformDirection(Vector3.forward) * range, Color.green);
+
+
+                    //INTERACTABLES MUST HAVE RIGIDBODY
+                    if (hit.collider.TryGetComponent<Interactable>(out Interactable i))
+                    {
+                        Debug.Log("Interacted with interactable: " + i);
+                        i.Interact(gameObject);
+                    }
+                    else if (hit.collider != null)
+                    {
+                        Debug.Log("Interacted with a non-interactable");
+                    }
+                }
+                _input.interact = false;
+            }
+        }
+
     }
 }
