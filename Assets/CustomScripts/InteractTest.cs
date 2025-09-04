@@ -2,10 +2,6 @@ using UnityEngine;
 
 public class InteractTest : MonoBehaviour, Interactable
 {
-    void Interact(GameObject o)
-    {
-        Debug.Log(o + " interacted with me!");
-    }
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -17,5 +13,10 @@ public class InteractTest : MonoBehaviour, Interactable
     void Update()
     {
         
+    }
+
+    public void Interact(GameObject o)
+    {
+        Debug.Log(o + " interacted with me!");
     }
 }

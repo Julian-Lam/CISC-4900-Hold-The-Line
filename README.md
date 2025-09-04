@@ -12,11 +12,14 @@ CISC 4900, Fall 2025 semester project.
 
 [UniVRM](https://vrm.dev/en/univrm/)
 
-# Custom-made avatars and assets
+# Custom-made avatars and models
 
 ## Characters
 
 - Charlie.vrm
 - Renske.vrm
 
+## Weapons
 
+- STG-2023.fbx
+- M1-Garand.fbx

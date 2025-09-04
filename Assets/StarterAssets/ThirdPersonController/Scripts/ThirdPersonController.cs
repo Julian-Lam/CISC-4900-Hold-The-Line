@@ -160,6 +160,7 @@ namespace StarterAssets
             GroundedCheck();
             Move();
             OnInteract();
+            OnUseWeapon();
 
         }
 
@@ -393,6 +394,8 @@ namespace StarterAssets
 
         //START CUSTOM ADDITION
 
+        private Weapon currentWeapon;
+
         private void OnInteract()
         {
             if (_input.interact)
@@ -408,15 +411,91 @@ namespace StarterAssets
                     //INTERACTABLES MUST HAVE RIGIDBODY
                     if (hit.collider.TryGetComponent<Interactable>(out Interactable i))
                     {
-                        Debug.Log("Interacted with interactable: " + i);
+                        //Debug.Log("Interacted with interactable: " + i);
+
+                        if(i is Weapon weapon)
+                        {
+                            _input.aim = false;
+                            _input.fire = false;
+                            currentWeapon = weapon;
+                            Debug.Log("Current Weapon is: " + i);
+                        }
+
                         i.Interact(gameObject);
                     }
                     else if (hit.collider != null)
                     {
-                        Debug.Log("Interacted with a non-interactable");
+                        //Debug.Log("Interacted with a non-interactable");
                     }
                 }
                 _input.interact = false;
+            }
+        }
+
+
+
+        private void OnUseWeapon()
+        {
+            if (currentWeapon != null)
+            {
+                OnFire();
+                OnAim();
+                OnReload();
+                OnSwitchFireMode();
+            }
+        }
+
+        private void OnFire()
+        {
+            if(currentWeapon != null)
+            {
+                currentWeapon.isTriggerHeld = _input.fire;
+            }
+
+            if (currentWeapon!=null && _input.fire && !currentWeapon.isReloading)
+            {
+                currentWeapon.Fire();
+            }
+            else if (currentWeapon != null && currentWeapon.isReloading)
+            {
+                currentWeapon.LeaveAim();
+            }
+        }
+
+        private void OnAim()
+        {
+            if (currentWeapon != null)
+            {
+                currentWeapon.isUsingADS = _input.aim;
+            }
+
+            if (currentWeapon != null && _input.aim && !currentWeapon.isReloading)
+            {
+                currentWeapon.Aim();
+                currentWeapon.SetAimFromCamera();
+            }
+            else if(currentWeapon != null && (!_input.aim || currentWeapon.isReloading))
+            {
+                currentWeapon.LeaveAim();
+                currentWeapon.SetAimFromBarrel();
+            }
+        }
+
+        private void OnReload()
+        {
+            if (currentWeapon != null && _input.reload)
+            {
+                _input.aim = false;
+                currentWeapon.Reload();
+                _input.reload = false;
+            }
+        }
+        private void OnSwitchFireMode()
+        {
+            if (currentWeapon != null && _input.selectFireMode)
+            {
+                currentWeapon.SwitchFireMode();
+                _input.selectFireMode = false;
             }
         }
 
