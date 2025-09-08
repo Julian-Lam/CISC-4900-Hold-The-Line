@@ -26,6 +26,8 @@ public class Weapon : MonoBehaviour, Interactable
     public bool isTriggerHeld;
     public bool isUsingADS;
 
+    public float fireAnimation = 0f;
+
     private Transform shootFromWhere;
 
     public Rigidbody rigidBody;
@@ -47,6 +49,8 @@ public class Weapon : MonoBehaviour, Interactable
     public float secondsUntilInactive = 600;
     public float leaveAimTimer = 0;
     public bool aimAfterFire;
+
+    public bool isCoroutineActive;
 
     private Coroutine storeWeapon = null;
 
@@ -71,6 +75,15 @@ public class Weapon : MonoBehaviour, Interactable
         {
             Debug.DrawRay(shootFromWhere.position, shootFromWhere.forward * weaponRange, Color.green);
         }
+
+        if (storeWeapon == null)
+        {
+            isCoroutineActive = false;
+        }else if (storeWeapon != null)
+        {
+            isCoroutineActive = true;
+        }
+
     }
 
     //Assuming weapon is on the ground or not used by anyone else
@@ -161,10 +174,6 @@ public class Weapon : MonoBehaviour, Interactable
     //WEAPON SYSTEM
     public void Aim()
     {
-        if (storeWeapon != null)
-        {
-            StopCoroutine(StoreWeapon());
-        }
         gameObject.SetActive(true);
         ChangeParent(brandish);
         HideItem(false);
@@ -189,18 +198,11 @@ public class Weapon : MonoBehaviour, Interactable
                 ChangeParent(brandish);
                 gameObject.SetActive(true);
                 HideItem(false);
-
+                fireAnimation = 1;
                 if (!isUsingADS)
                 {
-                    if (storeWeapon == null)
-                    {
-                        storeWeapon = StartCoroutine(StoreWeapon());
-                    }
-                    else if (storeWeapon != null)
-                    {
-                        StopCoroutine(StoreWeapon());
-                        storeWeapon = StartCoroutine(StoreWeapon());
-                    }
+                    if (storeWeapon != null) StopCoroutine(storeWeapon);
+                    storeWeapon = StartCoroutine(StoreWeapon());
                 }
                 HitTarget();
                 isReadyToShoot = false;
@@ -244,6 +246,7 @@ public class Weapon : MonoBehaviour, Interactable
             ChangeParent(weaponStorage);
             if(storeWeapon!=null) StopCoroutine(storeWeapon);
             storeWeapon = null;
+            aimAfterFire = false;
             isReloading = true;
             Invoke("RefillAmmo", reloadTime);
 
@@ -267,12 +270,16 @@ public class Weapon : MonoBehaviour, Interactable
         if (isAutomatic)
         {
             //Debug.Log("Loading Another Shot");
-            yield return new WaitForSeconds(60 / fireRate);
+            yield return new WaitForSeconds(30 / fireRate);
+            fireAnimation = 0;
+            yield return new WaitForSeconds(30 / fireRate);
             isReadyToShoot = true;
         }
         else if (!isAutomatic)
         {
             //Debug.Log("Waiting for releasing trigger");
+            yield return new WaitForSeconds(30 / fireRate);
+            fireAnimation = 0;
             yield return new WaitUntil(() => !isTriggerHeld);
             isReadyToShoot = true;
         }
@@ -298,6 +305,7 @@ public class Weapon : MonoBehaviour, Interactable
     {
         aimAfterFire = true;
         yield return new WaitForSeconds(2);
+        yield return new WaitUntil(() => !isUsingADS);
         LeaveAim();
         aimAfterFire = false;
         storeWeapon = null;

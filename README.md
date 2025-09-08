@@ -12,6 +12,8 @@ CISC 4900, Fall 2025 semester project.
 
 [UniVRM](https://vrm.dev/en/univrm/)
 
+[Animations (StrafeLeft, StrafeRight, Walking Backward)](https://www.mixamo.com/#/?page=1&type=Motion%2CMotionPack)
+
 # Custom-made avatars and models
 
 ## Characters

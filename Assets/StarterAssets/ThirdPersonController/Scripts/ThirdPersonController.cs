@@ -161,6 +161,7 @@ namespace StarterAssets
             Move();
             OnInteract();
             OnUseWeapon();
+            SetLookAnimaton();
 
         }
 
@@ -176,6 +177,14 @@ namespace StarterAssets
             _animIDJump = Animator.StringToHash("Jump");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+
+            //CUSTOM ANIMATIONS BELOW
+            aimAnimation = Animator.StringToHash("Aim");
+            fireWeaponAnimation = Animator.StringToHash("Fire");
+            strafeState = Animator.StringToHash("StrafeDirection");
+            lookUpDownAnimaton = Animator.StringToHash("LookUpDown");
+            aimOnlyAnimation = Animator.StringToHash("AimOnly");
+
         }
 
         private void GroundedCheck()
@@ -217,7 +226,7 @@ namespace StarterAssets
         private void Move()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+            float targetSpeed = _input.sprint ? (_input.aim? MoveSpeed : SprintSpeed) : MoveSpeed;
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
@@ -256,7 +265,7 @@ namespace StarterAssets
 
             // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is a move input rotate player when the player is moving
-            if (_input.move != Vector2.zero)
+            if (_input.move != Vector2.zero&&!_input.aim)
             {
                 _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
                                   _mainCamera.transform.eulerAngles.y;
@@ -267,8 +276,59 @@ namespace StarterAssets
                 transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
             }
 
+            //Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
-            Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+            //BEGIN CUSTOM ADDITION FOR MOVE FUNCTION
+
+            //While aiming, character rotation == camera rotation
+            if (_input.aim)
+            {
+                _targetRotation = _mainCamera.transform.eulerAngles.y;
+                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
+                    RotationSmoothTime);
+                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+            }
+
+            Vector3 targetDirection;
+            if (_input.aim)
+            {
+                targetDirection = _mainCamera.transform.forward * _input.move.y +
+                                  _mainCamera.transform.right * _input.move.x;
+                targetDirection.y = 0f;
+            }
+            else
+            {
+                targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+            }
+
+            if (_hasAnimator && _input.aim && _input.move != Vector2.zero)
+            {
+                if (_input.walkBackwards)
+                {
+                    _animator.SetFloat(strafeState, 1, 0.1f, Time.deltaTime);
+                }
+                else if (_input.strafe != 0)
+                {
+                    if (_input.strafe < 0)
+                    {
+                        _animator.SetFloat(strafeState, 2, 0.1f, Time.deltaTime);
+                    }
+                    else if (_input.strafe > 0)
+                    {
+                        _animator.SetFloat(strafeState, 3, 0.1f, Time.deltaTime);
+                    }
+                }
+                else
+                {
+                    _animator.SetFloat(strafeState, 0, 0.1f, Time.deltaTime);
+                }
+            }
+            else
+            {
+                _animator.SetFloat(strafeState, 0);
+            }
+
+            //END SECTION OF CUSTOM ADDITION FOR MOVE FUNCTION
 
             // move the player
             _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
@@ -280,6 +340,10 @@ namespace StarterAssets
                 _animator.SetFloat(_animIDSpeed, _animationBlend);
                 _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
             }
+
+            
+
+
         }
 
         private void JumpAndGravity()
@@ -394,12 +458,25 @@ namespace StarterAssets
 
         //START CUSTOM ADDITION
 
+        //Other animations
+        private int aimAnimation;
+        private int fireWeaponAnimation;
+        private int strafeState;
+        private int lookUpDownAnimaton;
+        private int aimOnlyAnimation;
+
         private Weapon currentWeapon;
+
+        private Transform playerCameraRootTransform;
+        public float rotationX;
 
         private void OnInteract()
         {
             if (_input.interact)
             {
+                _input.aim = false;
+                _input.fire = false;
+
                 float range = 8.0f;
                 Ray r = new Ray(_mainCamera.transform.position, _mainCamera.transform.TransformDirection(Vector3.forward));
                 RaycastHit hit;
@@ -415,8 +492,6 @@ namespace StarterAssets
 
                         if(i is Weapon weapon)
                         {
-                            _input.aim = false;
-                            _input.fire = false;
                             currentWeapon = weapon;
                             Debug.Log("Current Weapon is: " + i);
                         }
@@ -438,6 +513,8 @@ namespace StarterAssets
         {
             if (currentWeapon != null)
             {
+                currentWeapon.isTriggerHeld = _input.fire;
+                currentWeapon.isUsingADS = _input.aim;
                 OnFire();
                 OnAim();
                 OnReload();
@@ -449,35 +526,51 @@ namespace StarterAssets
         {
             if(currentWeapon != null)
             {
-                currentWeapon.isTriggerHeld = _input.fire;
-            }
+                if (_input.fire || _input.aim)
+                {
+                    _animator.SetBool(aimAnimation, true);
+                }
 
-            if (currentWeapon!=null && _input.fire && !currentWeapon.isReloading)
-            {
-                currentWeapon.Fire();
-            }
-            else if (currentWeapon != null && currentWeapon.isReloading)
-            {
-                currentWeapon.LeaveAim();
+                if (_input.fire && !currentWeapon.isReloading)
+                {
+                    currentWeapon.Fire();
+                    _animator.SetFloat(fireWeaponAnimation, currentWeapon.fireAnimation);
+                }
+                else if (!_input.aim && currentWeapon.isReloading)
+                {
+                    currentWeapon.LeaveAim();
+                    _animator.SetFloat(fireWeaponAnimation, currentWeapon.fireAnimation);
+                }
+                else
+                {
+                    _animator.SetFloat(fireWeaponAnimation, currentWeapon.fireAnimation);
+                }
             }
         }
 
         private void OnAim()
         {
+            
             if (currentWeapon != null)
             {
-                currentWeapon.isUsingADS = _input.aim;
-            }
+                if (currentWeapon != null && _input.aim && !currentWeapon.isReloading)
+                {
+                    currentWeapon.Aim();
+                    currentWeapon.SetAimFromCamera();
+                    _animator.SetBool(aimAnimation, true);
+                    _animator.SetBool(aimOnlyAnimation, true);
+                }
+                else if (currentWeapon != null && (!_input.aim || currentWeapon.isReloading))
+                {
+                    currentWeapon.LeaveAim();
+                    currentWeapon.SetAimFromBarrel();
+                    _animator.SetBool(aimOnlyAnimation, false);
+                }
 
-            if (currentWeapon != null && _input.aim && !currentWeapon.isReloading)
-            {
-                currentWeapon.Aim();
-                currentWeapon.SetAimFromCamera();
-            }
-            else if(currentWeapon != null && (!_input.aim || currentWeapon.isReloading))
-            {
-                currentWeapon.LeaveAim();
-                currentWeapon.SetAimFromBarrel();
+                if ((!_input.aim && !_input.fire && !currentWeapon.aimAfterFire) ||currentWeapon.isReloading)
+                {
+                    _animator.SetBool(aimAnimation, false);
+                }
             }
         }
 
@@ -496,6 +589,26 @@ namespace StarterAssets
             {
                 currentWeapon.SwitchFireMode();
                 _input.selectFireMode = false;
+            }
+        }
+
+        public void SetPlayerCameraRootTransform()
+        {
+            playerCameraRootTransform = transform.Find("PlayerCameraRoot");
+        }
+
+        public float GetRotationX(Transform t)
+        {
+            float angle = t.localEulerAngles.x;
+            return angle > 180 ? angle - 360 : angle;
+        }
+        public void SetLookAnimaton()
+        {
+            SetPlayerCameraRootTransform();
+            rotationX = GetRotationX(playerCameraRootTransform);
+            if (_hasAnimator&&_input.aim&&currentWeapon!=null)
+            {
+                _animator.SetFloat(lookUpDownAnimaton, rotationX);
             }
         }
 
