@@ -139,10 +139,13 @@ namespace StarterAssets
             _hasAnimator = TryGetComponent(out _animator);
             _controller = GetComponent<CharacterController>();
             _input = GetComponent<StarterAssetsInputs>();
-#if ENABLE_INPUT_SYSTEM 
+            c = GetComponent<Character>();
+#if ENABLE_INPUT_SYSTEM
             _playerInput = GetComponent<PlayerInput>();
 #else
-			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
+
+
+            Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
 
             AssignAnimationIDs();
@@ -223,10 +226,12 @@ namespace StarterAssets
                 _cinemachineTargetYaw, 0.0f);
         }
 
+        private Character c;
+
         private void Move()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = _input.sprint ? (_input.aim? MoveSpeed : SprintSpeed) : MoveSpeed;
+            float targetSpeed = _input.sprint ? (c.stanima>0? (_input.aim? MoveSpeed : SprintSpeed) : MoveSpeed) : MoveSpeed;
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
@@ -279,6 +284,11 @@ namespace StarterAssets
             //Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
             //BEGIN CUSTOM ADDITION FOR MOVE FUNCTION
+
+            if(_input.sprint && _input.move!=Vector2.zero && _input.strafe==0 && !_input.walkBackwards)
+            {
+                c.decreaseStanima(0.5f);
+            }
 
             //While aiming, character rotation == camera rotation
             if (_input.aim)

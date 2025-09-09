@@ -39,6 +39,7 @@ public class Weapon : MonoBehaviour, Interactable
     private Transform currentParent;
 
     private ThirdPersonController player;
+    private Character playerStats;
     private Transform camera;
 
     //CHILDREN
@@ -92,6 +93,7 @@ public class Weapon : MonoBehaviour, Interactable
         if (!isEquipped)
         {
             player = o.GetComponent<ThirdPersonController>();
+            playerStats = o.GetComponent<Character>();
             weaponStorage = FindDescendants(o.transform, "StorageEmpty");
             brandish = FindDescendants(o.transform, "BrandishEmpty");
 
@@ -337,6 +339,7 @@ public class Weapon : MonoBehaviour, Interactable
 
             if (hit.collider != null)
             {
+                /*
                 if (shootFromWhere == camera)
                 {
                     Debug.Log("Hit something while aiming");
@@ -344,6 +347,16 @@ public class Weapon : MonoBehaviour, Interactable
                 else if (shootFromWhere == muzzle)
                 {
                     Debug.Log("Hit something while blind firing");
+                }
+                */
+
+                if(hit.collider.TryGetComponent<Character>(out Character c))
+                {
+                    //This is to avoid friendly fire
+                    if (c.faction != playerStats.faction)
+                    {
+                        c.decreaseHealthAndArmor(damagePerBullet/2,damagePerBullet);
+                    }
                 }
             }
             else
