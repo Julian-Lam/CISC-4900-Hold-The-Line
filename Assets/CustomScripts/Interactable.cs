@@ -7,4 +7,5 @@ public interface Interactable
     {
 
     }
+    string Description();
 }

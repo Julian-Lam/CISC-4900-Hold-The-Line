@@ -1,4 +1,6 @@
-﻿ using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
 #endif
@@ -140,6 +142,9 @@ namespace StarterAssets
             _controller = GetComponent<CharacterController>();
             _input = GetComponent<StarterAssetsInputs>();
             c = GetComponent<Character>();
+
+            interactTextbox.SetActive(false);
+
 #if ENABLE_INPUT_SYSTEM
             _playerInput = GetComponent<PlayerInput>();
 #else
@@ -285,7 +290,7 @@ namespace StarterAssets
 
             //BEGIN CUSTOM ADDITION FOR MOVE FUNCTION
 
-            if(_input.sprint && _input.move!=Vector2.zero && _input.strafe==0 && !_input.walkBackwards)
+            if(_input.sprint && !_input.aim)
             {
                 c.decreaseStanima(0.5f);
             }
@@ -480,20 +485,45 @@ namespace StarterAssets
         private Transform playerCameraRootTransform;
         public float rotationX;
 
+        public GameObject interactTextbox;
+        public TextMeshProUGUI description;
+
+        public TextMeshProUGUI weaponNameText;
+
+        public TextMeshProUGUI weaponAmmoText;
+
         private void OnInteract()
         {
+            float range = 8.0f;
+
+            Ray inspector = new Ray(_mainCamera.transform.position, _mainCamera.transform.TransformDirection(Vector3.forward));
+            RaycastHit hit;
+
+            if (Physics.Raycast(inspector, out hit, range)){
+                if (hit.collider.TryGetComponent<Interactable>(out Interactable i))
+                {
+                    if (i != null)
+                    {
+                        description.text = i.Description();
+                        interactTextbox.SetActive(true);
+                    }
+                }
+                else
+                {
+                    interactTextbox.SetActive(false);
+                }
+            }
+
             if (_input.interact)
             {
                 _input.aim = false;
                 _input.fire = false;
 
-                float range = 8.0f;
                 Ray r = new Ray(_mainCamera.transform.position, _mainCamera.transform.TransformDirection(Vector3.forward));
-                RaycastHit hit;
+
                 if (Physics.Raycast(r, out hit, range))
                 {
                     Debug.DrawRay(_mainCamera.transform.position, _mainCamera.transform.TransformDirection(Vector3.forward) * range, Color.green);
-
 
                     //INTERACTABLES MUST HAVE RIGIDBODY
                     if (hit.collider.TryGetComponent<Interactable>(out Interactable i))
@@ -510,7 +540,6 @@ namespace StarterAssets
                     }
                     else if (hit.collider != null)
                     {
-                        //Debug.Log("Interacted with a non-interactable");
                     }
                 }
                 _input.interact = false;
@@ -529,6 +558,7 @@ namespace StarterAssets
                 OnAim();
                 OnReload();
                 OnSwitchFireMode();
+                WeaponImageHandler();
             }
         }
 
@@ -619,6 +649,46 @@ namespace StarterAssets
             if (_hasAnimator&&_input.aim&&currentWeapon!=null)
             {
                 _animator.SetFloat(lookUpDownAnimaton, rotationX);
+            }
+        }
+
+        public Image currentWeaponImage;
+        public Image currentFireModeImage;
+
+        public Sprite noSelectFireImage;
+        public Sprite autoFireImage;
+        public Sprite semiFireImage;
+
+        public void WeaponImageHandler()
+        {
+            if (currentWeapon != null)
+            {
+                currentWeaponImage.sprite = currentWeapon.gunSprite;
+                weaponNameText.text = currentWeapon.weaponName;
+
+                if (!currentWeapon.isReloading)
+                {
+                    weaponAmmoText.text = "Ammo: "+currentWeapon.ammoLeft.ToString();
+                }else if (currentWeapon.isReloading)
+                {
+                    weaponAmmoText.text = "Reloading...";
+                }
+
+                if (!currentWeapon.canBeAutomatic)
+                {
+                    currentFireModeImage.sprite = noSelectFireImage;
+                }
+                else
+                {
+                    if (currentWeapon.isAutomatic)
+                    {
+                        currentFireModeImage.sprite = autoFireImage;
+                    }
+                    else if(!currentWeapon.isAutomatic)
+                    {
+                        currentFireModeImage.sprite = semiFireImage;
+                    }
+                }
             }
         }
 

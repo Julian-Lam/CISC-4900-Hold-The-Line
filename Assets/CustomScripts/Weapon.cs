@@ -4,10 +4,13 @@ using UnityEngine.InputSystem;
 #endif
 using StarterAssets;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Weapon : MonoBehaviour, Interactable
 {
     //Weapon stats
+    public string weaponName;
+    
     public bool isEquipped = false;
     public float maxAmmo;
     public float ammoLeft;
@@ -55,6 +58,10 @@ public class Weapon : MonoBehaviour, Interactable
 
     private Coroutine storeWeapon = null;
 
+    //IMAGES
+
+    public Sprite gunSprite;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -84,7 +91,6 @@ public class Weapon : MonoBehaviour, Interactable
         {
             isCoroutineActive = true;
         }
-
     }
 
     //Assuming weapon is on the ground or not used by anyone else
@@ -127,6 +133,11 @@ public class Weapon : MonoBehaviour, Interactable
             isEquipped = true;
 
         }
+    }
+
+    public string Description()
+    {
+        return "Pick up " + weaponName;
     }
 
     public void Drop()

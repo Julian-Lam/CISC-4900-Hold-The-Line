@@ -19,4 +19,9 @@ public class InteractTest : MonoBehaviour, Interactable
     {
         Debug.Log(o + " interacted with me!");
     }
+
+    public string Description()
+    {
+        return "Click me for a test";
+    }
 }

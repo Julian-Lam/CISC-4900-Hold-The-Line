@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Character : MonoBehaviour
 {
@@ -30,6 +32,12 @@ public class Character : MonoBehaviour
     [Header("Teams")]
     [Tooltip("Current viable factions: BluFor, OpFor, Neutral")]
     public string faction;
+
+    [Header("Images")]
+    public Image staminaBar;
+    public Image armorBar;
+    public Image healthBar;
+    public TextMeshProUGUI currencyText;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -68,6 +76,7 @@ public class Character : MonoBehaviour
             timeSinceLastUsedStanima++;
         }
 
+        manageBars();
     }
 
     public void increaseHealth(float health = 1)
@@ -193,4 +202,27 @@ public class Character : MonoBehaviour
         }
     }
 
+    public void manageBars()
+    {
+        if (healthBar != null && armorBar != null && staminaBar != null && currencyText != null)
+        {
+            Color goodHealth = Color.green;
+            Color badHealth = Color.red;
+
+            if (health / maxHealth <= 0.2)
+            {
+                healthBar.color = badHealth;
+            }
+            else if (health / maxHealth > 0.2)
+            {
+                healthBar.color = goodHealth;
+            }
+
+            healthBar.fillAmount = health / maxHealth;
+            armorBar.fillAmount = armor / maxArmor;
+            staminaBar.fillAmount = stanima / maxStanima;
+
+            currencyText.text = "NYD$" + currency + ".00";
+        }
+    }
 }
