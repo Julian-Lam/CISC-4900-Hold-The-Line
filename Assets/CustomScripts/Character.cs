@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.InputSystem;
 
 public class Character : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class Character : MonoBehaviour
     public float maxArmor = 10;
     //By frame, 60 Seconds/Frame
     public float timeUntilArmorRecovery = 300;
-    private float timeSinceLastHit = 0;
+    public float timeSinceLastHit = 0;
 
     [Header("Effects Stats")]
     public bool isOnFire = false;
@@ -23,8 +24,8 @@ public class Character : MonoBehaviour
     [Header("Stanima")]
     public float stanima = 100;
     public float maxStanima = 100;
-    public float timeUntilStanimaRecovery = 180;
-    private float timeSinceLastUsedStanima = 0;
+    public float timeUntilStanimaRecovery = 120;
+    public float timeSinceLastUsedStanima = 0;
 
     [Header("Currency Stats")]
     public float currency = 0;
@@ -48,34 +49,6 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        while (isOnFire)
-        {
-            decreaseTrueHealth(depleteHealthByFire);
-        }
-        while (isPoisoned)
-        {
-            decreaseTrueHealth(depleteHealthByPoison);
-        }
-
-        if (timeSinceLastHit >= timeUntilArmorRecovery && health > 0)
-        {
-            increaseArmor(1);
-        }
-        else
-        {
-            timeSinceLastHit++;
-        }
-
-        if (timeSinceLastUsedStanima >= timeUntilStanimaRecovery)
-        {
-            increaseStanima(1);
-        }
-        else
-        {
-            timeSinceLastUsedStanima++;
-        }
-
         manageBars();
     }
 
@@ -222,7 +195,7 @@ public class Character : MonoBehaviour
             armorBar.fillAmount = armor / maxArmor;
             staminaBar.fillAmount = stanima / maxStanima;
 
-            currencyText.text = "NYD$" + currency + ".00";
+            currencyText.text = "NY$" + currency + ".00";
         }
     }
 }

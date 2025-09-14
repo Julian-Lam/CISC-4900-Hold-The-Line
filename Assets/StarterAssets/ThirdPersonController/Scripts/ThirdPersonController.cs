@@ -164,18 +164,24 @@ namespace StarterAssets
         {
             _hasAnimator = TryGetComponent(out _animator);
 
-            JumpAndGravity();
-            GroundedCheck();
-            Move();
-            OnInteract();
-            OnUseWeapon();
-            SetLookAnimaton();
-
+            if (!Pause.isGamePaused)
+            {
+                JumpAndGravity();
+                GroundedCheck();
+                Move();
+                OnInteract();
+                OnUseWeapon();
+                SetLookAnimaton();
+                HandleEffects();
+            }
         }
 
         private void LateUpdate()
         {
-            CameraRotation();
+            if (!Pause.isGamePaused)
+            {
+                CameraRotation();
+            }
         }
 
         private void AssignAnimationIDs()
@@ -290,9 +296,9 @@ namespace StarterAssets
 
             //BEGIN CUSTOM ADDITION FOR MOVE FUNCTION
 
-            if(_input.sprint && !_input.aim)
+            if(_input.sprint && !_input.aim && _input.move!=Vector2.zero)
             {
-                c.decreaseStanima(0.5f);
+                c.decreaseStanima(0.25f);
             }
 
             //While aiming, character rotation == camera rotation
@@ -507,11 +513,19 @@ namespace StarterAssets
                         description.text = i.Description();
                         interactTextbox.SetActive(true);
                     }
+                    else
+                    {
+                        interactTextbox.SetActive(false);
+                    }
                 }
                 else
                 {
                     interactTextbox.SetActive(false);
                 }
+            }
+            else
+            {
+                interactTextbox.SetActive(false);
             }
 
             if (_input.interact)
@@ -537,9 +551,6 @@ namespace StarterAssets
                         }
 
                         i.Interact(gameObject);
-                    }
-                    else if (hit.collider != null)
-                    {
                     }
                 }
                 _input.interact = false;
@@ -689,6 +700,36 @@ namespace StarterAssets
                         currentFireModeImage.sprite = semiFireImage;
                     }
                 }
+            }
+        }
+
+        public void HandleEffects()
+        {
+            while (c.isOnFire)
+            {
+                c.decreaseTrueHealth(c.depleteHealthByFire);
+            }
+            while (c.isPoisoned)
+            {
+                c.decreaseTrueHealth(c.depleteHealthByPoison);
+            }
+
+            if (c.timeSinceLastHit >= c.timeUntilArmorRecovery && c.health > 0)
+            {
+                c.increaseArmor(1);
+            }
+            else
+            {
+                c.timeSinceLastHit++;
+            }
+
+            if (c.timeSinceLastUsedStanima >= c.timeUntilStanimaRecovery)
+            {
+                c.increaseStanima(1);
+            }
+            else
+            {
+                c.timeSinceLastUsedStanima++;
             }
         }
 

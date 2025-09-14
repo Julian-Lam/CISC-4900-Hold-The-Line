@@ -85,6 +85,7 @@ namespace StarterAssets
 		{
 			WalkBackwardsInput(value.isPressed);
 		}
+
 #endif
 
 

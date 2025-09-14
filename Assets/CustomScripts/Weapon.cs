@@ -74,22 +74,26 @@ public class Weapon : MonoBehaviour, Interactable
     // Update is called once per frame
     void Update()
     {
-        if (leaveAimTimer < secondsUntilInactive)
+        if (!Pause.isGamePaused)
         {
-            leaveAimTimer++;
-        }
-        FindCamera();
-        if (shootFromWhere != null)
-        {
-            Debug.DrawRay(shootFromWhere.position, shootFromWhere.forward * weaponRange, Color.green);
-        }
+            if (leaveAimTimer < secondsUntilInactive)
+            {
+                leaveAimTimer++;
+            }
+            FindCamera();
+            if (shootFromWhere != null)
+            {
+                Debug.DrawRay(shootFromWhere.position, shootFromWhere.forward * weaponRange, Color.green);
+            }
 
-        if (storeWeapon == null)
-        {
-            isCoroutineActive = false;
-        }else if (storeWeapon != null)
-        {
-            isCoroutineActive = true;
+            if (storeWeapon == null)
+            {
+                isCoroutineActive = false;
+            }
+            else if (storeWeapon != null)
+            {
+                isCoroutineActive = true;
+            }
         }
     }
 
@@ -137,7 +141,7 @@ public class Weapon : MonoBehaviour, Interactable
 
     public string Description()
     {
-        return "Pick up " + weaponName;
+        return "Switch to " + weaponName+" ("+ammoLeft/maxAmmo+")";
     }
 
     public void Drop()
@@ -225,6 +229,7 @@ public class Weapon : MonoBehaviour, Interactable
             else if (ammoLeft == 0)
             {
                 //Debug.Log("Calling ReloadEmpty After Attempting to Shoot");
+                isReloading = true;
                 Invoke("ReloadEmpty", 2);
             }
         }
@@ -242,10 +247,10 @@ public class Weapon : MonoBehaviour, Interactable
             }
             else
             {
+                isReloading = true;
                 ChangeParent(weaponStorage);
                 if (storeWeapon != null) StopCoroutine(storeWeapon);
                 storeWeapon = null;
-                isReloading = true;
                 Invoke("RefillAmmo", reloadTime);
             }
         }
@@ -254,16 +259,12 @@ public class Weapon : MonoBehaviour, Interactable
     public void ReloadEmpty()
     {
         //Debug.Log("Calling ReloadEmpty");
-        if (!isReloading)
-        {
-            ChangeParent(weaponStorage);
-            if(storeWeapon!=null) StopCoroutine(storeWeapon);
-            storeWeapon = null;
-            aimAfterFire = false;
-            isReloading = true;
-            Invoke("RefillAmmo", reloadTime);
-
-        }
+        isReloading = true;
+        ChangeParent(weaponStorage);
+        if(storeWeapon!=null) StopCoroutine(storeWeapon);
+        storeWeapon = null;
+        aimAfterFire = false;
+        Invoke("RefillAmmo", reloadTime);
     }
 
     public void RefillAmmo()
