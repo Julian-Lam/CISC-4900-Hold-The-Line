@@ -141,7 +141,7 @@ public class Weapon : MonoBehaviour, Interactable
 
     public string Description()
     {
-        return "Switch to " + weaponName+" ("+ammoLeft/maxAmmo+")";
+        return "Switch to " + weaponName+" ("+ammoLeft+"/"+maxAmmo+")";
     }
 
     public void Drop()
@@ -230,7 +230,7 @@ public class Weapon : MonoBehaviour, Interactable
             {
                 //Debug.Log("Calling ReloadEmpty After Attempting to Shoot");
                 isReloading = true;
-                Invoke("ReloadEmpty", 2);
+                ReloadEmpty();
             }
         }
     }
@@ -264,7 +264,7 @@ public class Weapon : MonoBehaviour, Interactable
         if(storeWeapon!=null) StopCoroutine(storeWeapon);
         storeWeapon = null;
         aimAfterFire = false;
-        Invoke("RefillAmmo", reloadTime);
+        Invoke("RefillAmmo", reloadEmptyTime);
     }
 
     public void RefillAmmo()
