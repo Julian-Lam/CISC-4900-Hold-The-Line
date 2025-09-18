@@ -511,6 +511,11 @@ namespace StarterAssets
                     {
                         description.text = i.Description();
                         interactTextbox.SetActive(true);
+
+                        if (!_input.interact)
+                        {
+                            i.ReleaseAction();
+                        }
                     }
                     else
                     {
@@ -541,18 +546,38 @@ namespace StarterAssets
                     //INTERACTABLES MUST HAVE RIGIDBODY
                     if (hit.collider.TryGetComponent<Interactable>(out Interactable i))
                     {
-                        //Debug.Log("Interacted with interactable: " + i);
+                        if (i is MonoBehaviour mb && mb.enabled)
+                        {
+                            i.Interact(gameObject);
+                        }
 
+                        //Debug.Log("Interacted with interactable: " + i);
+                        
                         if(i is Weapon weapon)
                         {
                             currentWeapon = weapon;
                             Debug.Log("Current Weapon is: " + i);
                         }
 
-                        i.Interact(gameObject);
+                        if (i.CanHoldInteract() && i is MonoBehaviour m && m.enabled)
+                        {
+                            transform.LookAt(m.transform);
+                            if (i.Release())
+                            {
+                                _input.interact = false;
+                            }
+                        }
+                        else
+                        {
+                            _input.interact = false;
+                        }
+                    }
+                    else
+                    {
+                        _input.interact = false;
                     }
                 }
-                _input.interact = false;
+                
             }
         }
 

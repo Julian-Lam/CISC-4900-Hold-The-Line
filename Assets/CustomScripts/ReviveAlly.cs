@@ -1,5 +1,6 @@
 using UnityEngine;
 using StarterAssets;
+using System.Collections;
 using UnityEngine.UI;
 
 public class ReviveAlly : MonoBehaviour, Interactable
@@ -7,13 +8,13 @@ public class ReviveAlly : MonoBehaviour, Interactable
     public float pointsNeededToRevive=300;
     public float currentPoints=0;
 
-    public bool isReviving;
-
     private AlliedCharacter c;
     private ThirdPersonController player;
 
     public GameObject reviveBarParent;
     public Image reviveBar;
+
+    public Camera reviverCamera;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -30,23 +31,26 @@ public class ReviveAlly : MonoBehaviour, Interactable
     // Update is called once per frame
     void Update()
     {
-        if (isReviving)
-        {
-            currentPoints++;
-            CheckPoints();
-        }
+        CheckPoints();
         CheckForNearbyAlly();
         ManageBars();
-    }
 
-    public void Interact(GameObject o)
-    {
-        if (this.enabled)
+        if (player != null)
         {
-            player = o.GetComponent<ThirdPersonController>();
-            if (!isReviving)
+            GameObject playerObj = player.gameObject;
+            Transform reviverRoot = playerObj.transform;
+            Transform cameraTransform = reviverRoot.Find("MainCamera");
+            reviverCamera = cameraTransform.gameObject.GetComponent<Camera>();
+
+            Ray r = new Ray(reviverCamera.transform.position, reviverCamera.transform.TransformDirection(Vector3.forward));
+            RaycastHit hit;
+            if (Physics.Raycast(r, out hit, 8.0f))
             {
-                isReviving = true;
+                Debug.DrawRay(reviverCamera.transform.position, reviverCamera.transform.TransformDirection(Vector3.forward) * 8f, Color.red);
+                if (hit.collider.gameObject != gameObject)
+                {
+                    CancelRevive();
+                }
             }
             else
             {
@@ -55,16 +59,37 @@ public class ReviveAlly : MonoBehaviour, Interactable
         }
     }
 
+    public void Interact(GameObject o)
+    {
+        if (this.enabled)
+        {
+            player = o.GetComponent<ThirdPersonController>();
+
+            reviveBarParent.SetActive(true);
+            currentPoints++;
+        }
+    }
+
     public string Description()
     {
-        if (!isReviving)
-        {
-            return "Revive";
-        }
-        else
-        {
-            return "Cancel Revive";
-        }
+        return "Revive";
+    }
+
+    public bool CanHoldInteract()
+    {
+        return true;
+    }
+
+    public bool release = false;
+
+    public bool Release()
+    {
+        return release;
+    }
+
+    public void ReleaseAction()
+    {
+        CancelRevive();
     }
 
     public void CheckForNearbyAlly()
@@ -77,8 +102,9 @@ public class ReviveAlly : MonoBehaviour, Interactable
 
     public void CancelRevive()
     {
-        isReviving = false;
+        reviveBarParent.SetActive(false);
         currentPoints = 0;
+        release = false;
     }
 
     public void CheckPoints()
@@ -87,6 +113,7 @@ public class ReviveAlly : MonoBehaviour, Interactable
         {
             c.Revive();
             c.health = c.maxHealth*0.75f;
+            release = true;
             CancelRevive();
             this.enabled = false;
         }
@@ -94,15 +121,7 @@ public class ReviveAlly : MonoBehaviour, Interactable
 
     public void ManageBars()
     {
-        if (isReviving)
-        {
-            reviveBarParent.SetActive(true);
-            reviveBar.fillAmount = currentPoints / pointsNeededToRevive;
-        }
-        else
-        {
-            reviveBarParent.SetActive(false);
-        }
+        reviveBar.fillAmount = currentPoints / pointsNeededToRevive;
     }
 
 }

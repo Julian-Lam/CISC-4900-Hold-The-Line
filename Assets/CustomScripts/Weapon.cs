@@ -144,6 +144,21 @@ public class Weapon : MonoBehaviour, Interactable
         return "Switch to " + weaponName+" ("+ammoLeft+"/"+maxAmmo+")";
     }
 
+    public bool CanHoldInteract()
+    {
+        return false;
+    }
+
+    public bool Release()
+    {
+        return true;
+    }
+
+    public void ReleaseAction()
+    {
+
+    }
+
     public void Drop()
     {
         if (isEquipped)

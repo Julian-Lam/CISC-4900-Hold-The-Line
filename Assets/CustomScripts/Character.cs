@@ -79,7 +79,7 @@ public class Character : MonoBehaviour
             {
                 increaseArmor(1);
             }
-            else
+            else if(timeSinceLastHit<timeUntilArmorRecovery)
             {
                 timeSinceLastHit++;
             }
