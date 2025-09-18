@@ -2,9 +2,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class Character : MonoBehaviour
 {
+    public static List<Character> charList = new List<Character>();
+    public static List<Character> bluForList = new List<Character>();
+    public static int numberOfCharacters = 0;
+    public static int numberOfBluFor = 0;
+
     [Header("Health/Armor Stats")]
     public float health = 100;
     public float maxHealth = 100;
@@ -43,13 +49,52 @@ public class Character : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public virtual void Start()
     {
+        charList.Add(this);
+        numberOfCharacters++;
 
+        if (faction == "BluFor")
+        {
+            bluForList.Add(this);
+            numberOfBluFor++;
+        }
     }
 
     // Update is called once per frame
     public virtual void Update()
     {
         manageBars();
+
+        if(!Pause.isGamePaused)
+        {
+            while (isOnFire)
+            {
+                decreaseTrueHealth(depleteHealthByFire);
+            }
+            while (isPoisoned)
+            {
+                decreaseTrueHealth(depleteHealthByPoison);
+            }
+
+            if (timeSinceLastHit >= timeUntilArmorRecovery && health > 0)
+            {
+                increaseArmor(1);
+            }
+            else
+            {
+                timeSinceLastHit++;
+            }
+
+            if (timeSinceLastUsedStanima >= timeUntilStanimaRecovery)
+            {
+                increaseStanima(1);
+            }
+            else
+            {
+                timeSinceLastUsedStanima++;
+            }
+        }
+
+
     }
 
     public void increaseHealth(float health = 1)
@@ -177,7 +222,7 @@ public class Character : MonoBehaviour
 
     public void manageBars()
     {
-        if (healthBar != null && armorBar != null && staminaBar != null && currencyText != null)
+        if (healthBar != null && armorBar != null)
         {
             Color goodHealth = Color.green;
             Color badHealth = Color.red;
@@ -193,8 +238,14 @@ public class Character : MonoBehaviour
 
             healthBar.fillAmount = health / maxHealth;
             armorBar.fillAmount = armor / maxArmor;
-            staminaBar.fillAmount = stanima / maxStanima;
+        }
 
+        if (staminaBar != null){
+            staminaBar.fillAmount = stanima / maxStanima;
+        }
+
+        if (currencyText != null)
+        {
             currencyText.text = "NY$" + currency + ".00";
         }
     }

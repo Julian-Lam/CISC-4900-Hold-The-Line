@@ -172,7 +172,6 @@ namespace StarterAssets
                 OnInteract();
                 OnUseWeapon();
                 SetLookAnimaton();
-                HandleEffects();
             }
         }
 
@@ -508,7 +507,7 @@ namespace StarterAssets
             if (Physics.Raycast(inspector, out hit, range)){
                 if (hit.collider.TryGetComponent<Interactable>(out Interactable i))
                 {
-                    if (i != null)
+                    if (i != null && (i is MonoBehaviour mb && mb.enabled))
                     {
                         description.text = i.Description();
                         interactTextbox.SetActive(true);
@@ -702,36 +701,5 @@ namespace StarterAssets
                 }
             }
         }
-
-        public void HandleEffects()
-        {
-            while (c.isOnFire)
-            {
-                c.decreaseTrueHealth(c.depleteHealthByFire);
-            }
-            while (c.isPoisoned)
-            {
-                c.decreaseTrueHealth(c.depleteHealthByPoison);
-            }
-
-            if (c.timeSinceLastHit >= c.timeUntilArmorRecovery && c.health > 0)
-            {
-                c.increaseArmor(1);
-            }
-            else
-            {
-                c.timeSinceLastHit++;
-            }
-
-            if (c.timeSinceLastUsedStanima >= c.timeUntilStanimaRecovery)
-            {
-                c.increaseStanima(1);
-            }
-            else
-            {
-                c.timeSinceLastUsedStanima++;
-            }
-        }
-
     }
 }

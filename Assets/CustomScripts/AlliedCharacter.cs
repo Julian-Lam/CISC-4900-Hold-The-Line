@@ -17,21 +17,31 @@ public class AlliedCharacter : Character
     private Animator animator;
     private CharacterController controller;
 
+    private ReviveAlly reviveScript;
+
     //Animations
     private int animationSpeed;
     private int animationMotionSpeed;
+    private int animationKnockedOut;
 
     public override void Start()
     {
+        base.Start();
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
+        reviveScript = GetComponent<ReviveAlly>();
+
+        reviveScript.enabled = false;
+
         GetAnimations();
     }
 
     public override void Update()
     {
+        base.Update();
         distanceFromPlayer = Vector3.Distance(characterToFollow.position, transform.position);
+        CalculateDecisions();
         MoveTowardsPlayer();
         HealthCheck();
     }
@@ -40,6 +50,7 @@ public class AlliedCharacter : Character
     {
         animationSpeed = Animator.StringToHash("Speed");
         animationMotionSpeed = Animator.StringToHash("MotionSpeed");
+        animationKnockedOut = Animator.StringToHash("IsDowned");
     }
 
     //TAKEN FROM ThirdPersonController.cs
@@ -75,12 +86,21 @@ public class AlliedCharacter : Character
         if (health <= 0)
         {
             status = "Downed";
+            agent.isStopped = true;
+            animator.SetBool(animationKnockedOut, true);
+            controller.height = 0.6f;
+            controller.center = new Vector3(0, 0.2f, 0);
+            reviveScript.enabled = true;
         }
     }
 
     public void Revive()
     {
-        status = "Idle";
+        status = "Following";
+        agent.isStopped = false;
+        animator.SetBool(animationKnockedOut, false);
+        controller.height = 1.5f;
+        controller.center = new Vector3(0, 0.75f, 0);
     }
 
     public void MoveTowardsPlayer()
@@ -101,7 +121,7 @@ public class AlliedCharacter : Character
                 animator.SetFloat(animationMotionSpeed, agent.velocity.magnitude*0.5f);
             }
 
-            if (distanceFromPlayer > 1.5)
+            if (distanceFromPlayer > 2)
             {
                 agent.isStopped = false;
                 agent.destination = characterToFollow.position;
@@ -116,6 +136,14 @@ public class AlliedCharacter : Character
 
     public void CalculateDecisions()
     {
+        if (status != "Downed")
+        {
+            if (distanceFromPlayer > 5)
+            {
+                status = "Following";
+            }
+        }
+
         //If ally status!="Downed"
         
         //If ally is too far away from player, status="Following". If ally closer enough, but there's enemies nearby, status="Attacking".

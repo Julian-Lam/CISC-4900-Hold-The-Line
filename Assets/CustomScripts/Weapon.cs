@@ -211,7 +211,7 @@ public class Weapon : MonoBehaviour, Interactable
         {
             if(ammoLeft>0 && isReadyToShoot)
             {
-                //Debug.Log("Calling Shoot");
+                Debug.Log("Shooting");
                 ChangeParent(brandish);
                 gameObject.SetActive(true);
                 HideItem(false);
@@ -239,7 +239,6 @@ public class Weapon : MonoBehaviour, Interactable
     {
         if (ammoLeft < maxAmmo && !isReloading)
         { 
-            //Debug.Log("Calling Normal Reload");
             if (ammoLeft == 0)
             {
                 ReloadEmpty();
@@ -247,6 +246,7 @@ public class Weapon : MonoBehaviour, Interactable
             }
             else
             {
+                Debug.Log("Calling Normal Reload");
                 isReloading = true;
                 ChangeParent(weaponStorage);
                 if (storeWeapon != null) StopCoroutine(storeWeapon);
@@ -258,7 +258,7 @@ public class Weapon : MonoBehaviour, Interactable
 
     public void ReloadEmpty()
     {
-        //Debug.Log("Calling ReloadEmpty");
+        Debug.Log("Calling ReloadEmpty");
         isReloading = true;
         ChangeParent(weaponStorage);
         if(storeWeapon!=null) StopCoroutine(storeWeapon);
@@ -269,7 +269,7 @@ public class Weapon : MonoBehaviour, Interactable
 
     public void RefillAmmo()
     {
-        //Debug.Log("Refilling Ammo");
+        Debug.Log("Refilling Ammo");
         ammoLeft = maxAmmo;
         isReloading = false;
     }
@@ -283,7 +283,7 @@ public class Weapon : MonoBehaviour, Interactable
     {
         if (isAutomatic)
         {
-            //Debug.Log("Loading Another Shot");
+            Debug.Log("Loading Another Shot");
             yield return new WaitForSeconds(30 / fireRate);
             fireAnimation = 0;
             yield return new WaitForSeconds(30 / fireRate);
@@ -291,7 +291,7 @@ public class Weapon : MonoBehaviour, Interactable
         }
         else if (!isAutomatic)
         {
-            //Debug.Log("Waiting for releasing trigger");
+            Debug.Log("Waiting for releasing trigger");
             yield return new WaitForSeconds(30 / fireRate);
             fireAnimation = 0;
             yield return new WaitUntil(() => !isTriggerHeld);

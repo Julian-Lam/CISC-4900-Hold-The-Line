@@ -169,7 +169,7 @@ MonoBehaviour:
   isEquipped: 0
   maxAmmo: 8
   ammoLeft: 8
-  damagePerBullet: 15
+  damagePerBullet: 35
   fireRate: 600
   weaponRange: 20
   reloadTime: 1
