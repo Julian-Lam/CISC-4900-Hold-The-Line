@@ -44,7 +44,7 @@ public class Weapon : MonoBehaviour, Interactable
     private ThirdPersonController player;
     private Character playerStats;
     private Transform camera;
-
+    public Transform chest;
     //CHILDREN
 
     private Transform muzzle;
@@ -69,6 +69,7 @@ public class Weapon : MonoBehaviour, Interactable
         isReadyToShoot = true;
         isReloading = false;
         muzzle = FindDescendants(transform, "Muzzle");
+        IfOwnerNPC();
     }
 
     // Update is called once per frame
@@ -80,6 +81,12 @@ public class Weapon : MonoBehaviour, Interactable
             {
                 leaveAimTimer++;
             }
+
+            if (isEquipped && leaveAimTimer == secondsUntilInactive)
+            {
+                gameObject.SetActive(false);
+            }
+
             FindCamera();
             if (shootFromWhere != null)
             {
@@ -159,6 +166,28 @@ public class Weapon : MonoBehaviour, Interactable
 
     }
 
+    public void IfOwnerNPC()
+    {
+        if (transform.root.name != "PlayerArmature" && transform.parent!=null)
+        {
+           
+            weaponStorage = FindDescendants(transform.root, "StorageEmpty");
+            brandish = FindDescendants(transform.root, "BrandishEmpty");
+            playerStats = transform.root.gameObject.GetComponent<Character>();
+            Debug.Log(playerStats);
+            SetAimFromChest();
+            gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+            gameObject.SetActive(true);
+            HideItem(false);
+            ChangeParent(weaponStorage);
+            rigidBody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
+            rigidBody.useGravity = false;
+            rigidBody.isKinematic = true;
+            collider.enabled = false;
+            isEquipped = true;
+        }
+    }
+
     public void Drop()
     {
         if (isEquipped)
@@ -226,7 +255,7 @@ public class Weapon : MonoBehaviour, Interactable
         {
             if(ammoLeft>0 && isReadyToShoot)
             {
-                Debug.Log("Shooting");
+                //Debug.Log("Shooting");
                 ChangeParent(brandish);
                 gameObject.SetActive(true);
                 HideItem(false);
@@ -261,7 +290,7 @@ public class Weapon : MonoBehaviour, Interactable
             }
             else
             {
-                Debug.Log("Calling Normal Reload");
+                //Debug.Log("Calling Normal Reload");
                 isReloading = true;
                 ChangeParent(weaponStorage);
                 if (storeWeapon != null) StopCoroutine(storeWeapon);
@@ -273,7 +302,7 @@ public class Weapon : MonoBehaviour, Interactable
 
     public void ReloadEmpty()
     {
-        Debug.Log("Calling ReloadEmpty");
+        //Debug.Log("Calling ReloadEmpty");
         isReloading = true;
         ChangeParent(weaponStorage);
         if(storeWeapon!=null) StopCoroutine(storeWeapon);
@@ -284,7 +313,7 @@ public class Weapon : MonoBehaviour, Interactable
 
     public void RefillAmmo()
     {
-        Debug.Log("Refilling Ammo");
+        //Debug.Log("Refilling Ammo");
         ammoLeft = maxAmmo;
         isReloading = false;
     }
@@ -298,17 +327,19 @@ public class Weapon : MonoBehaviour, Interactable
     {
         if (isAutomatic)
         {
-            Debug.Log("Loading Another Shot");
+            //Debug.Log("Loading Another Shot");
             yield return new WaitForSeconds(30 / fireRate);
             fireAnimation = 0;
+            hitTarget = false;
             yield return new WaitForSeconds(30 / fireRate);
             isReadyToShoot = true;
         }
         else if (!isAutomatic)
         {
-            Debug.Log("Waiting for releasing trigger");
+            //Debug.Log("Waiting for releasing trigger");
             yield return new WaitForSeconds(30 / fireRate);
             fireAnimation = 0;
+            hitTarget = false;
             yield return new WaitUntil(() => !isTriggerHeld);
             isReadyToShoot = true;
         }
@@ -350,11 +381,19 @@ public class Weapon : MonoBehaviour, Interactable
         shootFromWhere = camera;
     }
 
+    public void SetAimFromChest()
+    {
+
+    }
+
+
     public void FindCamera()
     {
         Transform owner = transform.root;
         camera = FindDescendants(owner, "MainCamera");
     }
+
+    public bool hitTarget = false;
 
     public void HitTarget()
     {
@@ -376,13 +415,14 @@ public class Weapon : MonoBehaviour, Interactable
                     Debug.Log("Hit something while blind firing");
                 }
                 */
-
-                if(hit.collider.TryGetComponent<Character>(out Character c))
+                //Debug.Log("Hit " + hit.collider);
+                if (hit.collider.TryGetComponent<Character>(out Character c))
                 {
                     //This is to avoid friendly fire
                     if (c.faction != playerStats.faction)
                     {
                         c.decreaseHealthAndArmor(damagePerBullet/2,damagePerBullet);
+                        hitTarget = true;
                     }
                 }
             }

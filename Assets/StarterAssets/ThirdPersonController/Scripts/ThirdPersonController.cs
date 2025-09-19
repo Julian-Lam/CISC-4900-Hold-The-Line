@@ -144,6 +144,7 @@ namespace StarterAssets
             c = GetComponent<Character>();
 
             interactTextbox.SetActive(false);
+            hitMarker.SetActive(false);
 
 #if ENABLE_INPUT_SYSTEM
             _playerInput = GetComponent<PlayerInput>();
@@ -164,7 +165,7 @@ namespace StarterAssets
         {
             _hasAnimator = TryGetComponent(out _animator);
 
-            if (!Pause.isGamePaused)
+            if (!Pause.isGamePaused && !isDowned)
             {
                 JumpAndGravity();
                 GroundedCheck();
@@ -173,6 +174,8 @@ namespace StarterAssets
                 OnUseWeapon();
                 SetLookAnimaton();
             }
+
+            HealthCheck();
         }
 
         private void LateUpdate()
@@ -197,7 +200,7 @@ namespace StarterAssets
             strafeState = Animator.StringToHash("StrafeDirection");
             lookUpDownAnimaton = Animator.StringToHash("LookUpDown");
             aimOnlyAnimation = Animator.StringToHash("AimOnly");
-
+            knockOutAnimation = Animator.StringToHash("IsDowned");
         }
 
         private void GroundedCheck()
@@ -484,8 +487,11 @@ namespace StarterAssets
         private int strafeState;
         private int lookUpDownAnimaton;
         private int aimOnlyAnimation;
+        private int knockOutAnimation;
 
         private Weapon currentWeapon;
+
+        public bool isDowned;
 
         private Transform playerCameraRootTransform;
         public float rotationX;
@@ -561,7 +567,8 @@ namespace StarterAssets
 
                         if (i.CanHoldInteract() && i is MonoBehaviour m && m.enabled)
                         {
-                            transform.LookAt(m.transform);
+                            Vector3 lookAtThis = new Vector3(m.transform.position.x, transform.position.y, m.transform.position.z);
+                            transform.LookAt(lookAtThis);
                             if (i.Release())
                             {
                                 _input.interact = false;
@@ -624,8 +631,7 @@ namespace StarterAssets
         }
 
         private void OnAim()
-        {
-            
+        { 
             if (currentWeapon != null)
             {
                 if (currentWeapon != null && _input.aim && !currentWeapon.isReloading)
@@ -687,12 +693,31 @@ namespace StarterAssets
             }
         }
 
+        public void HealthCheck()
+        {
+            if (c.health <= 0)
+            {
+                isDowned = true;
+                _animator.SetBool(aimAnimation, false);
+                _animator.SetBool(aimOnlyAnimation, false);
+                if (currentWeapon != null)
+                {
+                    currentWeapon.gameObject.SetActive(false);
+                }
+                _animator.SetBool(knockOutAnimation, true);
+                _controller.height = 0.6f;
+                _controller.center = new Vector3(0, 0.2f, 0);
+                c.decreaseStanima(c.maxStanima);
+            }
+        }
+
         public Image currentWeaponImage;
         public Image currentFireModeImage;
 
         public Sprite noSelectFireImage;
         public Sprite autoFireImage;
         public Sprite semiFireImage;
+        public GameObject hitMarker;
 
         public void WeaponImageHandler()
         {
@@ -723,6 +748,15 @@ namespace StarterAssets
                     {
                         currentFireModeImage.sprite = semiFireImage;
                     }
+                }
+
+                if (currentWeapon.hitTarget)
+                {
+                    hitMarker.SetActive(true);
+                }
+                else
+                {
+                    hitMarker.SetActive(false);
                 }
             }
         }

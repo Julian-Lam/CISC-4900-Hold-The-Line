@@ -19,10 +19,15 @@ public class AlliedCharacter : Character
 
     private ReviveAlly reviveScript;
 
+    public Weapon currentWeapon;
+
     //Animations
     private int animationSpeed;
     private int animationMotionSpeed;
     private int animationKnockedOut;
+    private int animationAim;
+    private int animationAimOnly;
+    private int animationFire;
 
     public override void Start()
     {
@@ -44,6 +49,7 @@ public class AlliedCharacter : Character
         CalculateDecisions();
         MoveTowardsPlayer();
         HealthCheck();
+        OnUseWeapon();
     }
 
     public void GetAnimations()
@@ -51,6 +57,9 @@ public class AlliedCharacter : Character
         animationSpeed = Animator.StringToHash("Speed");
         animationMotionSpeed = Animator.StringToHash("MotionSpeed");
         animationKnockedOut = Animator.StringToHash("IsDowned");
+        animationAim = Animator.StringToHash("Aim");
+        animationAimOnly = Animator.StringToHash("AimOnly");
+        animationFire = Animator.StringToHash("Fire");
     }
 
     //TAKEN FROM ThirdPersonController.cs
@@ -87,9 +96,15 @@ public class AlliedCharacter : Character
         {
             status = "Downed";
             agent.isStopped = true;
+            currentWeapon.gameObject.SetActive(false);
             animator.SetBool(animationKnockedOut, true);
             controller.height = 0.6f;
             controller.center = new Vector3(0, 0.2f, 0);
+            aim = false;
+            fire = false;
+            reload = false;
+            animator.SetBool(animationAim, false);
+            animator.SetBool(animationAimOnly, false);
             reviveScript.enabled = true;
         }
     }
@@ -134,6 +149,20 @@ public class AlliedCharacter : Character
         }
     }
 
+    public void CalculateAttacks()
+    {
+        if (status == "Attacking")
+        {
+        }
+        else
+        {
+            if (currentWeapon.ammoLeft / currentWeapon.maxAmmo <= 0.67f)
+            {
+                reload = true;
+            }
+        }
+    }
+
     public void CalculateDecisions()
     {
         if (status != "Downed")
@@ -142,6 +171,9 @@ public class AlliedCharacter : Character
             {
                 status = "Following";
             }
+
+            
+            
         }
 
         //If ally status!="Downed"
@@ -153,6 +185,83 @@ public class AlliedCharacter : Character
         The max distance that this character will be allowed from the player character will == 2.5
 
      */
+
+    public bool fire;
+    public bool aim;
+    public bool reload;
+
+    private void OnUseWeapon()
+    {
+        if (currentWeapon != null)
+        {
+            currentWeapon.isTriggerHeld = fire;
+            currentWeapon.isUsingADS = aim;
+            OnFire();
+            OnAim();
+            OnReload();
+        }
+    }
+
+    private void OnFire()
+    {
+        if (currentWeapon != null)
+        {
+            if (fire||aim)
+            {
+                animator.SetBool(animationAim, true);
+            }
+
+            if (fire && !currentWeapon.isReloading)
+            {
+                currentWeapon.Fire();
+                animator.SetFloat(animationFire, currentWeapon.fireAnimation);
+            }
+            else if (!aim && currentWeapon.isReloading)
+            {
+                currentWeapon.LeaveAim();
+                animator.SetFloat(animationFire, currentWeapon.fireAnimation);
+            }
+            else
+            {
+                animator.SetFloat(animationFire, currentWeapon.fireAnimation);
+            }
+        }
+    }
+
+    private void OnAim()
+    {
+        if (currentWeapon != null)
+        {
+            if (currentWeapon != null && aim && !currentWeapon.isReloading)
+            {
+                currentWeapon.Aim();
+                currentWeapon.SetAimFromChest();
+                animator.SetBool(animationAim, true);
+                animator.SetBool(animationAimOnly, true);
+            }
+            else if (currentWeapon != null && (!aim || currentWeapon.isReloading))
+            {
+                currentWeapon.LeaveAim();
+                currentWeapon.SetAimFromBarrel();
+                animator.SetBool(animationAimOnly, false);
+            }
+
+            if ((!aim && !fire && !currentWeapon.aimAfterFire) || currentWeapon.isReloading)
+            {
+                animator.SetBool(animationAim, false);
+            }
+        }
+    }
+
+    private void OnReload()
+    {
+        if (currentWeapon != null && reload)
+        {
+            aim = false;
+            currentWeapon.Reload();
+            reload = false;
+        }
+    }
 
 
 }
