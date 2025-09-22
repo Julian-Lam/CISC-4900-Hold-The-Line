@@ -170,7 +170,7 @@ MonoBehaviour:
   maxAmmo: 8
   ammoLeft: 8
   damagePerBullet: 35
-  fireRate: 600
+  fireRate: 300
   weaponRange: 20
   reloadTime: 1
   reloadEmptyTime: 1
@@ -183,11 +183,13 @@ MonoBehaviour:
   fireAnimation: 0
   rigidBody: {fileID: 3429045960091120869}
   collider: {fileID: -1000127713273837816}
+  chest: {fileID: 0}
   secondsUntilInactive: 600
   leaveAimTimer: 0
   aimAfterFire: 0
   isCoroutineActive: 0
   gunSprite: {fileID: 21300000, guid: 0f3744a02304e4343adacc3bbfcb0e34, type: 3}
+  hitTarget: 0
 --- !u!4 &4185169728402191180 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3652011956315678642, guid: 6b44ee0b4c9f1a64890968d489adb9f2, type: 3}

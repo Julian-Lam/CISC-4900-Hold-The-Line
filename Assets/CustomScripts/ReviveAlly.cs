@@ -112,7 +112,6 @@ public class ReviveAlly : MonoBehaviour, Interactable
         if (currentPoints >= pointsNeededToRevive)
         {
             c.Revive();
-            c.health = c.maxHealth*0.75f;
             release = true;
             CancelRevive();
             this.enabled = false;

@@ -17,9 +17,17 @@ public class AlliedCharacter : Character
     private Animator animator;
     private CharacterController controller;
 
+    private Character currentTarget;
+    public float distanceFromCurrentTarget = Mathf.Infinity;
+
     private ReviveAlly reviveScript;
 
+    public float gracePeriodMax = 120;
+    public float gracePeriod;
+
     public Weapon currentWeapon;
+
+    public bool isFollowing;
 
     //Animations
     private int animationSpeed;
@@ -28,6 +36,17 @@ public class AlliedCharacter : Character
     private int animationAim;
     private int animationAimOnly;
     private int animationFire;
+
+    public enum AIAllyState
+    {
+        Idle,
+        Following,
+        Attacking,
+        Downed,
+        Reloading
+    }
+
+    public AIAllyState currentState;
 
     public override void Start()
     {
@@ -46,10 +65,21 @@ public class AlliedCharacter : Character
     {
         base.Update();
         distanceFromPlayer = Vector3.Distance(characterToFollow.position, transform.position);
+
+        if (currentTarget != null)
+        {
+            distanceFromCurrentTarget = Vector3.Distance(currentTarget.transform.position, transform.position);
+        }
+
+        if (gracePeriod > 0)
+        {
+            gracePeriod--;
+        }
+
+        CalculateClosestEnemy();
         CalculateDecisions();
-        MoveTowardsPlayer();
-        HealthCheck();
         OnUseWeapon();
+        ChangeState();
     }
 
     public void GetAnimations()
@@ -90,101 +120,184 @@ public class AlliedCharacter : Character
 
     //BELOW IS CUSTOM
 
-    public void HealthCheck()
+    public void KnockOut()
     {
-        if (health <= 0)
-        {
-            status = "Downed";
-            agent.isStopped = true;
-            currentWeapon.gameObject.SetActive(false);
-            animator.SetBool(animationKnockedOut, true);
-            controller.height = 0.6f;
-            controller.center = new Vector3(0, 0.2f, 0);
-            aim = false;
-            fire = false;
-            reload = false;
-            animator.SetBool(animationAim, false);
-            animator.SetBool(animationAimOnly, false);
-            reviveScript.enabled = true;
-        }
+        agent.isStopped = true;
+        controller.height = 0.6f;
+        controller.center = new Vector3(0, 0.2f, 0);
+        aim = false;
+        fire = false;
+        reload = false;
+        animator.SetBool(animationAim, false);
+        animator.SetBool(animationAimOnly, false);
+        animator.SetFloat(animationFire, 0);
+        currentWeapon.gameObject.SetActive(false);
+        animator.SetBool(animationKnockedOut, true);
+        reviveScript.enabled = true;
     }
 
     public void Revive()
     {
-        status = "Following";
+        health = maxHealth * 0.75f;
+        currentState = AIAllyState.Following;
         agent.isStopped = false;
+
+        currentTarget = null;
+        distanceFromCurrentTarget = Mathf.Infinity;
+
         animator.SetBool(animationKnockedOut, false);
+        animator.SetBool(animationAim, false);
+        animator.SetBool(animationAimOnly, false);
+        animator.SetFloat(animationFire, 0);
+        currentWeapon.gameObject.SetActive(true);
+        currentWeapon.ChangeParent(currentWeapon.GetWeaponStorage());
+
+        fire = false;
+        aim = false;
+        reload = false;
         controller.height = 1.5f;
         controller.center = new Vector3(0, 0.75f, 0);
+        gracePeriod = gracePeriodMax;
+    }
+
+    public void CalculateClosestEnemy()
+    {
+        if (currentTarget == null)
+        {
+            float closest = Mathf.Infinity;
+            foreach (Character c in charList)
+            {
+                float distance = Vector3.Distance(c.transform.position, transform.position);
+                if (c.faction == "OpFor" && distance < closest && distance < 4.5 && c.health > 0)
+                {
+                    currentTarget = c;
+                    closest = Vector3.Distance(c.transform.position, transform.position);
+                    break;
+                }
+            }
+            distanceFromCurrentTarget = closest;
+        }
+
+        if (distanceFromCurrentTarget > 4.5 || currentTarget.health<=0)
+        {
+            distanceFromCurrentTarget = Mathf.Infinity;
+            currentTarget = null;
+        }
+        //Debug.Log(currentTarget);
     }
 
     public void MoveTowardsPlayer()
     {
-        if (status=="Following")
+        fire = false;
+
+        if (distanceFromPlayer < 3.5)
         {
-
-            if (distanceFromPlayer < 3.5)
-            {
-                Vector3 lookAtThis = new Vector3(characterToFollow.position.x, transform.position.y, characterToFollow.position.z);
-                transform.LookAt(lookAtThis);
-            }
-
-            animator.SetFloat(animationSpeed, agent.velocity.magnitude);
-
-            if (agent.velocity.magnitude != 0)
-            {
-                animator.SetFloat(animationMotionSpeed, agent.velocity.magnitude*0.5f);
-            }
-
-            if (distanceFromPlayer > 2)
-            {
-                agent.isStopped = false;
-                agent.destination = characterToFollow.position;
-            }
-            else
-            {
-                agent.isStopped = true;
-                animator.SetFloat(animationSpeed, agent.velocity.magnitude);
-            }
+            //Vector3 lookAtThis = new Vector3(characterToFollow.position.x, transform.position.y, characterToFollow.position.z);
+            //transform.LookAt(lookAtThis);
+            Quaternion q = Quaternion.LookRotation((characterToFollow.transform.position - transform.position).normalized);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
         }
-    }
 
-    public void CalculateAttacks()
-    {
-        if (status == "Attacking")
+        //animator.SetFloat(animationSpeed, agent.velocity.magnitude);
+
+        if (agent.velocity.magnitude != 0)
         {
+            //animator.SetFloat(animationMotionSpeed, agent.velocity.magnitude * 0.5f);
+        }
+
+        if (distanceFromPlayer > 2)
+        {
+            agent.isStopped = false;
+            agent.destination = characterToFollow.position;
         }
         else
         {
-            if (currentWeapon.ammoLeft / currentWeapon.maxAmmo <= 0.67f)
-            {
-                reload = true;
-            }
+            agent.isStopped = true;
+            //animator.SetFloat(animationSpeed, agent.velocity.magnitude);
         }
+    }
+
+    public void Idle()
+    {
+        
+    }
+
+    public void Attack()
+    {
+        if (currentTarget == null || distanceFromCurrentTarget >= 4.5 || currentTarget.health <= 0 || gracePeriod>0)
+        {
+            fire = false;
+            //Debug.Log("Canceled Attack");
+            return;
+        }
+
+        //Debug.Log("Attempted Attack");
+
+        //Vector3 lookAtThis = new Vector3(currentTarget.transform.position.x, transform.position.y, currentTarget.transform.position.z);
+        //transform.LookAt(lookAtThis);
+
+        Quaternion q = Quaternion.LookRotation((currentTarget.transform.position - transform.position).normalized);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
+
+        fire = true;
     }
 
     public void CalculateDecisions()
     {
-        if (status != "Downed")
+        if (health <= 0)
         {
-            if (distanceFromPlayer > 5)
-            {
-                status = "Following";
-            }
-
-            
-            
+            currentState = AIAllyState.Downed;
         }
-
-        //If ally status!="Downed"
+        else if(gracePeriod>0)
+        {
+            currentState = AIAllyState.Following;
+        }
+        else
+        {
+            if (currentTarget != null && distanceFromCurrentTarget < 4.5f && currentTarget.health > 0 && gracePeriod <= 0)
+            {
+                currentState = AIAllyState.Attacking;
+            }
+            else if (currentWeapon.ammoLeft / currentWeapon.maxAmmo <= 0.67f && currentWeapon.isReloading)
+            {
+                currentState = AIAllyState.Reloading;
+            }
+            else if (distanceFromPlayer > 5.5f || currentWeapon.isReloading || currentTarget == null)
+            {
+                currentState = AIAllyState.Following;
+            }
+            else if (!isFollowing)
+            {
+                currentState = AIAllyState.Idle;
+            }
+        }
         
-        //If ally is too far away from player, status="Following". If ally closer enough, but there's enemies nearby, status="Attacking".
-    }
-    /*
-   
-        The max distance that this character will be allowed from the player character will == 2.5
 
-     */
+        animator.SetFloat(animationSpeed, agent.velocity.magnitude);
+        animator.SetFloat(animationMotionSpeed, agent.velocity.magnitude * 0.5f);
+    }
+    public void ChangeState()
+    {
+        switch (currentState)
+        {
+            case AIAllyState.Following:
+                MoveTowardsPlayer();
+                break;
+            case AIAllyState.Attacking:
+                Attack();
+                break;
+            case AIAllyState.Downed:
+                KnockOut();
+                break;
+            case AIAllyState.Reloading:
+                MoveTowardsPlayer();
+                reload = true;
+                break;
+            default:
+                Idle();
+                break;
+        }
+    }
 
     public bool fire;
     public bool aim;
@@ -194,6 +307,9 @@ public class AlliedCharacter : Character
     {
         if (currentWeapon != null)
         {
+            //AI must use automatic weapons
+            currentWeapon.isAutomatic = true;
+
             currentWeapon.isTriggerHeld = fire;
             currentWeapon.isUsingADS = aim;
             OnFire();
@@ -213,11 +329,13 @@ public class AlliedCharacter : Character
 
             if (fire && !currentWeapon.isReloading)
             {
+                //Debug.Log("Firing");
                 currentWeapon.Fire();
                 animator.SetFloat(animationFire, currentWeapon.fireAnimation);
             }
             else if (!aim && currentWeapon.isReloading)
             {
+                //Debug.Log("Firing");
                 currentWeapon.LeaveAim();
                 animator.SetFloat(animationFire, currentWeapon.fireAnimation);
             }
@@ -234,6 +352,7 @@ public class AlliedCharacter : Character
         {
             if (currentWeapon != null && aim && !currentWeapon.isReloading)
             {
+                //Debug.Log("Aiming");
                 currentWeapon.Aim();
                 currentWeapon.SetAimFromChest();
                 animator.SetBool(animationAim, true);
@@ -241,6 +360,7 @@ public class AlliedCharacter : Character
             }
             else if (currentWeapon != null && (!aim || currentWeapon.isReloading))
             {
+                //Debug.Log("Leaving Aim");
                 currentWeapon.LeaveAim();
                 currentWeapon.SetAimFromBarrel();
                 animator.SetBool(animationAimOnly, false);
@@ -248,6 +368,7 @@ public class AlliedCharacter : Character
 
             if ((!aim && !fire && !currentWeapon.aimAfterFire) || currentWeapon.isReloading)
             {
+                //Debug.Log("Leaving Aim");
                 animator.SetBool(animationAim, false);
             }
         }
@@ -257,11 +378,10 @@ public class AlliedCharacter : Character
     {
         if (currentWeapon != null && reload)
         {
+            //Debug.Log("Reloading");
             aim = false;
             currentWeapon.Reload();
             reload = false;
         }
     }
-
-
 }

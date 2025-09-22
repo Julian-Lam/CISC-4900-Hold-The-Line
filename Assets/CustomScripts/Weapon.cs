@@ -104,6 +104,13 @@ public class Weapon : MonoBehaviour, Interactable
         }
     }
 
+    void OnDisable()
+    {
+        fireAnimation = 0;
+        StopAllCoroutines(); // stop ResetShot
+        isReadyToShoot = true;
+    }
+
     //Assuming weapon is on the ground or not used by anyone else
     public void Interact(GameObject o)
     {
@@ -174,7 +181,7 @@ public class Weapon : MonoBehaviour, Interactable
             weaponStorage = FindDescendants(transform.root, "StorageEmpty");
             brandish = FindDescendants(transform.root, "BrandishEmpty");
             playerStats = transform.root.gameObject.GetComponent<Character>();
-            Debug.Log(playerStats);
+            //Debug.Log(playerStats);
             SetAimFromChest();
             gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             gameObject.SetActive(true);
@@ -320,7 +327,10 @@ public class Weapon : MonoBehaviour, Interactable
 
     public void SwitchFireMode()
     {
-        isAutomatic = !isAutomatic;
+        if (canBeAutomatic)
+        {
+            isAutomatic = !isAutomatic;
+        }
     }
 
     public IEnumerator ResetShot()
@@ -328,18 +338,19 @@ public class Weapon : MonoBehaviour, Interactable
         if (isAutomatic)
         {
             //Debug.Log("Loading Another Shot");
-            yield return new WaitForSeconds(30 / fireRate);
+            yield return new WaitForSeconds(1/fireRate);
             fireAnimation = 0;
             hitTarget = false;
-            yield return new WaitForSeconds(30 / fireRate);
+            yield return new WaitForSeconds(59/fireRate);
             isReadyToShoot = true;
         }
         else if (!isAutomatic)
         {
             //Debug.Log("Waiting for releasing trigger");
-            yield return new WaitForSeconds(30 / fireRate);
+            yield return new WaitForSeconds(1 / fireRate);
             fireAnimation = 0;
             hitTarget = false;
+            yield return new WaitForSeconds(59 /fireRate);
             yield return new WaitUntil(() => !isTriggerHeld);
             isReadyToShoot = true;
         }
@@ -383,9 +394,18 @@ public class Weapon : MonoBehaviour, Interactable
 
     public void SetAimFromChest()
     {
-
+        shootFromWhere = chest;
     }
 
+    public Transform GetWeaponStorage()
+    {
+        return weaponStorage;
+    }
+
+    public Transform GetShootFromWhere()
+    {
+        return shootFromWhere;
+    }
 
     public void FindCamera()
     {

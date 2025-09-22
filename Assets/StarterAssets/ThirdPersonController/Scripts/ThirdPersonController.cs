@@ -167,12 +167,15 @@ namespace StarterAssets
 
             if (!Pause.isGamePaused && !isDowned)
             {
-                JumpAndGravity();
-                GroundedCheck();
-                Move();
                 OnInteract();
-                OnUseWeapon();
-                SetLookAnimaton();
+                if (!isHoldingInteract)
+                {
+                    JumpAndGravity();
+                    GroundedCheck();
+                    Move();
+                    OnUseWeapon();
+                    SetLookAnimaton();
+                }
             }
 
             HealthCheck();
@@ -180,7 +183,7 @@ namespace StarterAssets
 
         private void LateUpdate()
         {
-            if (!Pause.isGamePaused)
+            if (!Pause.isGamePaused && !isHoldingInteract)
             {
                 CameraRotation();
             }
@@ -491,6 +494,8 @@ namespace StarterAssets
 
         private Weapon currentWeapon;
 
+        public bool isHoldingInteract;
+
         public bool isDowned;
 
         private Transform playerCameraRootTransform;
@@ -502,6 +507,14 @@ namespace StarterAssets
         public TextMeshProUGUI weaponNameText;
 
         public TextMeshProUGUI weaponAmmoText;
+
+        public Transform playerModel;
+
+        public void ResetRotation()
+        {
+            playerModel.localRotation = Quaternion.identity;
+            isHoldingInteract = false;
+        }
 
         private void OnInteract()
         {
@@ -521,21 +534,23 @@ namespace StarterAssets
                         if (!_input.interact)
                         {
                             i.ReleaseAction();
+                            ResetRotation();
+                            Debug.Log("Release 1");
                         }
                     }
                     else
                     {
                         interactTextbox.SetActive(false);
+                        ResetRotation();
+                        Debug.Log("Release 2");
                     }
                 }
                 else
                 {
                     interactTextbox.SetActive(false);
+                    ResetRotation();
+                    Debug.Log("Release 3");
                 }
-            }
-            else
-            {
-                interactTextbox.SetActive(false);
             }
 
             if (_input.interact)
@@ -554,6 +569,10 @@ namespace StarterAssets
                     {
                         if (i is MonoBehaviour mb && mb.enabled)
                         {
+                            //Vector3 lookAtThis = new Vector3(mb.transform.position.x- playerModel.position.x, 0f, mb.transform.position.z- playerModel.position.z).normalized;
+                            Quaternion q = Quaternion.LookRotation((mb.transform.position-playerModel.position).normalized);
+
+                            playerModel.rotation = Quaternion.RotateTowards(playerModel.rotation,q, 5f);
                             i.Interact(gameObject);
                         }
 
@@ -565,30 +584,31 @@ namespace StarterAssets
                             Debug.Log("Current Weapon is: " + i);
                         }
 
-                        if (i.CanHoldInteract() && i is MonoBehaviour m && m.enabled)
+                        if (i.CanHoldInteract() && i is MonoBehaviour m && m.enabled && Grounded)
                         {
-                            Vector3 lookAtThis = new Vector3(m.transform.position.x, transform.position.y, m.transform.position.z);
-                            transform.LookAt(lookAtThis);
+                            isHoldingInteract = true;
+
+                            _input.move = Vector2.zero;
+                            _input.jump = false;
+                            _animator.SetFloat(_animIDSpeed, 0f);
+                            _animator.SetFloat(_animIDMotionSpeed, 0f);
+
                             if (i.Release())
                             {
+                                Debug.Log("Release From Player 1");
                                 _input.interact = false;
+                                isHoldingInteract = false;
                             }
                         }
                         else
                         {
+                            Debug.Log("Release From Player 2");
                             _input.interact = false;
                         }
                     }
-                    else
-                    {
-                        _input.interact = false;
-                    }
                 }
-                
             }
         }
-
-
 
         private void OnUseWeapon()
         {
