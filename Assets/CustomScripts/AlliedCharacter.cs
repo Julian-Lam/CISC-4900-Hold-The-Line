@@ -248,13 +248,18 @@ public class AlliedCharacter : Character
         {
             currentState = AIAllyState.Downed;
         }
-        else if(gracePeriod>0)
+        else if(gracePeriod>0 && isFollowing)
         {
             currentState = AIAllyState.Following;
         }
         else
         {
-            if (currentTarget != null && distanceFromCurrentTarget < 4.5f && currentTarget.health > 0 && gracePeriod <= 0)
+            /*
+            if (!isFollowing)
+            {
+                currentState = AIAllyState.Idle;
+            }
+            else */ if (currentTarget != null && distanceFromCurrentTarget < 4.5f && currentTarget.health > 0 && gracePeriod <= 0)
             {
                 currentState = AIAllyState.Attacking;
             }
@@ -262,11 +267,11 @@ public class AlliedCharacter : Character
             {
                 currentState = AIAllyState.Reloading;
             }
-            else if (distanceFromPlayer > 5.5f || currentWeapon.isReloading || currentTarget == null)
+            else if (isFollowing && (distanceFromPlayer > 5.5f || currentWeapon.isReloading || currentTarget == null))
             {
                 currentState = AIAllyState.Following;
             }
-            else if (!isFollowing)
+            else
             {
                 currentState = AIAllyState.Idle;
             }

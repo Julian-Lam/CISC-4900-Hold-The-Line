@@ -535,21 +535,18 @@ namespace StarterAssets
                         {
                             i.ReleaseAction();
                             ResetRotation();
-                            Debug.Log("Release 1");
                         }
                     }
                     else
                     {
                         interactTextbox.SetActive(false);
                         ResetRotation();
-                        Debug.Log("Release 2");
                     }
                 }
                 else
                 {
                     interactTextbox.SetActive(false);
                     ResetRotation();
-                    Debug.Log("Release 3");
                 }
             }
 
@@ -581,7 +578,6 @@ namespace StarterAssets
                         if(i is Weapon weapon)
                         {
                             currentWeapon = weapon;
-                            Debug.Log("Current Weapon is: " + i);
                         }
 
                         if (i.CanHoldInteract() && i is MonoBehaviour m && m.enabled && Grounded)
@@ -595,14 +591,12 @@ namespace StarterAssets
 
                             if (i.Release())
                             {
-                                Debug.Log("Release From Player 1");
                                 _input.interact = false;
                                 isHoldingInteract = false;
                             }
                         }
                         else
                         {
-                            Debug.Log("Release From Player 2");
                             _input.interact = false;
                         }
                     }
