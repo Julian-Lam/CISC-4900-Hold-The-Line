@@ -183,11 +183,15 @@ MonoBehaviour:
   fireAnimation: 0
   rigidBody: {fileID: 2662805873293007058}
   collider: {fileID: 2328757858460954920}
+  chest: {fileID: 0}
   secondsUntilInactive: 600
   leaveAimTimer: 0
   aimAfterFire: 0
   isCoroutineActive: 0
   gunSprite: {fileID: 21300000, guid: b5d48f06b66a9d94da7ab499ae7f4e76, type: 3}
+  muzzleFlash: {fileID: 1743301284569550, guid: ad2ab49d0a2a17148bd51c93d977bdbc, type: 3}
+  hitPointParticle: {fileID: 1096893136476370, guid: 24b82347924701148a13c746edfb6b22, type: 3}
+  hitTarget: 0
 --- !u!4 &8857364894584672449 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3652011956315678642, guid: f5d938015a1ae5b4783e670de6295bd9, type: 3}

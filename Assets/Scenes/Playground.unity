@@ -8012,6 +8012,14 @@ PrefabInstance:
       propertyPath: chest
       value: 
       objectReference: {fileID: 1071291580}
+    - target: {fileID: 1845347613556429095, guid: 8569fe58bbe24d145be925b239566a54, type: 3}
+      propertyPath: muzzleFlash
+      value: 
+      objectReference: {fileID: 1743301284569550, guid: ad2ab49d0a2a17148bd51c93d977bdbc, type: 3}
+    - target: {fileID: 1845347613556429095, guid: 8569fe58bbe24d145be925b239566a54, type: 3}
+      propertyPath: hitPointParticle
+      value: 
+      objectReference: {fileID: 1096893136476370, guid: 24b82347924701148a13c746edfb6b22, type: 3}
     - target: {fileID: 2506720323026008936, guid: 8569fe58bbe24d145be925b239566a54, type: 3}
       propertyPath: m_Name
       value: Renske

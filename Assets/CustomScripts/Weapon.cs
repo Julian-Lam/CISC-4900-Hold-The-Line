@@ -61,6 +61,8 @@ public class Weapon : MonoBehaviour, Interactable
     //IMAGES
 
     public Sprite gunSprite;
+    public GameObject muzzleFlash;
+    public GameObject hitPointParticle;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -266,6 +268,7 @@ public class Weapon : MonoBehaviour, Interactable
                 ChangeParent(brandish);
                 gameObject.SetActive(true);
                 HideItem(false);
+                Instantiate(muzzleFlash, muzzle, false);
                 fireAnimation = 1;
                 if (!isUsingADS)
                 {
@@ -438,6 +441,12 @@ public class Weapon : MonoBehaviour, Interactable
                 //Debug.Log("Hit " + hit.collider);
                 if (hit.collider.TryGetComponent<Character>(out Character c))
                 {
+                    
+                    if(c.faction != "Object")
+                    {
+                        Instantiate(hitPointParticle, hit.point, Quaternion.Euler(0, 180, 0));
+                    }
+                    
                     //This is to avoid friendly fire
                     if (c.faction != playerStats.faction)
                     {
