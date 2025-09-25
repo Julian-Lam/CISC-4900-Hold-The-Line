@@ -23,6 +23,6 @@ public class ParticleDestroy : MonoBehaviour
 
     public void DestroyIfParticleStop()
     {
-        Destroy(parent);
+        Destroy(gameObject);
     }
 }

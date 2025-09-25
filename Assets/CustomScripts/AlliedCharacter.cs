@@ -138,7 +138,7 @@ public class AlliedCharacter : Character
 
     public void Revive()
     {
-        health = maxHealth * 0.75f;
+        health = maxHealth * 0.67f;
         currentState = AIAllyState.Following;
         agent.isStopped = false;
 

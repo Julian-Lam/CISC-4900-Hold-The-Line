@@ -14,6 +14,10 @@ CISC 4900, Fall 2025 semester project.
 
 [Animations (StrafeLeft, StrafeRight, Walking Backward, Falling Down)](https://www.mixamo.com/#/?page=1&type=Motion%2CMotionPack)
 
+## Audio
+
+[M1 Garand Ping](https://www.myinstants.com/en/instant/m1-garand-ping-11528/)
+
 # Custom-made avatars and models
 
 ## Characters
@@ -25,3 +29,8 @@ CISC 4900, Fall 2025 semester project.
 
 - STG-2023.fbx
 - M1-Garand.fbx
+
+## Audio
+
+- cupvstable.mp3
+- measuringtape.mp3

@@ -64,6 +64,13 @@ public class Weapon : MonoBehaviour, Interactable
     public GameObject muzzleFlash;
     public GameObject hitPointParticle;
 
+    //AUDIO
+
+    public AudioClip shotFiredSound;
+    public AudioClip lastBulletFiredSound;
+    public AudioClip reloadSound;
+    public AudioClip reloadEmptySound;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -268,19 +275,26 @@ public class Weapon : MonoBehaviour, Interactable
                 ChangeParent(brandish);
                 gameObject.SetActive(true);
                 HideItem(false);
-                Instantiate(muzzleFlash, muzzle, false);
+                Instantiate(muzzleFlash, muzzle.position, Quaternion.Euler(0, 180, 0));
                 fireAnimation = 1;
                 if (!isUsingADS)
                 {
                     if (storeWeapon != null) StopCoroutine(storeWeapon);
                     storeWeapon = StartCoroutine(StoreWeapon());
                 }
+
+                AudioSource.PlayClipAtPoint(shotFiredSound, transform.position, 1f);
+                if (lastBulletFiredSound != null && ammoLeft == 1)
+                {
+                    AudioSource.PlayClipAtPoint(lastBulletFiredSound, transform.position, 1f);
+                }
+
                 HitTarget();
                 isReadyToShoot = false;
                 ammoLeft--;
                 StartCoroutine(ResetShot());
             }
-            else if (ammoLeft == 0)
+            else if (ammoLeft == 0 && isReadyToShoot)
             {
                 //Debug.Log("Calling ReloadEmpty After Attempting to Shoot");
                 isReloading = true;
@@ -302,6 +316,7 @@ public class Weapon : MonoBehaviour, Interactable
             {
                 //Debug.Log("Calling Normal Reload");
                 isReloading = true;
+                AudioSource.PlayClipAtPoint(reloadSound, transform.position, 1f);
                 ChangeParent(weaponStorage);
                 if (storeWeapon != null) StopCoroutine(storeWeapon);
                 storeWeapon = null;
@@ -314,6 +329,14 @@ public class Weapon : MonoBehaviour, Interactable
     {
         //Debug.Log("Calling ReloadEmpty");
         isReloading = true;
+        if (reloadEmptySound != null)
+        {
+            AudioSource.PlayClipAtPoint(reloadEmptySound, transform.position, 1f);
+        }
+        else
+        {
+            AudioSource.PlayClipAtPoint(reloadSound, transform.position, 1f);
+        }
         ChangeParent(weaponStorage);
         if(storeWeapon!=null) StopCoroutine(storeWeapon);
         storeWeapon = null;
@@ -441,7 +464,6 @@ public class Weapon : MonoBehaviour, Interactable
                 //Debug.Log("Hit " + hit.collider);
                 if (hit.collider.TryGetComponent<Character>(out Character c))
                 {
-                    
                     if(c.faction != "Object")
                     {
                         Instantiate(hitPointParticle, hit.point, Quaternion.Euler(0, 180, 0));
