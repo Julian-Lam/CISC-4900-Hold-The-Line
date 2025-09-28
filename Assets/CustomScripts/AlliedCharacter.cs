@@ -56,8 +56,6 @@ public class AlliedCharacter : Character
         controller = GetComponent<CharacterController>();
         reviveScript = GetComponent<ReviveAlly>();
 
-        reviveScript.enabled = false;
-
         GetAnimations();
     }
 
@@ -74,6 +72,15 @@ public class AlliedCharacter : Character
         if (gracePeriod > 0)
         {
             gracePeriod--;
+        }
+
+        if (health < maxHealth)
+        {
+            reviveScript.enabled = true;
+        }
+        else
+        {
+            reviveScript.enabled = false;
         }
 
         CalculateClosestEnemy();
@@ -133,7 +140,6 @@ public class AlliedCharacter : Character
         animator.SetFloat(animationFire, 0);
         currentWeapon.gameObject.SetActive(false);
         animator.SetBool(animationKnockedOut, true);
-        reviveScript.enabled = true;
     }
 
     public void Revive()

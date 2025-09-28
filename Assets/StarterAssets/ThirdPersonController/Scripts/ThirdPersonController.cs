@@ -600,6 +600,10 @@ namespace StarterAssets
                             _input.interact = false;
                         }
                     }
+                    else
+                    {
+                        _input.interact = false;
+                    }
                 }
             }
         }

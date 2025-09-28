@@ -16,6 +16,8 @@ public class ReviveAlly : MonoBehaviour, Interactable
 
     public Camera reviverCamera;
 
+    public string status;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -31,6 +33,16 @@ public class ReviveAlly : MonoBehaviour, Interactable
     // Update is called once per frame
     void Update()
     {
+        if(c.health>0 && c.health < c.maxHealth)
+        {
+            status = "Heal";
+        }
+        else if (c.health <= 0)
+        {
+            status = "Revive";
+        }
+        
+        
         CheckPoints();
         CheckForNearbyAlly();
         ManageBars();
@@ -65,19 +77,44 @@ public class ReviveAlly : MonoBehaviour, Interactable
         {
             player = o.GetComponent<ThirdPersonController>();
 
-            reviveBarParent.SetActive(true);
-            currentPoints++;
+            if (status == "Revive")
+            {
+                reviveBarParent.SetActive(true);
+                currentPoints++;
+            }
+            else if (status == "Heal")
+            {
+                Heal();
+            }
         }
     }
 
     public string Description()
     {
-        return "Revive";
+        if (status == "Revive")
+        {
+            return "Revive";
+        }
+        else if (status == "Heal")
+        {
+            return "Heal";
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public bool CanHoldInteract()
     {
-        return true;
+        if (status == "Revive")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public bool release = false;
@@ -115,6 +152,14 @@ public class ReviveAlly : MonoBehaviour, Interactable
             release = true;
             CancelRevive();
             this.enabled = false;
+        }
+    }
+
+    public void Heal()
+    {
+        if (c.health <= c.maxHealth || c.health > 0)
+        {
+            c.increaseHealth(10f);
         }
     }
 

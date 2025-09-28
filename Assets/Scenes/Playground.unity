@@ -4762,6 +4762,7 @@ MonoBehaviour:
   reviveBarParent: {fileID: 934663033}
   reviveBar: {fileID: 106718037}
   reviverCamera: {fileID: 0}
+  status: 
   release: 0
 --- !u!1 &1283038925
 GameObject:

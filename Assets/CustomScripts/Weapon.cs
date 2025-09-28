@@ -79,6 +79,7 @@ public class Weapon : MonoBehaviour, Interactable
         isReloading = false;
         muzzle = FindDescendants(transform, "Muzzle");
         IfOwnerNPC();
+        rigidBody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
     }
 
     // Update is called once per frame
@@ -215,6 +216,8 @@ public class Weapon : MonoBehaviour, Interactable
             transform.position = brandish.position;
             transform.rotation = brandish.rotation;
             */
+            transform.rotation = Quaternion.identity;
+
             rigidBody.constraints = RigidbodyConstraints.None;
             rigidBody.isKinematic = false;
             collider.enabled = true;
