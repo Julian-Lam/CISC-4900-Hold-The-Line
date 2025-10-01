@@ -179,6 +179,13 @@ namespace StarterAssets
             }
 
             HealthCheck();
+
+            if (isDowned)
+            {
+                _input.fire = false;
+                _input.aim = false;
+                _input.reload = false;
+            }
         }
 
         private void LateUpdate()
@@ -548,6 +555,11 @@ namespace StarterAssets
                     interactTextbox.SetActive(false);
                     ResetRotation();
                 }
+            }
+            else
+            {
+                interactTextbox.SetActive(false);
+                ResetRotation();
             }
 
             if (_input.interact)

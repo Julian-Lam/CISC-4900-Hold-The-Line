@@ -10,8 +10,6 @@ public class AlliedCharacter : Character
     //Statuses: Idle, Following, Downed, Attacking
     
     public string status;
-    //public bool isDown;
-    //public bool isFollowing;
     public float distanceFromPlayer;
     private NavMeshAgent agent;
     private Animator animator;
@@ -174,7 +172,7 @@ public class AlliedCharacter : Character
             foreach (Character c in charList)
             {
                 float distance = Vector3.Distance(c.transform.position, transform.position);
-                if (c.faction == "OpFor" && distance < closest && distance < 4.5 && c.health > 0)
+                if (c is EnemyCharacter && distance < closest && distance < 4.5 && c.health > 0)
                 {
                     currentTarget = c;
                     closest = Vector3.Distance(c.transform.position, transform.position);
@@ -287,6 +285,7 @@ public class AlliedCharacter : Character
         animator.SetFloat(animationSpeed, agent.velocity.magnitude);
         animator.SetFloat(animationMotionSpeed, agent.velocity.magnitude * 0.5f);
     }
+
     public void ChangeState()
     {
         switch (currentState)

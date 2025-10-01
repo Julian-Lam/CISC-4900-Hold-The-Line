@@ -14,7 +14,7 @@ public class ReviveAlly : MonoBehaviour, Interactable
     public GameObject reviveBarParent;
     public Image reviveBar;
 
-    public Camera reviverCamera;
+    //public Camera reviverCamera;
 
     public string status;
 
@@ -46,7 +46,7 @@ public class ReviveAlly : MonoBehaviour, Interactable
         CheckPoints();
         CheckForNearbyAlly();
         ManageBars();
-
+        /*
         if (player != null)
         {
             GameObject playerObj = player.gameObject;
@@ -69,6 +69,7 @@ public class ReviveAlly : MonoBehaviour, Interactable
                 CancelRevive();
             }
         }
+        */
     }
 
     public void Interact(GameObject o)
@@ -121,7 +122,14 @@ public class ReviveAlly : MonoBehaviour, Interactable
 
     public bool Release()
     {
-        return release;
+        if (status == "Revive")
+        {
+            return release;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public void ReleaseAction()

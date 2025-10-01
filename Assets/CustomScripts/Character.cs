@@ -224,8 +224,8 @@ public class Character : MonoBehaviour
     {
         if (healthBar != null && armorBar != null)
         {
-            Color goodHealth = Color.green;
-            Color badHealth = Color.red;
+            ColorUtility.TryParseHtmlString("#72FF78", out Color goodHealth);
+            ColorUtility.TryParseHtmlString("#ff4d4d", out Color badHealth);
 
             if (health / maxHealth <= 0.2)
             {
