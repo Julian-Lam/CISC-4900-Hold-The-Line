@@ -166,7 +166,7 @@ public class AlliedCharacter : Character
 
     public void CalculateClosestEnemy()
     {
-        if (currentTarget == null)
+        if (currentTarget == null && EnemyCharacter.enemyList.Count>0)
         {
             float closest = Mathf.Infinity;
             foreach (Character c in charList)

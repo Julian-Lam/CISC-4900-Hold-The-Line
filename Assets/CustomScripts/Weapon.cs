@@ -477,6 +477,13 @@ public class Weapon : MonoBehaviour, Interactable
                     {
                         c.decreaseHealthAndArmor(damagePerBullet/2,damagePerBullet);
                         hitTarget = true;
+
+                        if (c.health <= 0)
+                        {
+                            playerStats.increaseCurrency(c.currency);
+                            c.setCurrency(0f);
+                        }
+
                     }
                 }
             }

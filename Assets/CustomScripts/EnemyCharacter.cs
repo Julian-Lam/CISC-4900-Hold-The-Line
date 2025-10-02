@@ -17,6 +17,8 @@ public class EnemyCharacter : Character
 
     public float distanceToStopAndAttack;
 
+    public float distanceFromSpawn;
+
     public bool fire;
     public bool aim;
     public bool reload;
@@ -89,6 +91,10 @@ public class EnemyCharacter : Character
             cooldown -= Time.deltaTime;
         }
 
+        moveCooldown -= Time.deltaTime;
+
+        distanceFromSpawn = Vector3.Distance(transform.position, spawnCoords);
+
         CalculateDecisions();
         ChangeState();
         ChooseTarget();
@@ -127,12 +133,24 @@ public class EnemyCharacter : Character
 
     //BELOW IS CUSTOM
 
+    public float timeUntilDisappearance = 3f;
+
+
     public void IsDead()
     {
         agent.isStopped = true;
         controller.height = 0.6f;
         controller.center = new Vector3(0, 0.2f, 0);
-        Destroy(gameObject);
+        timeUntilDisappearance -= Time.deltaTime;
+
+        enemyList.Remove(this);
+
+        if (timeUntilDisappearance <= 0)
+        {
+            Destroy(gameObject);
+        }
+
+
     }
 
     public void ChooseTarget()
@@ -182,6 +200,49 @@ public class EnemyCharacter : Character
         }
     }
 
+    public bool returningToBase;
+
+    public void ReturnToSpawnIfNeeded()
+    {
+        if (distanceFromSpawn > 10)
+        {
+            returningToBase = true;
+            agent.isStopped = false;
+            agent.destination = spawnCoords;
+        }else if (distanceFromSpawn < 2)
+        {
+            returningToBase = false;
+        }
+    }
+
+    public bool destinationSet;
+    private Vector3 newDestination;
+    public float moveCooldown = 0f;
+
+    public void Patrol()
+    {
+        if (!returningToBase)
+        {
+            if (!destinationSet && moveCooldown <=0)
+            {
+                float destinationX = Random.Range(-8, 8);
+                float destinationZ = Random.Range(-8, 8);
+
+                newDestination = new Vector3(transform.position.x + destinationX, transform.position.y, transform.position.z + destinationZ);
+                destinationSet = true;
+            }
+            else if(destinationSet)
+            {
+                agent.destination = newDestination;
+                if (Vector3.Distance(newDestination, transform.position) < 2)
+                {
+                    destinationSet = false;
+                    moveCooldown = 5;
+                }
+            }
+        }
+    }
+
     public float cooldown = 0f;
 
     public void Attack()
@@ -198,12 +259,11 @@ public class EnemyCharacter : Character
 
     public void CalculateDecisions()
     {
-        /*
         if (health <= 0)
         {
             currentState = AIEnemyState.Dead;
         }
-        else */
+        else
         {
             if (distanceFromCurrentTarget <= distanceToStopAndAttack && currentTarget.health > 0)
             {
@@ -213,7 +273,7 @@ public class EnemyCharacter : Character
             {
                 currentState = AIEnemyState.Reloading;
             }*/
-            else if (distanceFromCurrentTarget > distanceToStopAndAttack && currentTarget != null)
+            else if (currentTarget != null && !returningToBase && distanceFromSpawn < 10 && distanceFromCurrentTarget > distanceToStopAndAttack)
             {
                 currentState = AIEnemyState.Following;
             }
@@ -230,6 +290,8 @@ public class EnemyCharacter : Character
         switch (currentState)
         {
             case AIEnemyState.Patroling:
+                ReturnToSpawnIfNeeded();
+                Patrol();
                 break;
             case AIEnemyState.Following:
                 MoveTowardsTarget();
