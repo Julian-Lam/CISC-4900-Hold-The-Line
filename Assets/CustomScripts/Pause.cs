@@ -7,6 +7,8 @@ public class Pause : MonoBehaviour
     public GameObject pauseMenu;
     public static bool isGamePaused;
 
+    public static bool friendlyFireAllowed;
+
     public InputActionAsset userInput;
 
     private InputAction pause;

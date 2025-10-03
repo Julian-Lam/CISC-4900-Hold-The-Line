@@ -81,9 +81,18 @@ public class AlliedCharacter : Character
             reviveScript.enabled = false;
         }
 
-        CalculateClosestEnemy();
-        CalculateDecisions();
-        OnUseWeapon();
+        if (currentTarget !=null && currentTarget.health <= 0)
+        {
+            currentTarget = null;
+            distanceFromCurrentTarget = Mathf.Infinity;
+        }
+
+        if (currentState != AIAllyState.Downed)
+        {
+            CalculateClosestEnemy();
+            CalculateDecisions();
+            OnUseWeapon();
+        }
         ChangeState();
     }
 
@@ -169,8 +178,13 @@ public class AlliedCharacter : Character
         if (currentTarget == null && EnemyCharacter.enemyList.Count>0)
         {
             float closest = Mathf.Infinity;
-            foreach (Character c in charList)
+            foreach (EnemyCharacter c in EnemyCharacter.enemyList)
             {
+                if(c == null || c.health <= 0)
+                {
+                    continue;
+                }
+
                 float distance = Vector3.Distance(c.transform.position, transform.position);
                 if (c is EnemyCharacter && distance < closest && distance < 4.5 && c.health > 0)
                 {
@@ -194,7 +208,7 @@ public class AlliedCharacter : Character
     {
         fire = false;
 
-        if (distanceFromPlayer < 3.5)
+        if (distanceFromPlayer < 3.5 && !Pause.isGamePaused)
         {
             //Vector3 lookAtThis = new Vector3(characterToFollow.position.x, transform.position.y, characterToFollow.position.z);
             //transform.LookAt(lookAtThis);
@@ -233,17 +247,19 @@ public class AlliedCharacter : Character
             fire = false;
             //Debug.Log("Canceled Attack");
             return;
+        } 
+        else if (currentTarget != null)
+        {
+            Quaternion q = Quaternion.LookRotation((currentTarget.transform.position - transform.position).normalized);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
+
+            fire = true;
         }
 
         //Debug.Log("Attempted Attack");
 
         //Vector3 lookAtThis = new Vector3(currentTarget.transform.position.x, transform.position.y, currentTarget.transform.position.z);
         //transform.LookAt(lookAtThis);
-
-        Quaternion q = Quaternion.LookRotation((currentTarget.transform.position - transform.position).normalized);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
-
-        fire = true;
     }
 
     public void CalculateDecisions()
@@ -263,17 +279,17 @@ public class AlliedCharacter : Character
             {
                 currentState = AIAllyState.Idle;
             }
-            else */ if (currentTarget != null && distanceFromCurrentTarget < 4.5f && currentTarget.health > 0 && gracePeriod <= 0)
-            {
-                currentState = AIAllyState.Attacking;
-            }
-            else if (currentWeapon.ammoLeft / currentWeapon.maxAmmo <= 0.67f && currentWeapon.isReloading)
+            else */ if (currentWeapon.ammoLeft / currentWeapon.maxAmmo <= 0.67f && currentWeapon.isReloading)
             {
                 currentState = AIAllyState.Reloading;
             }
             else if (isFollowing && (distanceFromPlayer > 5.5f || currentWeapon.isReloading || currentTarget == null))
             {
                 currentState = AIAllyState.Following;
+            } 
+            else if (currentTarget != null && distanceFromCurrentTarget < 4.5f && currentTarget.health > 0 && gracePeriod <= 0)
+            {
+                currentState = AIAllyState.Attacking;
             }
             else
             {

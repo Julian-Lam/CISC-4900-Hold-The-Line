@@ -165,12 +165,13 @@ namespace StarterAssets
         {
             _hasAnimator = TryGetComponent(out _animator);
 
+            JumpAndGravity();
+
             if (!Pause.isGamePaused && !isDowned)
             {
                 OnInteract();
                 if (!isHoldingInteract)
                 {
-                    JumpAndGravity();
                     GroundedCheck();
                     Move();
                     OnUseWeapon();
@@ -400,7 +401,7 @@ namespace StarterAssets
                 }
 
                 // Jump
-                if (_input.jump && _jumpTimeoutDelta <= 0.0f)
+                if (_input.jump && _jumpTimeoutDelta <= 0.0f && !isDowned)
                 {
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
@@ -728,6 +729,9 @@ namespace StarterAssets
             if (c.health <= 0)
             {
                 isDowned = true;
+                _input.jump = false;
+                _input.sprint=false;
+
                 _animator.SetBool(aimAnimation, false);
                 _animator.SetBool(aimOnlyAnimation, false);
                 if (currentWeapon != null)

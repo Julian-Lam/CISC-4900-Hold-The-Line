@@ -62,7 +62,6 @@ public class Weapon : MonoBehaviour, Interactable
 
     public Sprite gunSprite;
     public GameObject muzzleFlash;
-    public GameObject hitPointParticle;
 
     //AUDIO
 
@@ -467,9 +466,9 @@ public class Weapon : MonoBehaviour, Interactable
                 //Debug.Log("Hit " + hit.collider);
                 if (hit.collider.TryGetComponent<Character>(out Character c))
                 {
-                    if(c.faction != "Object")
+                    if(c.hitParticle!=null)
                     {
-                        Instantiate(hitPointParticle, hit.point, Quaternion.Euler(0, 180, 0));
+                        Instantiate(c.hitParticle, hit.point, Quaternion.Euler(0, 180, 0));
                     }
                     
                     //This is to avoid friendly fire

@@ -1,6 +1,7 @@
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections.Generic;
 
 public class EnemyCharacter : Character
 {
@@ -48,6 +49,16 @@ public class EnemyCharacter : Character
 
     public AIEnemyState currentState;
 
+    //Animations
+    private int animationSpeed;
+    private int animationMotionSpeed;
+    private int animationDeath;
+    private int animationPunch;
+
+    //Animations to be used in future enemy types
+    private int animationAim;
+    private int animationAimOnly;
+    private int animationFire;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void Start()
@@ -98,11 +109,18 @@ public class EnemyCharacter : Character
         CalculateDecisions();
         ChangeState();
         ChooseTarget();
+        HandleSpeed();
     }
 
     public void GetAnimations()
     {
-
+        animationSpeed = Animator.StringToHash("Speed");
+        animationMotionSpeed = Animator.StringToHash("MotionSpeed");
+        animationAim = Animator.StringToHash("Aim");
+        animationAimOnly = Animator.StringToHash("AimOnly");
+        animationFire = Animator.StringToHash("Fire");
+        animationDeath = Animator.StringToHash("IsDead");
+        animationPunch = Animator.StringToHash("Punching");
     }
 
     //TAKEN FROM ThirdPersonController.cs
@@ -133,29 +151,40 @@ public class EnemyCharacter : Character
 
     //BELOW IS CUSTOM
 
-    public float timeUntilDisappearance = 3f;
+    public float timeUntilDisappearance = 10f;
 
 
     public void IsDead()
     {
+        animator.SetBool(animationDeath, true);
         agent.isStopped = true;
         controller.height = 0.6f;
         controller.center = new Vector3(0, 0.2f, 0);
         timeUntilDisappearance -= Time.deltaTime;
 
         enemyList.Remove(this);
+        charList.Remove(this);
 
         if (timeUntilDisappearance <= 0)
         {
             Destroy(gameObject);
         }
+    }
 
-
+    public void HandleSpeed()
+    {
+        if (currentState == AIEnemyState.Following)
+        {
+            agent.speed = 3;
+        }
+        else
+        {
+            agent.speed = 2;
+        }
     }
 
     public void ChooseTarget()
     {
-
         float closest = Mathf.Infinity;
         foreach (Character c in charList)
         {
@@ -168,7 +197,7 @@ public class EnemyCharacter : Character
         }
         distanceFromCurrentTarget = closest;
 
-        if (distanceFromCurrentTarget > 4.5 || currentTarget.health <= 0)
+        if (distanceFromCurrentTarget > 6 || currentTarget.health <= 0)
         {
             distanceFromCurrentTarget = Mathf.Infinity;
             currentTarget = null;
@@ -179,7 +208,7 @@ public class EnemyCharacter : Character
     {
         if (currentTarget != null)
         {
-            if (distanceFromCurrentTarget < 3.5)
+            if (distanceFromCurrentTarget < 5 && !Pause.isGamePaused)
             {
                 Quaternion q = Quaternion.LookRotation((currentTarget.transform.position - transform.position).normalized);
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
@@ -195,7 +224,6 @@ public class EnemyCharacter : Character
             else
             {
                 agent.isStopped = true;
-                //animator.SetFloat(animationSpeed, agent.velocity.magnitude);
             }
         }
     }
@@ -204,8 +232,9 @@ public class EnemyCharacter : Character
 
     public void ReturnToSpawnIfNeeded()
     {
-        if (distanceFromSpawn > 10)
+        if (distanceFromSpawn > 12)
         {
+            //Debug.Log("Returning to base");
             returningToBase = true;
             agent.isStopped = false;
             agent.destination = spawnCoords;
@@ -229,6 +258,7 @@ public class EnemyCharacter : Character
                 float destinationZ = Random.Range(-8, 8);
 
                 newDestination = new Vector3(transform.position.x + destinationX, transform.position.y, transform.position.z + destinationZ);
+                //Debug.Log("Set new destination at: "+ newDestination);
                 destinationSet = true;
             }
             else if(destinationSet)
@@ -236,6 +266,7 @@ public class EnemyCharacter : Character
                 agent.destination = newDestination;
                 if (Vector3.Distance(newDestination, transform.position) < 2)
                 {
+                    //Debug.Log("Reached destination.");
                     destinationSet = false;
                     moveCooldown = 5;
                 }
@@ -251,10 +282,18 @@ public class EnemyCharacter : Character
         {
             if (cooldown <= 0)
             {
-                currentTarget.decreaseHealthAndArmor(10f, 15f);
+                //Debug.Log("Punch Start");
+                animator.SetTrigger(animationPunch);
                 cooldown = meleeCooldown;
             }
         }
+    }
+
+    private void OnPunch()
+    {
+        currentTarget.decreaseHealthAndArmor(10f, 15f);
+        CharacterController targetController = currentTarget.gameObject.GetComponent<CharacterController>();
+        Instantiate(currentTarget.hitParticle, targetController.transform.TransformPoint(targetController.center), Quaternion.identity);
     }
 
     public void CalculateDecisions()
@@ -282,7 +321,8 @@ public class EnemyCharacter : Character
                 currentState = AIEnemyState.Patroling;
             }
         }
-
+        animator.SetFloat(animationSpeed, agent.velocity.magnitude);
+        animator.SetFloat(animationMotionSpeed, agent.velocity.magnitude * 0.5f);
     }
 
     public void ChangeState()
