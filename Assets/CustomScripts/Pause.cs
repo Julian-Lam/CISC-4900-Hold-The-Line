@@ -1,17 +1,20 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class Pause : MonoBehaviour
 {
     public GameObject pauseMenu;
     public static bool isGamePaused;
 
-    public static bool friendlyFireAllowed;
+    public static bool allowFriendlyFire;
 
     public InputActionAsset userInput;
 
     private InputAction pause;
+
+    public TextMeshProUGUI friendlyFireText;
 
     void Start()
     {
@@ -23,6 +26,13 @@ public class Pause : MonoBehaviour
     void Update()
     {
         PauseSystem();
+        friendlyFireText.text = allowFriendlyFire.ToString();
+        EnemyCharacter.DeleteCorpses();
+    }
+
+    public void ToggleFriendlyFire()
+    {
+        allowFriendlyFire = !allowFriendlyFire;
     }
 
     public void PauseGame()

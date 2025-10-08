@@ -6,9 +6,9 @@ public class AlliedCharacter : Character
 
     [Header("Allied-Specific Stats")]
     public Transform characterToFollow;
-    
+
     //Statuses: Idle, Following, Downed, Attacking
-    
+
     public string status;
     public float distanceFromPlayer;
     private NavMeshAgent agent;
@@ -81,7 +81,7 @@ public class AlliedCharacter : Character
             reviveScript.enabled = false;
         }
 
-        if (currentTarget !=null && currentTarget.health <= 0)
+        if (currentTarget != null && currentTarget.health <= 0)
         {
             currentTarget = null;
             distanceFromCurrentTarget = Mathf.Infinity;
@@ -94,6 +94,9 @@ public class AlliedCharacter : Character
             OnUseWeapon();
         }
         ChangeState();
+
+        Debug.Log(IsMuzzleSweeping());
+
     }
 
     public void GetAnimations()
@@ -175,12 +178,12 @@ public class AlliedCharacter : Character
 
     public void CalculateClosestEnemy()
     {
-        if (currentTarget == null && EnemyCharacter.enemyList.Count>0)
+        if (currentTarget == null && EnemyCharacter.enemyList.Count > 0)
         {
             float closest = Mathf.Infinity;
             foreach (EnemyCharacter c in EnemyCharacter.enemyList)
             {
-                if(c == null || c.health <= 0)
+                if (c == null || c.health <= 0)
                 {
                     continue;
                 }
@@ -196,7 +199,7 @@ public class AlliedCharacter : Character
             distanceFromCurrentTarget = closest;
         }
 
-        if (distanceFromCurrentTarget > 4.5 || currentTarget.health<=0)
+        if (distanceFromCurrentTarget > 4.5 || currentTarget.health <= 0)
         {
             distanceFromCurrentTarget = Mathf.Infinity;
             currentTarget = null;
@@ -218,10 +221,7 @@ public class AlliedCharacter : Character
 
         //animator.SetFloat(animationSpeed, agent.velocity.magnitude);
 
-        if (agent.velocity.magnitude != 0)
-        {
-            //animator.SetFloat(animationMotionSpeed, agent.velocity.magnitude * 0.5f);
-        }
+        agent.stoppingDistance = 2;
 
         if (distanceFromPlayer > 2)
         {
@@ -237,29 +237,74 @@ public class AlliedCharacter : Character
 
     public void Idle()
     {
-        
+
     }
 
     public void Attack()
     {
-        if (currentTarget == null || distanceFromCurrentTarget >= 4.5 || currentTarget.health <= 0 || gracePeriod>0)
+        if (IsMuzzleSweeping() && currentTarget!=null)
         {
-            fire = false;
-            //Debug.Log("Canceled Attack");
-            return;
-        } 
-        else if (currentTarget != null)
-        {
+            agent.stoppingDistance = 2;
+            agent.destination = currentTarget.transform.position;
             Quaternion q = Quaternion.LookRotation((currentTarget.transform.position - transform.position).normalized);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
-
-            fire = true;
         }
+        else
+        {
+            if (currentTarget == null || distanceFromCurrentTarget >= 4.5 || currentTarget.health <= 0 || gracePeriod > 0)
+            {
+                fire = false;
+                //Debug.Log("Canceled Attack");
+                return;
+            }
+            else if (currentTarget != null)
+            {
+                agent.stoppingDistance = 2;
+                Quaternion q = Quaternion.LookRotation((currentTarget.transform.position - transform.position).normalized);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
 
-        //Debug.Log("Attempted Attack");
+                fire = true;
+            }
+        }
+    }
 
-        //Vector3 lookAtThis = new Vector3(currentTarget.transform.position.x, transform.position.y, currentTarget.transform.position.z);
-        //transform.LookAt(lookAtThis);
+    public bool IsMuzzleSweeping()
+    {
+        Vector3 chest = transform.position + transform.up * 1.2f + transform.forward * 0.2f;
+
+        Ray r1 = new Ray(currentWeapon.GetShootFromWhere().position,currentWeapon.GetShootFromWhere().forward);
+        Ray r2 = new Ray(chest, transform.forward);
+
+        Debug.DrawRay(currentWeapon.GetShootFromWhere().position, currentWeapon.GetShootFromWhere().forward*8);
+        Debug.DrawRay(chest, transform.forward*8);
+
+        return CheckMuzzleSweeping(r1) || CheckMuzzleSweeping(r2);
+    }
+
+    public bool CheckMuzzleSweeping(Ray r)
+    {
+        if (Physics.Raycast(r, out RaycastHit hit, 8))
+        {
+            if (hit.collider != null && hit.collider.TryGetComponent<Character>(out Character c))
+            {
+                if (faction == c.faction)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public void CalculateDecisions()

@@ -472,7 +472,7 @@ public class Weapon : MonoBehaviour, Interactable
                     }
                     
                     //This is to avoid friendly fire
-                    if (c.faction != playerStats.faction)
+                    if (c.faction != playerStats.faction || (c.faction==playerStats.faction && Pause.allowFriendlyFire))
                     {
                         c.decreaseHealthAndArmor(damagePerBullet/2,damagePerBullet);
                         hitTarget = true;

@@ -27,7 +27,7 @@ public class EnemyCharacter : Character
     public float meleeCooldown = 1f;
 
     public static List<EnemyCharacter> enemyList = new List<EnemyCharacter>();
-    static float numberOfEnemies;
+    public static List<EnemyCharacter> enemyCorpseList = new List<EnemyCharacter>();
 
     public enum EnemyType
     {
@@ -64,7 +64,6 @@ public class EnemyCharacter : Character
     public override void Start()
     {
         base.Start();
-        numberOfEnemies++;
         enemyList.Add(this);
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
@@ -77,12 +76,12 @@ public class EnemyCharacter : Character
         else if (enemyType == EnemyType.Melee)
         {
             distanceToStopAndAttack = 1f;
-        }else if(enemyType == EnemyType.Sniper)
+        } else if (enemyType == EnemyType.Sniper)
         {
             distanceToStopAndAttack = Mathf.Infinity;
         }
 
-        spawnCoords = new Vector3(transform.position.x,transform.position.y,transform.position.z);
+        spawnCoords = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 
         GetAnimations();
     }
@@ -151,24 +150,33 @@ public class EnemyCharacter : Character
 
     //BELOW IS CUSTOM
 
-    public float timeUntilDisappearance = 10f;
+    public static void DeleteCorpses()
+    {
+        if (enemyCorpseList.Count > 3)
+        {
+            Destroy(enemyCorpseList[0].gameObject);
+            enemyCorpseList.RemoveAt(0);
+        }
+    }
 
+    public bool isDead;
 
     public void IsDead()
     {
+        if (isDead)
+        {
+            return;
+        }
+        isDead = true;
         animator.SetBool(animationDeath, true);
         agent.isStopped = true;
         controller.height = 0.6f;
         controller.center = new Vector3(0, 0.2f, 0);
-        timeUntilDisappearance -= Time.deltaTime;
 
         enemyList.Remove(this);
         charList.Remove(this);
 
-        if (timeUntilDisappearance <= 0)
-        {
-            Destroy(gameObject);
-        }
+        enemyCorpseList.Add(this);
     }
 
     public void HandleSpeed()
@@ -238,7 +246,9 @@ public class EnemyCharacter : Character
             returningToBase = true;
             agent.isStopped = false;
             agent.destination = spawnCoords;
-        }else if (distanceFromSpawn < 2)
+            agent.stoppingDistance=1;
+        }
+        else if (distanceFromSpawn < 2)
         {
             returningToBase = false;
         }
@@ -264,6 +274,7 @@ public class EnemyCharacter : Character
             else if(destinationSet)
             {
                 agent.destination = newDestination;
+                agent.stoppingDistance = 1;
                 if (Vector3.Distance(newDestination, transform.position) < 2)
                 {
                     //Debug.Log("Reached destination.");
@@ -312,7 +323,7 @@ public class EnemyCharacter : Character
             {
                 currentState = AIEnemyState.Reloading;
             }*/
-            else if (currentTarget != null && !returningToBase && distanceFromSpawn < 10 && distanceFromCurrentTarget > distanceToStopAndAttack)
+            else if (currentTarget != null && (!returningToBase || distanceFromCurrentTarget<3) && distanceFromSpawn < 10 && distanceFromCurrentTarget > distanceToStopAndAttack)
             {
                 currentState = AIEnemyState.Following;
             }
