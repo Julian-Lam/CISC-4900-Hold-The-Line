@@ -3874,7 +3874,6 @@ MonoBehaviour:
   armor: 10
   maxArmor: 10
   timeUntilArmorRecovery: 300
-  timeSinceLastHit: 0
   isOnFire: 0
   depleteHealthByFire: 1
   isPoisoned: 0
@@ -3883,7 +3882,6 @@ MonoBehaviour:
   stanima: 100
   maxStanima: 100
   timeUntilStanimaRecovery: 120
-  timeSinceLastUsedStanima: 0
   currency: 1000
   faction: OpFor
   staminaBar: {fileID: 0}
@@ -5230,8 +5228,7 @@ MonoBehaviour:
   maxHealth: 100
   armor: 10
   maxArmor: 10
-  timeUntilArmorRecovery: 300
-  timeSinceLastHit: 0
+  timeUntilArmorRecovery: 5
   isOnFire: 0
   depleteHealthByFire: 1
   isPoisoned: 0
@@ -5239,8 +5236,7 @@ MonoBehaviour:
   isInvincible: 0
   stanima: 100
   maxStanima: 100
-  timeUntilStanimaRecovery: 120
-  timeSinceLastUsedStanima: 0
+  timeUntilStanimaRecovery: 2
   currency: 0
   faction: BluFor
   staminaBar: {fileID: 0}
@@ -7457,8 +7453,7 @@ MonoBehaviour:
   maxHealth: 100
   armor: 10
   maxArmor: 10
-  timeUntilArmorRecovery: 300
-  timeSinceLastHit: 0
+  timeUntilArmorRecovery: 5
   isOnFire: 0
   depleteHealthByFire: 1
   isPoisoned: 0
@@ -7466,8 +7461,7 @@ MonoBehaviour:
   isInvincible: 0
   stanima: 100
   maxStanima: 100
-  timeUntilStanimaRecovery: 180
-  timeSinceLastUsedStanima: 0
+  timeUntilStanimaRecovery: 2
   currency: 0
   faction: BluFor
   staminaBar: {fileID: 319779081}

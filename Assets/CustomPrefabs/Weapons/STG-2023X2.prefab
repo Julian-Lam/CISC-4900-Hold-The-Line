@@ -184,8 +184,7 @@ MonoBehaviour:
   rigidBody: {fileID: 2662805873293007058}
   collider: {fileID: 2328757858460954920}
   chest: {fileID: 0}
-  secondsUntilInactive: 600
-  leaveAimTimer: 0
+  secondsUntilInactive: 10
   aimAfterFire: 0
   isCoroutineActive: 0
   gunSprite: {fileID: 21300000, guid: b5d48f06b66a9d94da7ab499ae7f4e76, type: 3}

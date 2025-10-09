@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,10 +18,10 @@ public class AlliedCharacter : Character
 
     private Character currentTarget;
     public float distanceFromCurrentTarget = Mathf.Infinity;
+    private Vector3 currentTargetCoords;
 
     private ReviveAlly reviveScript;
 
-    public float gracePeriodMax = 120;
     public float gracePeriod;
 
     public Weapon currentWeapon;
@@ -64,12 +65,13 @@ public class AlliedCharacter : Character
 
         if (currentTarget != null)
         {
-            distanceFromCurrentTarget = Vector3.Distance(currentTarget.transform.position, transform.position);
+            currentTargetCoords = currentTarget.transform.position;
+            distanceFromCurrentTarget = Vector3.Distance(currentTargetCoords, transform.position);
         }
 
         if (gracePeriod > 0)
         {
-            gracePeriod--;
+            gracePeriod-=Time.deltaTime;
         }
 
         if (health < maxHealth)
@@ -81,7 +83,7 @@ public class AlliedCharacter : Character
             reviveScript.enabled = false;
         }
 
-        if (currentTarget != null && currentTarget.health <= 0)
+        if (currentTarget != null && !IsTargetAlive())
         {
             currentTarget = null;
             distanceFromCurrentTarget = Mathf.Infinity;
@@ -89,14 +91,9 @@ public class AlliedCharacter : Character
 
         if (currentState != AIAllyState.Downed)
         {
-            CalculateClosestEnemy();
             CalculateDecisions();
             OnUseWeapon();
         }
-        ChangeState();
-
-        Debug.Log(IsMuzzleSweeping());
-
     }
 
     public void GetAnimations()
@@ -137,6 +134,24 @@ public class AlliedCharacter : Character
 
     //BELOW IS CUSTOM
 
+    public bool IsTargetAlive()
+    {
+        if(currentTarget != null)
+        {
+            if (currentTarget.health > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
     public void KnockOut()
     {
         agent.isStopped = true;
@@ -173,16 +188,18 @@ public class AlliedCharacter : Character
         reload = false;
         controller.height = 1.5f;
         controller.center = new Vector3(0, 0.75f, 0);
-        gracePeriod = gracePeriodMax;
+        gracePeriod = 2;
     }
 
     public void CalculateClosestEnemy()
     {
+        Collider[] potentialEnemyColliders = Physics.OverlapSphere(transform.position,4f);
         if (currentTarget == null && EnemyCharacter.enemyList.Count > 0)
         {
             float closest = Mathf.Infinity;
-            foreach (EnemyCharacter c in EnemyCharacter.enemyList)
+            foreach (Collider enemyCollider in potentialEnemyColliders)
             {
+                EnemyCharacter c = enemyCollider.GetComponent<EnemyCharacter>();
                 if (c == null || c.health <= 0)
                 {
                     continue;
@@ -192,14 +209,14 @@ public class AlliedCharacter : Character
                 if (c is EnemyCharacter && distance < closest && distance < 4.5 && c.health > 0)
                 {
                     currentTarget = c;
-                    closest = Vector3.Distance(c.transform.position, transform.position);
+                    closest = distance;
                     break;
                 }
             }
             distanceFromCurrentTarget = closest;
         }
 
-        if (distanceFromCurrentTarget > 4.5 || currentTarget.health <= 0)
+        if (distanceFromCurrentTarget > 4.5 || !IsTargetAlive())
         {
             distanceFromCurrentTarget = Mathf.Infinity;
             currentTarget = null;
@@ -242,16 +259,17 @@ public class AlliedCharacter : Character
 
     public void Attack()
     {
+        Quaternion q = Quaternion.LookRotation((currentTargetCoords - transform.position).normalized);
+        agent.stoppingDistance = 2;
+
         if (IsMuzzleSweeping() && currentTarget!=null)
         {
-            agent.stoppingDistance = 2;
             agent.destination = currentTarget.transform.position;
-            Quaternion q = Quaternion.LookRotation((currentTarget.transform.position - transform.position).normalized);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
         }
         else
         {
-            if (currentTarget == null || distanceFromCurrentTarget >= 4.5 || currentTarget.health <= 0 || gracePeriod > 0)
+            if (currentTarget == null || distanceFromCurrentTarget >= 4.5 || !IsTargetAlive() || gracePeriod > 0)
             {
                 fire = false;
                 //Debug.Log("Canceled Attack");
@@ -259,8 +277,6 @@ public class AlliedCharacter : Character
             }
             else if (currentTarget != null)
             {
-                agent.stoppingDistance = 2;
-                Quaternion q = Quaternion.LookRotation((currentTarget.transform.position - transform.position).normalized);
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
 
                 fire = true;
@@ -274,9 +290,6 @@ public class AlliedCharacter : Character
 
         Ray r1 = new Ray(currentWeapon.GetShootFromWhere().position,currentWeapon.GetShootFromWhere().forward);
         Ray r2 = new Ray(chest, transform.forward);
-
-        Debug.DrawRay(currentWeapon.GetShootFromWhere().position, currentWeapon.GetShootFromWhere().forward*8);
-        Debug.DrawRay(chest, transform.forward*8);
 
         return CheckMuzzleSweeping(r1) || CheckMuzzleSweeping(r2);
     }
@@ -309,6 +322,7 @@ public class AlliedCharacter : Character
 
     public void CalculateDecisions()
     {
+        CalculateClosestEnemy();
         if (health <= 0)
         {
             currentState = AIAllyState.Downed;
@@ -332,7 +346,7 @@ public class AlliedCharacter : Character
             {
                 currentState = AIAllyState.Following;
             } 
-            else if (currentTarget != null && distanceFromCurrentTarget < 4.5f && currentTarget.health > 0 && gracePeriod <= 0)
+            else if (currentTarget != null && distanceFromCurrentTarget < 4.5f && IsTargetAlive() && gracePeriod <= 0)
             {
                 currentState = AIAllyState.Attacking;
             }
@@ -341,7 +355,8 @@ public class AlliedCharacter : Character
                 currentState = AIAllyState.Idle;
             }
         }
-        
+
+        ChangeState();
 
         animator.SetFloat(animationSpeed, agent.velocity.magnitude);
         animator.SetFloat(animationMotionSpeed, agent.velocity.magnitude * 0.5f);

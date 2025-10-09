@@ -17,8 +17,7 @@ public class Character : MonoBehaviour
     public float armor = 10;
     public float maxArmor = 10;
     //By frame, 60 Seconds/Frame
-    public float timeUntilArmorRecovery = 300;
-    public float timeSinceLastHit = 0;
+    public float timeUntilArmorRecovery;
 
     [Header("Effects Stats")]
     public bool isOnFire = false;
@@ -30,8 +29,7 @@ public class Character : MonoBehaviour
     [Header("Stanima")]
     public float stanima = 100;
     public float maxStanima = 100;
-    public float timeUntilStanimaRecovery = 120;
-    public float timeSinceLastUsedStanima = 0;
+    public float timeUntilStanimaRecovery;
 
     [Header("Currency Stats")]
     public float currency = 0;
@@ -77,22 +75,22 @@ public class Character : MonoBehaviour
                 decreaseTrueHealth(depleteHealthByPoison);
             }
 
-            if (timeSinceLastHit >= timeUntilArmorRecovery && health > 0)
+            if (timeUntilArmorRecovery<=0 && health > 0)
             {
                 increaseArmor(1);
             }
-            else if(timeSinceLastHit<timeUntilArmorRecovery)
+            else if(timeUntilArmorRecovery>-1)
             {
-                timeSinceLastHit++;
+                timeUntilArmorRecovery -= Time.deltaTime;
             }
 
-            if (timeSinceLastUsedStanima >= timeUntilStanimaRecovery)
+            if (timeUntilStanimaRecovery<=0 && stanima<maxStanima)
             {
                 increaseStanima(1);
             }
-            else
+            else if(timeUntilStanimaRecovery>-1)
             {
-                timeSinceLastUsedStanima++;
+                timeUntilStanimaRecovery -= Time.deltaTime;
             }
         }
 
@@ -113,7 +111,7 @@ public class Character : MonoBehaviour
 
     public void decreaseTrueHealth(float health = 1)
     {
-        timeSinceLastHit = 0;
+        timeUntilArmorRecovery = 5;
         if (!isInvincible)
         {
             if (this.health - health < 0)
@@ -141,7 +139,7 @@ public class Character : MonoBehaviour
 
     public void decreaseHealthAndArmor(float armor = 1, float health = 1)
     {
-        timeSinceLastHit = 0;
+        timeUntilArmorRecovery = 5;
         if (!isInvincible)
         {
             if (this.armor > 0)
@@ -173,7 +171,7 @@ public class Character : MonoBehaviour
 
     public void decreaseStanima(float stanima = 1)
     {
-        timeSinceLastUsedStanima = 0;
+        timeUntilStanimaRecovery = 2;
         if (this.stanima - stanima <= 0)
         {
             this.stanima = 0;

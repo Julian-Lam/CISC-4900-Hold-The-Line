@@ -50,8 +50,7 @@ public class Weapon : MonoBehaviour, Interactable
     private Transform muzzle;
 
     //LEAVEAIM
-    public float secondsUntilInactive = 600;
-    public float leaveAimTimer = 0;
+    public float secondsUntilInactive;
     public bool aimAfterFire;
 
     public bool isCoroutineActive;
@@ -86,12 +85,12 @@ public class Weapon : MonoBehaviour, Interactable
     {
         if (!Pause.isGamePaused)
         {
-            if (leaveAimTimer < secondsUntilInactive)
+            if (secondsUntilInactive>0)
             {
-                leaveAimTimer++;
+                secondsUntilInactive -= Time.deltaTime;
             }
 
-            if (isEquipped && leaveAimTimer == secondsUntilInactive)
+            if (isEquipped && secondsUntilInactive<=0)
             {
                 gameObject.SetActive(false);
             }
@@ -388,15 +387,15 @@ public class Weapon : MonoBehaviour, Interactable
     {
         if (startTimer)
         {
-            if (leaveAimTimer == secondsUntilInactive)
+            if (secondsUntilInactive<=0)
             {
                 gameObject.SetActive(false);
-                leaveAimTimer = 0;
+                secondsUntilInactive = 10;
             }
         }
         else
         {
-            leaveAimTimer = 0;
+            secondsUntilInactive = 10;
         }
     }
 

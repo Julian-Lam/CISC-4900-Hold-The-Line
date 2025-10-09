@@ -13,6 +13,7 @@ public class EnemyCharacter : Character
 
     private Character currentTarget;
     public float distanceFromCurrentTarget = Mathf.Infinity;
+    private Vector3 currentTargetCoords;
 
     public Weapon currentWeapon;
 
@@ -23,8 +24,6 @@ public class EnemyCharacter : Character
     public bool fire;
     public bool aim;
     public bool reload;
-
-    public float meleeCooldown = 1f;
 
     public static List<EnemyCharacter> enemyList = new List<EnemyCharacter>();
     public static List<EnemyCharacter> enemyCorpseList = new List<EnemyCharacter>();
@@ -91,24 +90,28 @@ public class EnemyCharacter : Character
     {
         base.Update();
 
-        if (currentTarget != null)
+        if (!isDead)
         {
-            distanceFromCurrentTarget = Vector3.Distance(currentTarget.transform.position, transform.position);
+            if (currentTarget != null)
+            {
+                currentTargetCoords = currentTarget.transform.position;
+                distanceFromCurrentTarget = Vector3.Distance(currentTargetCoords, transform.position);
+            }
+
+            if (meleeCooldown > 0)
+            {
+                meleeCooldown -= Time.deltaTime;
+            }
+
+            if (moveCooldown > 0)
+            {
+                moveCooldown -= Time.deltaTime;
+            }
+
+            distanceFromSpawn = Vector3.Distance(transform.position, spawnCoords);
+
+            CalculateDecisions();
         }
-
-        if (cooldown > 0)
-        {
-            cooldown -= Time.deltaTime;
-        }
-
-        moveCooldown -= Time.deltaTime;
-
-        distanceFromSpawn = Vector3.Distance(transform.position, spawnCoords);
-
-        CalculateDecisions();
-        ChangeState();
-        ChooseTarget();
-        HandleSpeed();
     }
 
     public void GetAnimations()
@@ -161,7 +164,26 @@ public class EnemyCharacter : Character
 
     public bool isDead;
 
-    public void IsDead()
+    public bool IsTargetAlive()
+    {
+        if (currentTarget != null)
+        {
+            if (currentTarget.health > 0)
+            {
+                return true;
+            }
+            else
+            {
+
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public void OnDeath()
     {
         if (isDead)
         {
@@ -200,12 +222,12 @@ public class EnemyCharacter : Character
             if (c.faction == "BluFor" && distance < closest && c.health > 0)
             {
                 currentTarget = c;
-                closest = Vector3.Distance(c.transform.position, transform.position);
+                closest = distance;
             }
         }
         distanceFromCurrentTarget = closest;
 
-        if (distanceFromCurrentTarget > 6 || currentTarget.health <= 0)
+        if (distanceFromCurrentTarget > 6 || !IsTargetAlive())
         {
             distanceFromCurrentTarget = Mathf.Infinity;
             currentTarget = null;
@@ -218,7 +240,7 @@ public class EnemyCharacter : Character
         {
             if (distanceFromCurrentTarget < 5 && !Pause.isGamePaused)
             {
-                Quaternion q = Quaternion.LookRotation((currentTarget.transform.position - transform.position).normalized);
+                Quaternion q = Quaternion.LookRotation((currentTargetCoords - transform.position).normalized);
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
             }
 
@@ -227,7 +249,7 @@ public class EnemyCharacter : Character
             if (distanceFromCurrentTarget > distanceToStopAndAttack)
             {
                 agent.isStopped = false;
-                agent.destination = currentTarget.transform.position;
+                agent.destination = currentTargetCoords;
             }
             else
             {
@@ -285,37 +307,42 @@ public class EnemyCharacter : Character
         }
     }
 
-    public float cooldown = 0f;
+    public float meleeCooldown;
 
     public void Attack()
     {
         if (enemyType == EnemyType.Melee)
         {
-            if (cooldown <= 0)
+            if (meleeCooldown <= 0)
             {
                 //Debug.Log("Punch Start");
                 animator.SetTrigger(animationPunch);
-                cooldown = meleeCooldown;
+                meleeCooldown = 1f;
             }
         }
     }
 
     private void OnPunch()
     {
-        currentTarget.decreaseHealthAndArmor(10f, 15f);
-        CharacterController targetController = currentTarget.gameObject.GetComponent<CharacterController>();
-        Instantiate(currentTarget.hitParticle, targetController.transform.TransformPoint(targetController.center), Quaternion.identity);
+        if (distanceFromCurrentTarget<=1f)
+        {
+            currentTarget.decreaseHealthAndArmor(10f, 15f);
+            CharacterController targetController = currentTarget.gameObject.GetComponent<CharacterController>();
+            Instantiate(currentTarget.hitParticle, targetController.transform.TransformPoint(targetController.center), Quaternion.identity);
+        }
     }
 
     public void CalculateDecisions()
     {
+        ChooseTarget();
+        
         if (health <= 0)
         {
             currentState = AIEnemyState.Dead;
         }
         else
         {
-            if (distanceFromCurrentTarget <= distanceToStopAndAttack && currentTarget.health > 0)
+            if (distanceFromCurrentTarget <= distanceToStopAndAttack && IsTargetAlive())
             {
                 currentState = AIEnemyState.Attacking;
             }
@@ -332,6 +359,10 @@ public class EnemyCharacter : Character
                 currentState = AIEnemyState.Patroling;
             }
         }
+
+        ChangeState();
+        HandleSpeed();
+
         animator.SetFloat(animationSpeed, agent.velocity.magnitude);
         animator.SetFloat(animationMotionSpeed, agent.velocity.magnitude * 0.5f);
     }
@@ -351,7 +382,7 @@ public class EnemyCharacter : Character
                 Attack();
                 break;
             case AIEnemyState.Dead:
-                IsDead();
+                OnDeath();
                 break;
             case AIEnemyState.Reloading:
                 MoveTowardsTarget();

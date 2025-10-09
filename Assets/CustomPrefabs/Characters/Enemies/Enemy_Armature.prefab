@@ -1537,8 +1537,7 @@ MonoBehaviour:
   maxHealth: 100
   armor: 10
   maxArmor: 10
-  timeUntilArmorRecovery: 300
-  timeSinceLastHit: 0
+  timeUntilArmorRecovery: 5
   isOnFire: 0
   depleteHealthByFire: 1
   isPoisoned: 0
@@ -1546,8 +1545,7 @@ MonoBehaviour:
   isInvincible: 0
   stanima: 100
   maxStanima: 100
-  timeUntilStanimaRecovery: 120
-  timeSinceLastUsedStanima: 0
+  timeUntilStanimaRecovery: 2
   currency: 1000
   faction: OpFor
   staminaBar: {fileID: 0}
@@ -1578,6 +1576,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 274649b0e221539409070ebf6c18918b, type: 3}
   - {fileID: 8300000, guid: a3194b8bbc96ef84fab1f98f4b7dae3e, type: 3}
   FootstepAudioVolume: 1
+  isDead: 0
   returningToBase: 0
   destinationSet: 0
   moveCooldown: 0
