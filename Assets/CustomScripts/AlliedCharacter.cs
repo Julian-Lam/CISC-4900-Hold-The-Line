@@ -1,3 +1,4 @@
+using UniGLTF;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -7,11 +8,13 @@ public class AlliedCharacter : Character
 
     [Header("Allied-Specific Stats")]
     public Transform characterToFollow;
+    private Character friendlyChar;
 
     //Statuses: Idle, Following, Downed, Attacking
 
     public string status;
     public float distanceFromPlayer;
+    private Vector3 followingCharacterCoords;
     private NavMeshAgent agent;
     private Animator animator;
     private CharacterController controller;
@@ -55,13 +58,18 @@ public class AlliedCharacter : Character
         controller = GetComponent<CharacterController>();
         reviveScript = GetComponent<ReviveAlly>();
 
+        friendlyChar = characterToFollow.GetComponent<Character>();
+
+        potentialEnemyColliders = new Collider[15];
+
         GetAnimations();
     }
 
     public override void Update()
     {
         base.Update();
-        distanceFromPlayer = Vector3.Distance(characterToFollow.position, transform.position);
+        followingCharacterCoords = characterToFollow.position;
+        distanceFromPlayer = Vector3.Distance(followingCharacterCoords, transform.position);
 
         if (currentTarget != null)
         {
@@ -87,6 +95,11 @@ public class AlliedCharacter : Character
         {
             currentTarget = null;
             distanceFromCurrentTarget = Mathf.Infinity;
+        }
+
+        if (currency > 0)
+        {
+            pay(friendlyChar,currency);
         }
 
         if (currentState != AIAllyState.Downed)
@@ -191,26 +204,35 @@ public class AlliedCharacter : Character
         gracePeriod = 2;
     }
 
+    private Collider[] potentialEnemyColliders;
+
     public void CalculateClosestEnemy()
     {
-        Collider[] potentialEnemyColliders = Physics.OverlapSphere(transform.position,4f);
         if (currentTarget == null && EnemyCharacter.enemyList.Count > 0)
         {
+            int numOfPotentialEnemies = Physics.OverlapSphereNonAlloc(transform.position, 4.5f,potentialEnemyColliders,LayerMask.GetMask("Enemy"));
             float closest = Mathf.Infinity;
-            foreach (Collider enemyCollider in potentialEnemyColliders)
-            {
-                EnemyCharacter c = enemyCollider.GetComponent<EnemyCharacter>();
-                if (c == null || c.health <= 0)
-                {
-                    continue;
-                }
 
-                float distance = Vector3.Distance(c.transform.position, transform.position);
-                if (c is EnemyCharacter && distance < closest && distance < 4.5 && c.health > 0)
+            //Debug.Log("Number of potential enemies: "+numOfPotentialEnemies);
+
+            for (int i = 0;i < numOfPotentialEnemies;i++)
+            {
+
+                //Debug.Log("Enemy #" + (i + 1) + potentialEnemyColliders[i]);
+
+                if (potentialEnemyColliders[i].TryGetComponent<EnemyCharacter>(out EnemyCharacter c))
                 {
-                    currentTarget = c;
-                    closest = distance;
-                    break;
+                    if (c == null || c.health <= 0)
+                    {
+                        continue;
+                    }
+
+                    float distance = Vector3.Distance(c.transform.position, transform.position);
+                    if (c is EnemyCharacter && distance < closest && distance < 4.5 && c.health > 0)
+                    {
+                        currentTarget = c;
+                        closest = distance;
+                    }
                 }
             }
             distanceFromCurrentTarget = closest;
@@ -221,7 +243,6 @@ public class AlliedCharacter : Character
             distanceFromCurrentTarget = Mathf.Infinity;
             currentTarget = null;
         }
-        //Debug.Log(currentTarget);
     }
 
     public void MoveTowardsPlayer()
@@ -230,10 +251,17 @@ public class AlliedCharacter : Character
 
         if (distanceFromPlayer < 3.5 && !Pause.isGamePaused)
         {
-            //Vector3 lookAtThis = new Vector3(characterToFollow.position.x, transform.position.y, characterToFollow.position.z);
-            //transform.LookAt(lookAtThis);
-            Quaternion q = Quaternion.LookRotation((characterToFollow.transform.position - transform.position).normalized);
+            Quaternion q = Quaternion.LookRotation((followingCharacterCoords - transform.position).normalized);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
+        }
+
+        if (distanceFromPlayer > 5.5f)
+        {
+            agent.speed = 5;
+        }
+        else
+        {
+            agent.speed = 3;
         }
 
         //animator.SetFloat(animationSpeed, agent.velocity.magnitude);
@@ -243,7 +271,7 @@ public class AlliedCharacter : Character
         if (distanceFromPlayer > 2)
         {
             agent.isStopped = false;
-            agent.destination = characterToFollow.position;
+            agent.destination = followingCharacterCoords;
         }
         else
         {

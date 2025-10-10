@@ -207,6 +207,15 @@ public class Character : MonoBehaviour
         this.currency += currency;
     }
 
+    public void pay(Character c, float currency = 1)
+    {
+        if (this.currency - currency >= 0)
+        {
+            c.currency += currency;
+            this.currency -= currency;
+        }
+    }
+
     public bool transaction(ref float currency)
     {
         if (this.currency - currency < 0)
@@ -220,11 +229,13 @@ public class Character : MonoBehaviour
         }
     }
 
+    public string goodHealth;
+
     public void manageBars()
     {
         if (healthBar != null && armorBar != null)
         {
-            ColorUtility.TryParseHtmlString("#72FF78", out Color goodHealth);
+            ColorUtility.TryParseHtmlString(this.goodHealth, out Color goodHealth);
             ColorUtility.TryParseHtmlString("#ff4d4d", out Color badHealth);
 
             if (health / maxHealth <= 0.2)

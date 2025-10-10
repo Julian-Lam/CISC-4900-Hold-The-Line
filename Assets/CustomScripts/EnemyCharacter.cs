@@ -90,7 +90,7 @@ public class EnemyCharacter : Character
     {
         base.Update();
 
-        if (!isDead)
+        if (!isDead && !Pause.isGamePaused)
         {
             if (currentTarget != null)
             {
@@ -163,6 +163,7 @@ public class EnemyCharacter : Character
     }
 
     public bool isDead;
+    public GameObject enemyHealthBar;
 
     public bool IsTargetAlive()
     {
@@ -199,6 +200,8 @@ public class EnemyCharacter : Character
         charList.Remove(this);
 
         enemyCorpseList.Add(this);
+
+        Destroy(enemyHealthBar);
     }
 
     public void HandleSpeed()
@@ -238,7 +241,7 @@ public class EnemyCharacter : Character
     {
         if (currentTarget != null)
         {
-            if (distanceFromCurrentTarget < 5 && !Pause.isGamePaused)
+            if (distanceFromCurrentTarget < 5)
             {
                 Quaternion q = Quaternion.LookRotation((currentTargetCoords - transform.position).normalized);
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);

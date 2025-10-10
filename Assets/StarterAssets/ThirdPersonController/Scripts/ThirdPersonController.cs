@@ -181,7 +181,7 @@ namespace StarterAssets
 
             HealthCheck();
 
-            if (isDowned)
+            if (isDowned||Pause.isGamePaused)
             {
                 _input.fire = false;
                 _input.aim = false;
@@ -401,7 +401,7 @@ namespace StarterAssets
                 }
 
                 // Jump
-                if (_input.jump && _jumpTimeoutDelta <= 0.0f && !isDowned)
+                if (_input.jump && _jumpTimeoutDelta <= 0.0f && !isDowned && !_input.interact)
                 {
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
@@ -524,7 +524,7 @@ namespace StarterAssets
             isHoldingInteract = false;
         }
 
-        private void OnInteract()
+        private void OnInteractOld()
         {
             float range = 8.0f;
 
@@ -617,6 +617,85 @@ namespace StarterAssets
                     {
                         _input.interact = false;
                     }
+                }
+            }
+        }
+
+        private Ray inspector;
+        private bool interacted;
+        private void OnInteract()
+        {
+            float range = 8.0f;
+
+            inspector = new Ray(_mainCamera.transform.position, _mainCamera.transform.TransformDirection(Vector3.forward));
+            RaycastHit hit;
+
+            if (Physics.Raycast(inspector,out hit, range))
+            {
+                if (hit.collider.TryGetComponent<Interactable>(out Interactable i))
+                {
+                    void releaseActions()
+                    {
+                        if (interacted)
+                        {
+                            //Debug.Log("Releasing Actions");
+                            i.ReleaseAction();
+                            ResetRotation();
+                            _input.interact = false;
+                            isHoldingInteract = false;
+                        }
+                    }
+
+                    if (i is MonoBehaviour mb && mb.enabled)
+                    {
+                        description.text = i.Description();
+                        interactTextbox.SetActive(true);
+                        
+                        if (_input.interact)
+                        {
+                            interacted = true;
+                            i.Interact(gameObject);
+
+                            //Debug.Log("Interacted with interactable: " + i);
+
+                            if (i is Weapon weapon)
+                            {
+                                currentWeapon = weapon;
+                            }
+
+                            if (i.CanHoldInteract() && Grounded)
+                            {
+                                Quaternion q = Quaternion.LookRotation((mb.transform.position - playerModel.position).normalized);
+
+                                playerModel.rotation = Quaternion.RotateTowards(playerModel.rotation, q, 5f);
+                                isHoldingInteract = true;
+
+                                _input.move = Vector2.zero;
+                                _input.jump = false;
+                                _animator.SetFloat(_animIDSpeed, 0f);
+                                _animator.SetFloat(_animIDMotionSpeed, 0f);
+                            }
+                            if (i.Release())
+                            {
+                                releaseActions();
+                            }
+                        }
+                        else
+                        {
+                            releaseActions();
+                            interacted = false;
+                        }
+                    }
+                    else
+                    {
+                        interactTextbox.SetActive(false);
+                    }
+                }
+                else
+                {
+                    _input.interact = false;
+                    isHoldingInteract = false;
+                    interactTextbox.SetActive(false);
                 }
             }
         }

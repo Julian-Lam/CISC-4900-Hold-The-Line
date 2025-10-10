@@ -40,36 +40,9 @@ public class ReviveAlly : MonoBehaviour, Interactable
         else if (c.health <= 0)
         {
             status = "Revive";
+            CheckForNearbyAlly();
+            ManageBars();
         }
-        
-        
-        CheckPoints();
-        CheckForNearbyAlly();
-        ManageBars();
-        /*
-        if (player != null)
-        {
-            GameObject playerObj = player.gameObject;
-            Transform reviverRoot = playerObj.transform;
-            Transform cameraTransform = reviverRoot.Find("MainCamera");
-            reviverCamera = cameraTransform.gameObject.GetComponent<Camera>();
-
-            Ray r = new Ray(reviverCamera.transform.position, reviverCamera.transform.TransformDirection(Vector3.forward));
-            RaycastHit hit;
-            if (Physics.Raycast(r, out hit, 8.0f))
-            {
-                Debug.DrawRay(reviverCamera.transform.position, reviverCamera.transform.TransformDirection(Vector3.forward) * 8f, Color.red);
-                if (hit.collider.gameObject != gameObject)
-                {
-                    CancelRevive();
-                }
-            }
-            else
-            {
-                CancelRevive();
-            }
-        }
-        */
     }
 
     public void Interact(GameObject o)
@@ -80,7 +53,10 @@ public class ReviveAlly : MonoBehaviour, Interactable
 
             if (status == "Revive")
             {
-                reviveBarParent.SetActive(true);
+                if (c.health < c.maxHealth)
+                {
+                    reviveBarParent.SetActive(true);
+                }
                 currentPoints++;
             }
             else if (status == "Heal")
@@ -118,17 +94,17 @@ public class ReviveAlly : MonoBehaviour, Interactable
         }
     }
 
-    public bool release = false;
-
     public bool Release()
     {
         if (status == "Revive")
         {
-            return release;
+            //Debug.Log("IsReviving and bool release is: " + IsDoneReviving());
+            CheckPoints();
+            return IsDoneReviving();
         }
         else
         {
-            return false;
+            return true;
         }
     }
 
@@ -149,16 +125,19 @@ public class ReviveAlly : MonoBehaviour, Interactable
     {
         reviveBarParent.SetActive(false);
         currentPoints = 0;
-        release = false;
+    }
+
+    public bool IsDoneReviving()
+    {
+        return currentPoints >= pointsNeededToRevive;
     }
 
     public void CheckPoints()
     {
-        if (currentPoints >= pointsNeededToRevive)
+        if (IsDoneReviving())
         {
-            c.Revive();
-            release = true;
             CancelRevive();
+            c.Revive();
             this.enabled = false;
         }
     }
