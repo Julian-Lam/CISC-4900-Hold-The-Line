@@ -31,7 +31,7 @@ public class Weapon : MonoBehaviour, Interactable
 
     public float fireAnimation = 0f;
 
-    private Transform shootFromWhere;
+    public Transform shootFromWhere;
 
     public Rigidbody rigidBody;
     public Collider collider;
@@ -45,6 +45,8 @@ public class Weapon : MonoBehaviour, Interactable
     private Character playerStats;
     private Transform camera;
     public Transform chest;
+
+    public LayerMask ownerLayer;
     //CHILDREN
 
     private Transform muzzle;
@@ -474,6 +476,7 @@ public class Weapon : MonoBehaviour, Interactable
                     if (c.faction != playerStats.faction || (c.faction==playerStats.faction && Pause.allowFriendlyFire))
                     {
                         c.decreaseHealthAndArmor(damagePerBullet/2,damagePerBullet);
+                        c.RegisterAttacker(playerStats);
                         hitTarget = true;
 
                         if (c.health <= 0)

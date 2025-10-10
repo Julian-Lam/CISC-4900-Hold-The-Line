@@ -94,7 +94,38 @@ public class Character : MonoBehaviour
             }
         }
 
+        if (attacker != null)
+        {
+            if (attacker.health <= 0|| attackedCooldown<=0)
+            {
+                ResetAttacker();
+            }
+            else
+            {
+                attackerDistance=Vector3.Distance(attacker.transform.position, transform.position);
+            }
+        }
 
+        if (attackedCooldown > 0)
+        {
+            attackedCooldown -= Time.deltaTime;
+        }
+    }
+
+    public Character attacker;
+    public float attackerDistance=Mathf.Infinity;
+    public float attackedCooldown;
+
+    public void RegisterAttacker(Character attacker)
+    {
+        attackedCooldown = 5;
+        this.attacker = attacker;
+    }
+
+    public void ResetAttacker()
+    {
+        attacker = null;
+        attackerDistance = Mathf.Infinity;
     }
 
     public void increaseHealth(float health = 1)

@@ -1371,6 +1371,9 @@ MonoBehaviour:
   healthBar: {fileID: 4578938294041347202}
   currencyText: {fileID: 0}
   hitParticle: {fileID: 1096893136476370, guid: 24b82347924701148a13c746edfb6b22, type: 3}
+  attacker: {fileID: 0}
+  attackerDistance: Infinity
+  attackedCooldown: 0
   goodHealth: '#ff4d4d'
   distanceFromCurrentTarget: Infinity
   currentWeapon: {fileID: 0}
@@ -1410,7 +1413,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.3
-  m_Speed: 2
+  m_Speed: 4
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120

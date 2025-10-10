@@ -174,7 +174,10 @@ namespace StarterAssets
                 {
                     GroundedCheck();
                     Move();
-                    OnUseWeapon();
+                    if (currentWeapon != null)
+                    {
+                        OnUseWeapon();
+                    }
                     SetLookAnimaton();
                 }
             }
@@ -621,13 +624,11 @@ namespace StarterAssets
             }
         }
 
-        private Ray inspector;
-        private bool interacted;
         private void OnInteract()
         {
             float range = 8.0f;
 
-            inspector = new Ray(_mainCamera.transform.position, _mainCamera.transform.TransformDirection(Vector3.forward));
+            Ray inspector = new Ray(_mainCamera.transform.position, _mainCamera.transform.TransformDirection(Vector3.forward));
             RaycastHit hit;
 
             if (Physics.Raycast(inspector,out hit, range))
@@ -636,14 +637,10 @@ namespace StarterAssets
                 {
                     void releaseActions()
                     {
-                        if (interacted)
-                        {
-                            //Debug.Log("Releasing Actions");
-                            i.ReleaseAction();
-                            ResetRotation();
-                            _input.interact = false;
-                            isHoldingInteract = false;
-                        }
+                        i.ReleaseAction();
+                        ResetRotation();
+                        _input.interact = false;
+                        isHoldingInteract = false;
                     }
 
                     if (i is MonoBehaviour mb && mb.enabled)
@@ -653,7 +650,6 @@ namespace StarterAssets
                         
                         if (_input.interact)
                         {
-                            interacted = true;
                             i.Interact(gameObject);
 
                             //Debug.Log("Interacted with interactable: " + i);
@@ -682,8 +678,10 @@ namespace StarterAssets
                         }
                         else
                         {
-                            releaseActions();
-                            interacted = false;
+                            if (i.CanHoldInteract()&&!i.Release())
+                            {
+                                releaseActions();
+                            }
                         }
                     }
                     else

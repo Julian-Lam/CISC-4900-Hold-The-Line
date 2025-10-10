@@ -1098,8 +1098,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4a92fc306363e643a472099f476dc6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 100
-  maxHealth: 100
+  health: 250
+  maxHealth: 250
   armor: 10
   maxArmor: 10
   timeUntilArmorRecovery: 5
@@ -1118,6 +1118,9 @@ MonoBehaviour:
   healthBar: {fileID: 7287604609573259540}
   currencyText: {fileID: 0}
   hitParticle: {fileID: 1096893136476370, guid: 24b82347924701148a13c746edfb6b22, type: 3}
+  attacker: {fileID: 0}
+  attackerDistance: Infinity
+  attackedCooldown: 0
   goodHealth: '#ff4d4d'
   distanceFromCurrentTarget: Infinity
   currentWeapon: {fileID: 0}

@@ -19,7 +19,7 @@ public class AlliedCharacter : Character
     private Animator animator;
     private CharacterController controller;
 
-    private Character currentTarget;
+    public Character currentTarget;
     public float distanceFromCurrentTarget = Mathf.Infinity;
     private Vector3 currentTargetCoords;
 
@@ -208,14 +208,18 @@ public class AlliedCharacter : Character
 
     public void CalculateClosestEnemy()
     {
-        if (currentTarget == null && EnemyCharacter.enemyList.Count > 0)
+        if (attacker != null)
         {
-            int numOfPotentialEnemies = Physics.OverlapSphereNonAlloc(transform.position, 4.5f,potentialEnemyColliders,LayerMask.GetMask("Enemy"));
+            PrioritizeAttacker(distanceFromCurrentTarget);
+        }
+        else if (currentTarget == null && EnemyCharacter.enemyList.Count > 0)
+        {
+            int numOfPotentialEnemies = Physics.OverlapSphereNonAlloc(transform.position, 4.5f, potentialEnemyColliders, LayerMask.GetMask("Enemy"));
             float closest = Mathf.Infinity;
 
             //Debug.Log("Number of potential enemies: "+numOfPotentialEnemies);
 
-            for (int i = 0;i < numOfPotentialEnemies;i++)
+            for (int i = 0; i < numOfPotentialEnemies; i++)
             {
 
                 //Debug.Log("Enemy #" + (i + 1) + potentialEnemyColliders[i]);
@@ -241,13 +245,22 @@ public class AlliedCharacter : Character
         if (distanceFromCurrentTarget > 4.5 || !IsTargetAlive())
         {
             distanceFromCurrentTarget = Mathf.Infinity;
+            attackerDistance = Mathf.Infinity;
+            attacker = null;
             currentTarget = null;
         }
+    }
+
+    public void PrioritizeAttacker(float distance)
+    {
+        currentTarget = attacker;
+        distanceFromCurrentTarget = attackerDistance;
     }
 
     public void MoveTowardsPlayer()
     {
         fire = false;
+        aim = false;
 
         if (distanceFromPlayer < 3.5 && !Pause.isGamePaused)
         {
@@ -288,7 +301,7 @@ public class AlliedCharacter : Character
     public void Attack()
     {
         Quaternion q = Quaternion.LookRotation((currentTargetCoords - transform.position).normalized);
-        agent.stoppingDistance = 2;
+        agent.stoppingDistance = 2; 
 
         if (IsMuzzleSweeping() && currentTarget!=null)
         {
@@ -300,13 +313,14 @@ public class AlliedCharacter : Character
             if (currentTarget == null || distanceFromCurrentTarget >= 4.5 || !IsTargetAlive() || gracePeriod > 0)
             {
                 fire = false;
+                aim = false;
                 //Debug.Log("Canceled Attack");
                 return;
             }
             else if (currentTarget != null)
             {
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
-
+                aim = true;
                 fire = true;
             }
         }

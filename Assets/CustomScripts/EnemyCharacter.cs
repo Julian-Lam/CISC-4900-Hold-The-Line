@@ -25,6 +25,8 @@ public class EnemyCharacter : Character
     public bool aim;
     public bool reload;
 
+    private float defaultSpeed;
+
     public static List<EnemyCharacter> enemyList = new List<EnemyCharacter>();
     public static List<EnemyCharacter> enemyCorpseList = new List<EnemyCharacter>();
 
@@ -81,6 +83,8 @@ public class EnemyCharacter : Character
         }
 
         spawnCoords = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+
+        defaultSpeed = agent.speed;
 
         GetAnimations();
     }
@@ -208,7 +212,7 @@ public class EnemyCharacter : Character
     {
         if (currentState == AIEnemyState.Following)
         {
-            agent.speed = 3;
+            agent.speed = defaultSpeed;
         }
         else
         {
@@ -218,29 +222,45 @@ public class EnemyCharacter : Character
 
     public void ChooseTarget()
     {
-        float closest = Mathf.Infinity;
-        foreach (Character c in charList)
+        if (attacker != null)
         {
-            float distance = Vector3.Distance(c.transform.position, transform.position);
-            if (c.faction == "BluFor" && distance < closest && c.health > 0)
-            {
-                currentTarget = c;
-                closest = distance;
-            }
+            PrioritizeAttacker(distanceFromCurrentTarget);
         }
-        distanceFromCurrentTarget = closest;
+        else if(currentTarget == null)
+        {
+            float closest = Mathf.Infinity;
+            foreach (Character c in charList)
+            {
+                float distance = Vector3.Distance(c.transform.position, transform.position);
+                if (c.faction == "BluFor" && distance < closest && c.health > 0)
+                {
+                    currentTarget = c;
+                    closest = distance;
+                }
+            }
+            distanceFromCurrentTarget = closest;
+        }
 
         if (distanceFromCurrentTarget > 6 || !IsTargetAlive())
         {
             distanceFromCurrentTarget = Mathf.Infinity;
+            attackerDistance = Mathf.Infinity;
+            attacker = null;
             currentTarget = null;
         }
+    }
+
+    public void PrioritizeAttacker(float distance)
+    {
+        currentTarget = attacker;
+        distanceFromCurrentTarget = attackerDistance;
     }
 
     public void MoveTowardsTarget()
     {
         if (currentTarget != null)
         {
+            agent.stoppingDistance = 1.5f;
             if (distanceFromCurrentTarget < 5)
             {
                 Quaternion q = Quaternion.LookRotation((currentTargetCoords - transform.position).normalized);
@@ -331,6 +351,7 @@ public class EnemyCharacter : Character
         {
             currentTarget.decreaseHealthAndArmor(10f, 15f);
             CharacterController targetController = currentTarget.gameObject.GetComponent<CharacterController>();
+            currentTarget.RegisterAttacker(this);
             Instantiate(currentTarget.hitParticle, targetController.transform.TransformPoint(targetController.center), Quaternion.identity);
         }
     }

@@ -2,10 +2,12 @@
 
 A game built in Unity where you fight enemies.
 
-CISC 4900, Fall 2025 semester project.
+CISC 4900, Fall 2025 semester project
+
+Made by Julian Lam (aka FighterWolf_MC)
 
 Plot:\
-*"So... roughly 4 kilometers East of Queens lies the ruins of a village built by the Dutch in 1624 and abandoned in 1633. Its existence was declassified by the New York Republic about a year ago. Before then, it was just a rumor on the dark web. The New York Self-Defense Forces wants us to explore, clear out and fix up the village... but what kind of horrors made the its existence worth getting covered up for nearly half a millennia?" - 1st Lt. Aleksey Lijn, 2124 A.D.*
+*"So... roughly 4 kilometers East of Queens lies the ruins of a village built by the Dutch in 1624 and abandoned in 1633. Its existence was declassified by the New York Republic about a year ago. Before then, it was just a rumor on the dark web. The New York Self-Defense Forces wants us to explore, clear out and fix up the village... but what horrors made its existence worth covering up for nearly half a millennia?" - 1st Lt. Aleksey Lijn, 2124 A.D.*
 
 # Unity and Third-Party Assets
 
