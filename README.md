@@ -33,6 +33,7 @@ Plot:\
 
 - Charlie.vrm
 <img src="/Assets/CustomSprites/CharacterSprites/CharlieThumbnail.png" alt="Portrait of Charlie Gray" style="width:25%; height:auto;">
+
 - Renske.vrm
 <img src="/Assets/CustomSprites/CharacterSprites/RenskeThumbnail.png" alt="Portrait of Renske Kneijnsberg" style="width:25%; height:auto;">
 
