@@ -527,103 +527,6 @@ namespace StarterAssets
             isHoldingInteract = false;
         }
 
-        private void OnInteractOld()
-        {
-            float range = 8.0f;
-
-            Ray inspector = new Ray(_mainCamera.transform.position, _mainCamera.transform.TransformDirection(Vector3.forward));
-            RaycastHit hit;
-
-            if (Physics.Raycast(inspector, out hit, range)){
-                if (hit.collider.TryGetComponent<Interactable>(out Interactable i))
-                {
-                    if (i != null && (i is MonoBehaviour mb && mb.enabled))
-                    {
-                        description.text = i.Description();
-                        interactTextbox.SetActive(true);
-
-                        if (!_input.interact)
-                        {
-                            i.ReleaseAction();
-                            ResetRotation();
-                        }
-                    }
-                    else
-                    {
-                        interactTextbox.SetActive(false);
-                        ResetRotation();
-                    }
-                }
-                else
-                {
-                    interactTextbox.SetActive(false);
-                    ResetRotation();
-                }
-            }
-            else
-            {
-                interactTextbox.SetActive(false);
-                ResetRotation();
-            }
-
-            if (_input.interact)
-            {
-                _input.aim = false;
-                _input.fire = false;
-
-                Ray r = new Ray(_mainCamera.transform.position, _mainCamera.transform.TransformDirection(Vector3.forward));
-
-                if (Physics.Raycast(r, out hit, range))
-                {
-                    Debug.DrawRay(_mainCamera.transform.position, _mainCamera.transform.TransformDirection(Vector3.forward) * range, Color.green);
-
-                    //INTERACTABLES MUST HAVE RIGIDBODY
-                    if (hit.collider.TryGetComponent<Interactable>(out Interactable i))
-                    {
-                        if (i is MonoBehaviour mb && mb.enabled)
-                        {
-                            //Vector3 lookAtThis = new Vector3(mb.transform.position.x- playerModel.position.x, 0f, mb.transform.position.z- playerModel.position.z).normalized;
-                            Quaternion q = Quaternion.LookRotation((mb.transform.position-playerModel.position).normalized);
-
-                            playerModel.rotation = Quaternion.RotateTowards(playerModel.rotation,q, 5f);
-                            i.Interact(gameObject);
-                        }
-
-                        //Debug.Log("Interacted with interactable: " + i);
-                        
-                        if(i is Weapon weapon)
-                        {
-                            currentWeapon = weapon;
-                        }
-
-                        if (i.CanHoldInteract() && i is MonoBehaviour m && m.enabled && Grounded)
-                        {
-                            isHoldingInteract = true;
-
-                            _input.move = Vector2.zero;
-                            _input.jump = false;
-                            _animator.SetFloat(_animIDSpeed, 0f);
-                            _animator.SetFloat(_animIDMotionSpeed, 0f);
-
-                            if (i.Release())
-                            {
-                                _input.interact = false;
-                                isHoldingInteract = false;
-                            }
-                        }
-                        else
-                        {
-                            _input.interact = false;
-                        }
-                    }
-                    else
-                    {
-                        _input.interact = false;
-                    }
-                }
-            }
-        }
-
         private void OnInteract()
         {
             float range = 8.0f;
@@ -633,8 +536,11 @@ namespace StarterAssets
 
             if (Physics.Raycast(inspector,out hit, range))
             {
+                //If aiming at interactable
                 if (hit.collider.TryGetComponent<Interactable>(out Interactable i))
                 {
+                    
+                    //Helper function for when you finish or stop interacting
                     void releaseActions()
                     {
                         i.ReleaseAction();
@@ -645,32 +551,40 @@ namespace StarterAssets
 
                     if (i is MonoBehaviour mb && mb.enabled)
                     {
+                        //Message for interactable
                         description.text = i.Description();
                         interactTextbox.SetActive(true);
                         
                         if (_input.interact)
                         {
+                            //Interact with interactable
                             i.Interact(gameObject);
 
                             //Debug.Log("Interacted with interactable: " + i);
 
+                            //Equip the weapon if interactable is weapon
                             if (i is Weapon weapon)
                             {
                                 currentWeapon = weapon;
                             }
 
+                            //If on ground and you have to hold to interact
                             if (i.CanHoldInteract() && Grounded)
                             {
+                                //Look at object
                                 Quaternion q = Quaternion.LookRotation((mb.transform.position - playerModel.position).normalized);
 
                                 playerModel.rotation = Quaternion.RotateTowards(playerModel.rotation, q, 5f);
                                 isHoldingInteract = true;
 
+                                //If hold-interacting, do not move or do anything else
                                 _input.move = Vector2.zero;
                                 _input.jump = false;
                                 _animator.SetFloat(_animIDSpeed, 0f);
                                 _animator.SetFloat(_animIDMotionSpeed, 0f);
                             }
+                            
+                            //If done interacting
                             if (i.Release())
                             {
                                 releaseActions();
@@ -678,6 +592,7 @@ namespace StarterAssets
                         }
                         else
                         {
+                            //When you stop interacting
                             if (i.CanHoldInteract()&&!i.Release())
                             {
                                 releaseActions();
@@ -691,6 +606,7 @@ namespace StarterAssets
                 }
                 else
                 {
+                    //Safety check if aiming away from interactable
                     _input.interact = false;
                     isHoldingInteract = false;
                     interactTextbox.SetActive(false);
@@ -805,6 +721,7 @@ namespace StarterAssets
         {
             if (c.health <= 0)
             {
+                //Prevent player from doing anything
                 isDowned = true;
                 _input.jump = false;
                 _input.sprint=false;

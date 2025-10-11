@@ -126,6 +126,7 @@ public class Weapon : MonoBehaviour, Interactable
     {
         if (!isEquipped)
         {
+            //Set owner
             player = o.GetComponent<ThirdPersonController>();
             playerStats = o.GetComponent<Character>();
             weaponStorage = FindDescendants(o.transform, "StorageEmpty");
@@ -150,6 +151,7 @@ public class Weapon : MonoBehaviour, Interactable
                 }
             }
 
+            //Make sure weapon is connected to owner
             gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             gameObject.SetActive(true);
             HideItem(false);
@@ -187,7 +189,6 @@ public class Weapon : MonoBehaviour, Interactable
     {
         if (transform.root.name != "PlayerArmature" && transform.parent!=null)
         {
-           
             weaponStorage = FindDescendants(transform.root, "StorageEmpty");
             brandish = FindDescendants(transform.root, "BrandishEmpty");
             playerStats = transform.root.gameObject.GetComponent<Character>();
@@ -205,6 +206,7 @@ public class Weapon : MonoBehaviour, Interactable
         }
     }
 
+    //Disconnect weapon from player
     public void Drop()
     {
         if (isEquipped)
@@ -278,8 +280,13 @@ public class Weapon : MonoBehaviour, Interactable
                 ChangeParent(brandish);
                 gameObject.SetActive(true);
                 HideItem(false);
+                
+                //Create muzzle flash
                 Instantiate(muzzleFlash, muzzle.position, Quaternion.Euler(0, 180, 0));
+                
+                //Start firing animation
                 fireAnimation = 1;
+                
                 if (!isUsingADS)
                 {
                     if (storeWeapon != null) StopCoroutine(storeWeapon);
@@ -312,6 +319,7 @@ public class Weapon : MonoBehaviour, Interactable
         { 
             if (ammoLeft == 0)
             {
+                //Reloading empty has a slightly different system
                 ReloadEmpty();
                 return;
             }
@@ -342,6 +350,8 @@ public class Weapon : MonoBehaviour, Interactable
         }
         ChangeParent(weaponStorage);
         if(storeWeapon!=null) StopCoroutine(storeWeapon);
+        
+        //Reset
         storeWeapon = null;
         aimAfterFire = false;
         Invoke("RefillAmmo", reloadEmptyTime);
@@ -351,6 +361,8 @@ public class Weapon : MonoBehaviour, Interactable
     {
         //Debug.Log("Refilling Ammo");
         ammoLeft = maxAmmo;
+
+        //No longer reloading
         isReloading = false;
     }
 
@@ -358,6 +370,7 @@ public class Weapon : MonoBehaviour, Interactable
     {
         if (canBeAutomatic)
         {
+            //Toggle firing mode
             isAutomatic = !isAutomatic;
         }
     }
@@ -380,11 +393,14 @@ public class Weapon : MonoBehaviour, Interactable
             fireAnimation = 0;
             hitTarget = false;
             yield return new WaitForSeconds(59 /fireRate);
+
+            //Wait until owner is not holding the fire button
             yield return new WaitUntil(() => !isTriggerHeld);
             isReadyToShoot = true;
         }
     }
 
+    //Cosmetic
     public void HideItem(bool startTimer)
     {
         if (startTimer)
@@ -401,6 +417,7 @@ public class Weapon : MonoBehaviour, Interactable
         }
     }
 
+    //Weapon goes back to back
     public IEnumerator StoreWeapon()
     {
         aimAfterFire = true;
@@ -450,23 +467,14 @@ public class Weapon : MonoBehaviour, Interactable
         RaycastHit hit;
         if (Physics.Raycast(r, out hit, weaponRange))
         {
-            Debug.DrawRay(shootFromWhere.position, shootFromWhere.forward * weaponRange);
+            //Debug.DrawRay(shootFromWhere.position, shootFromWhere.forward * weaponRange);
 
             if (hit.collider != null)
             {
-                /*
-                if (shootFromWhere == camera)
-                {
-                    Debug.Log("Hit something while aiming");
-                }
-                else if (shootFromWhere == muzzle)
-                {
-                    Debug.Log("Hit something while blind firing");
-                }
-                */
-                //Debug.Log("Hit " + hit.collider);
+                //If the target is a character
                 if (hit.collider.TryGetComponent<Character>(out Character c))
                 {
+                    //Spawn the target's particles at the hit point
                     if(c.hitParticle!=null)
                     {
                         Instantiate(c.hitParticle, hit.point, Quaternion.Euler(0, 180, 0));
@@ -476,13 +484,19 @@ public class Weapon : MonoBehaviour, Interactable
                     if (c.faction != playerStats.faction || (c.faction==playerStats.faction && Pause.allowFriendlyFire))
                     {
                         c.decreaseHealthAndArmor(damagePerBullet/2,damagePerBullet);
-                        c.RegisterAttacker(playerStats);
+                        
+                        //Owner is now the attacker if target wasn't a friendly
+                        if (c.faction != playerStats.faction)
+                        {
+                            c.RegisterAttacker(playerStats);
+                        }
+                        
                         hitTarget = true;
 
+                        //If target dies, give all the target's money to the killer
                         if (c.health <= 0)
                         {
-                            playerStats.increaseCurrency(c.currency);
-                            c.setCurrency(0f);
+                            c.pay(playerStats, c.currency);
                         }
 
                     }
@@ -490,7 +504,7 @@ public class Weapon : MonoBehaviour, Interactable
             }
             else
             {
-                Debug.Log("Hit nothing");
+                //Debug.Log("Hit nothing");
             }
         }
     }

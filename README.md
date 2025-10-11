@@ -1,6 +1,17 @@
 # CISC-4900-Hold-The-Line
 
-A game built in Unity where you fight enemies.
+A game built in Unity where you fight enemies and support allies.
+
+Controls:
+- WASD - Move around
+- Mouse - Look around
+- Space - Jump
+- Left-Shift - Sprint
+- F - Interact
+- Left-Click - Fire current weapon
+- Right-Click - Aim current weapon
+- R - Reload
+- B - Switch firing mode (if current weapon allows)
 
 CISC 4900, Fall 2025 semester project
 
@@ -8,6 +19,8 @@ Made by Julian Lam (aka FighterWolf_MC)
 
 Plot:\
 *"So... roughly 4 kilometers East of Queens lies the ruins of a village built by the Dutch in 1624 and abandoned in 1633. Its existence was declassified by the New York Republic about a year ago. Before then, it was just a rumor on the dark web. The New York Self-Defense Forces wants us to explore, clear out and fix up the village... but what horrors made its existence worth covering up for nearly half a millennia?" - 1st Lt. Aleksey Lijn, 2124 A.D.*
+
+itch.io link: TBA
 
 # Unity and Third-Party Assets
 
@@ -31,10 +44,10 @@ Plot:\
 
 ## Characters
 
-- Charlie.vrm
+- Charlie Gray (Charlie.vrm)
 <img src="/Assets/CustomSprites/CharacterSprites/CharlieThumbnail.png" alt="Portrait of Charlie Gray" style="width:25%; height:auto;">
 
-- Renske.vrm
+- Renske Kneijnsberg (Renske.vrm)
 <img src="/Assets/CustomSprites/CharacterSprites/RenskeThumbnail.png" alt="Portrait of Renske Kneijnsberg" style="width:25%; height:auto;">
 
 ## Weapons

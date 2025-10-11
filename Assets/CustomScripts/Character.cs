@@ -8,8 +8,6 @@ public class Character : MonoBehaviour
 {
     public static List<Character> charList = new List<Character>();
     public static List<Character> bluForList = new List<Character>();
-    public static int numberOfCharacters = 0;
-    public static int numberOfBluFor = 0;
 
     [Header("Health/Armor Stats")]
     public float health = 100;
@@ -50,12 +48,10 @@ public class Character : MonoBehaviour
     public virtual void Start()
     {
         charList.Add(this);
-        numberOfCharacters++;
 
         if (faction == "BluFor")
         {
             bluForList.Add(this);
-            numberOfBluFor++;
         }
     }
 
@@ -96,6 +92,7 @@ public class Character : MonoBehaviour
 
         if (attacker != null)
         {
+            //If attacker is dead or stopped attacking, forget attacker, otherwise, keep track of attacker
             if (attacker.health <= 0|| attackedCooldown<=0)
             {
                 ResetAttacker();
@@ -116,6 +113,7 @@ public class Character : MonoBehaviour
     public float attackerDistance=Mathf.Infinity;
     public float attackedCooldown;
 
+    //If attacked, keep attacker in memory
     public void RegisterAttacker(Character attacker)
     {
         attackedCooldown = 5;
@@ -173,6 +171,7 @@ public class Character : MonoBehaviour
         timeUntilArmorRecovery = 5;
         if (!isInvincible)
         {
+            //If there is armor, deplete that first, and then health
             if (this.armor > 0)
             {
                 this.armor -= armor;
@@ -240,6 +239,7 @@ public class Character : MonoBehaviour
 
     public void pay(Character c, float currency = 1)
     {
+        //If character can afford, give c the currency
         if (this.currency - currency >= 0)
         {
             c.currency += currency;
@@ -290,5 +290,14 @@ public class Character : MonoBehaviour
         {
             currencyText.text = "NY$" + currency + ".00";
         }
+    }
+
+    //Clear static lists before reloading scene
+    public static void Clearlists()
+    {
+        charList.Clear();
+        bluForList.Clear();
+        EnemyCharacter.enemyList.Clear();
+        EnemyCharacter.enemyCorpseList.Clear();
     }
 }

@@ -5,7 +5,13 @@ using TMPro;
 
 public class Pause : MonoBehaviour
 {
+    public static Pause Instance
+    {
+        get; private set;
+    }
+    
     public GameObject pauseMenu;
+    public GameObject gameOverMenu;
     public static bool isGamePaused;
 
     public static bool allowFriendlyFire;
@@ -16,11 +22,13 @@ public class Pause : MonoBehaviour
 
     public TextMeshProUGUI friendlyFireText;
 
+    public Character player;
     void Start()
     {
         ResumeGame();
         userInput.FindActionMap("GameSystem").Enable();
         pause = userInput.FindAction("Pause");
+        gameOverMenu.SetActive(false);
     }
 
     void Update()
@@ -28,6 +36,10 @@ public class Pause : MonoBehaviour
         PauseSystem();
         friendlyFireText.text = allowFriendlyFire.ToString();
         EnemyCharacter.DeleteCorpses();
+        if (player.health <= 0)
+        {
+            EnableGameOver();
+        }
     }
 
     public void ToggleFriendlyFire()
@@ -72,5 +84,24 @@ public class Pause : MonoBehaviour
                 PauseGame();
             }
         }
+    }
+
+    public void EnableGameOver()
+    {
+        gameOverMenu.SetActive(true);
+        isGamePaused = true;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    public void RestartGame()
+    {
+        Character.Clearlists();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        gameOverMenu.SetActive(false);
+        Time.timeScale = 1;
+        isGamePaused = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }

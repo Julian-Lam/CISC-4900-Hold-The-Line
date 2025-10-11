@@ -91,12 +91,14 @@ public class AlliedCharacter : Character
             reviveScript.enabled = false;
         }
 
+        //If target is dead, reset targeting
         if (currentTarget != null && !IsTargetAlive())
         {
             currentTarget = null;
             distanceFromCurrentTarget = Mathf.Infinity;
         }
 
+        //Allied bot cannot use money, has to give it to human player for use
         if (currency > 0)
         {
             pay(friendlyChar,currency);
@@ -147,6 +149,7 @@ public class AlliedCharacter : Character
 
     //BELOW IS CUSTOM
 
+    //Return true if the charcter that it is hunting down is alive
     public bool IsTargetAlive()
     {
         if(currentTarget != null)
@@ -167,6 +170,7 @@ public class AlliedCharacter : Character
     }
     public void KnockOut()
     {
+        //Make sure the character cannot do anything in this state.
         agent.isStopped = true;
         controller.height = 0.6f;
         controller.center = new Vector3(0, 0.2f, 0);
@@ -182,10 +186,12 @@ public class AlliedCharacter : Character
 
     public void Revive()
     {
+        //Heal and follow player
         health = maxHealth * 0.67f;
         currentState = AIAllyState.Following;
         agent.isStopped = false;
 
+        //Reset target after reviving
         currentTarget = null;
         distanceFromCurrentTarget = Mathf.Infinity;
 
@@ -208,17 +214,20 @@ public class AlliedCharacter : Character
 
     public void CalculateClosestEnemy()
     {
+        //If character is being attacked, prioritize attacking its attacker
         if (attacker != null)
         {
             PrioritizeAttacker(distanceFromCurrentTarget);
         }
         else if (currentTarget == null && EnemyCharacter.enemyList.Count > 0)
         {
+            //Using a "OverlapSphere", find how many possible enemies there are from a certain radius
             int numOfPotentialEnemies = Physics.OverlapSphereNonAlloc(transform.position, 4.5f, potentialEnemyColliders, LayerMask.GetMask("Enemy"));
             float closest = Mathf.Infinity;
 
             //Debug.Log("Number of potential enemies: "+numOfPotentialEnemies);
 
+            //For every possible enemies that the sphere detects, find the closest
             for (int i = 0; i < numOfPotentialEnemies; i++)
             {
 
@@ -242,6 +251,7 @@ public class AlliedCharacter : Character
             distanceFromCurrentTarget = closest;
         }
 
+        //If target is dead or too far, forget about attacking it
         if (distanceFromCurrentTarget > 4.5 || !IsTargetAlive())
         {
             distanceFromCurrentTarget = Mathf.Infinity;
@@ -251,6 +261,7 @@ public class AlliedCharacter : Character
         }
     }
 
+    //Set current target to attacker
     public void PrioritizeAttacker(float distance)
     {
         currentTarget = attacker;
@@ -262,6 +273,7 @@ public class AlliedCharacter : Character
         fire = false;
         aim = false;
 
+        //If close enough to player, look at player
         if (distanceFromPlayer < 3.5 && !Pause.isGamePaused)
         {
             Quaternion q = Quaternion.LookRotation((followingCharacterCoords - transform.position).normalized);
@@ -281,6 +293,7 @@ public class AlliedCharacter : Character
 
         agent.stoppingDistance = 2;
 
+        //If close enough to player, stop
         if (distanceFromPlayer > 2)
         {
             agent.isStopped = false;
@@ -293,6 +306,7 @@ public class AlliedCharacter : Character
         }
     }
 
+    //To be dealt with in a future date
     public void Idle()
     {
 
@@ -300,9 +314,11 @@ public class AlliedCharacter : Character
 
     public void Attack()
     {
+        //Look at enemy
         Quaternion q = Quaternion.LookRotation((currentTargetCoords - transform.position).normalized);
         agent.stoppingDistance = 2; 
 
+        //If pointing weapon at player, try to find another away around player
         if (IsMuzzleSweeping() && currentTarget!=null)
         {
             agent.destination = currentTarget.transform.position;
@@ -310,6 +326,7 @@ public class AlliedCharacter : Character
         }
         else
         {
+            //If target is invalid, too far, or dead, return
             if (currentTarget == null || distanceFromCurrentTarget >= 4.5 || !IsTargetAlive() || gracePeriod > 0)
             {
                 fire = false;
@@ -319,6 +336,7 @@ public class AlliedCharacter : Character
             }
             else if (currentTarget != null)
             {
+                //Look at target and use weapon on target
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
                 aim = true;
                 fire = true;
@@ -326,6 +344,7 @@ public class AlliedCharacter : Character
         }
     }
 
+    //Check if pointing weapon at player
     public bool IsMuzzleSweeping()
     {
         Vector3 chest = transform.position + transform.up * 1.2f + transform.forward * 0.2f;
@@ -342,6 +361,7 @@ public class AlliedCharacter : Character
         {
             if (hit.collider != null && hit.collider.TryGetComponent<Character>(out Character c))
             {
+                //If what character is aiming at is a friend
                 if (faction == c.faction)
                 {
                     return true;

@@ -113,6 +113,7 @@ public class ReviveAlly : MonoBehaviour, Interactable
         CancelRevive();
     }
 
+    //If reviver somehow gets away from downed, stop the revive
     public void CheckForNearbyAlly()
     {
         if (c.distanceFromPlayer > 2)

@@ -169,6 +169,7 @@ public class EnemyCharacter : Character
     public bool isDead;
     public GameObject enemyHealthBar;
 
+    //Return true if the charcter that it is hunting down is alive
     public bool IsTargetAlive()
     {
         if (currentTarget != null)
@@ -222,12 +223,14 @@ public class EnemyCharacter : Character
 
     public void ChooseTarget()
     {
+        //If character is being attacked, prioritize attacking the attacker
         if (attacker != null)
         {
             PrioritizeAttacker(distanceFromCurrentTarget);
         }
         else if(currentTarget == null)
         {
+            //Choose between the player or the player's single ally.
             float closest = Mathf.Infinity;
             foreach (Character c in charList)
             {
@@ -241,6 +244,7 @@ public class EnemyCharacter : Character
             distanceFromCurrentTarget = closest;
         }
 
+        //If target is dead or too far, forget about attacking it
         if (distanceFromCurrentTarget > 6 || !IsTargetAlive())
         {
             distanceFromCurrentTarget = Mathf.Infinity;
@@ -250,6 +254,7 @@ public class EnemyCharacter : Character
         }
     }
 
+    //Set current target to attacker
     public void PrioritizeAttacker(float distance)
     {
         currentTarget = attacker;
@@ -261,6 +266,8 @@ public class EnemyCharacter : Character
         if (currentTarget != null)
         {
             agent.stoppingDistance = 1.5f;
+
+            //If close enough to target, look at target
             if (distanceFromCurrentTarget < 5)
             {
                 Quaternion q = Quaternion.LookRotation((currentTargetCoords - transform.position).normalized);
@@ -269,6 +276,7 @@ public class EnemyCharacter : Character
 
             agent.stoppingDistance = distanceToStopAndAttack;
 
+            //If close enough to target, stop
             if (distanceFromCurrentTarget > distanceToStopAndAttack)
             {
                 agent.isStopped = false;
@@ -285,6 +293,7 @@ public class EnemyCharacter : Character
 
     public void ReturnToSpawnIfNeeded()
     {
+        //If too far from spawn, attempt returning to spawn
         if (distanceFromSpawn > 12)
         {
             //Debug.Log("Returning to base");
@@ -295,6 +304,7 @@ public class EnemyCharacter : Character
         }
         else if (distanceFromSpawn < 2)
         {
+            //When reaching spawn, stop attempting to retrun to spawn
             returningToBase = false;
         }
     }
@@ -309,17 +319,22 @@ public class EnemyCharacter : Character
         {
             if (!destinationSet && moveCooldown <=0)
             {
+                //Random coordinates
                 float destinationX = Random.Range(-8, 8);
                 float destinationZ = Random.Range(-8, 8);
 
+                //Set new destination
                 newDestination = new Vector3(transform.position.x + destinationX, transform.position.y, transform.position.z + destinationZ);
                 //Debug.Log("Set new destination at: "+ newDestination);
                 destinationSet = true;
             }
             else if(destinationSet)
             {
+                //Go to new destination
                 agent.destination = newDestination;
                 agent.stoppingDistance = 1;
+                
+                //When at destination, stop
                 if (Vector3.Distance(newDestination, transform.position) < 2)
                 {
                     //Debug.Log("Reached destination.");
