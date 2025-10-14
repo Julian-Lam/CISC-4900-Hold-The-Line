@@ -12,13 +12,17 @@ public class Pause : MonoBehaviour
     
     public GameObject pauseMenu;
     public GameObject gameOverMenu;
+    public GameObject inventoryMenu;
     public static bool isGamePaused;
 
     public static bool allowFriendlyFire;
 
+    public static bool isInventoryOpen;
+
     public InputActionAsset userInput;
 
     private InputAction pause;
+    private InputAction inventory;
 
     public TextMeshProUGUI friendlyFireText;
 
@@ -28,12 +32,14 @@ public class Pause : MonoBehaviour
         ResumeGame();
         userInput.FindActionMap("GameSystem").Enable();
         pause = userInput.FindAction("Pause");
+        inventory = userInput.FindAction("Inventory");
         gameOverMenu.SetActive(false);
     }
 
     void Update()
     {
         PauseSystem();
+        InventorySystem();
         friendlyFireText.text = allowFriendlyFire.ToString();
         EnemyCharacter.DeleteCorpses();
         if (player.health <= 0)
@@ -45,6 +51,11 @@ public class Pause : MonoBehaviour
     public void ToggleFriendlyFire()
     {
         allowFriendlyFire = !allowFriendlyFire;
+    }
+
+    public void ToggleInventory()
+    {
+        isInventoryOpen = !isInventoryOpen;
     }
 
     public void PauseGame()
@@ -69,6 +80,7 @@ public class Pause : MonoBehaviour
     {
         SceneManager.LoadSceneAsync(0);
         isGamePaused = false;
+        isInventoryOpen = false;
     }
 
     public void PauseSystem()
@@ -86,6 +98,31 @@ public class Pause : MonoBehaviour
         }
     }
 
+    public void InventorySystem()
+    {
+        if (!isGamePaused)
+        {
+            if (inventory.WasPressedThisFrame())
+            {
+                ToggleInventory();
+            }
+            
+            if (isInventoryOpen)
+            {
+                Time.timeScale = 0;
+                inventoryMenu.SetActive(true);
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            else
+            {
+                Time.timeScale = 1;
+                inventoryMenu.SetActive(false);
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+        }
+    }
     public void EnableGameOver()
     {
         gameOverMenu.SetActive(true);

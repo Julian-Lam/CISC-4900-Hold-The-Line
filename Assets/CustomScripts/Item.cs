@@ -1,0 +1,87 @@
+using UnityEngine;
+using StarterAssets;
+
+public class Item : MonoBehaviour, Interactable
+{
+
+    public enum ItemType
+    {
+        Medkit,
+        Money,
+        Defibrillator,
+        Key,
+        Intel
+    }
+
+    public ItemType itemType;
+    public float numOfItem;
+    public Sprite itemSprite;
+    public string itemName;
+    public float itemValue;
+    private ThirdPersonController player;
+    private Inventory playerInventory;
+    private Character c;
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    public void Interact(GameObject o)
+    {
+        //Get info about interactor/player
+        player = o.GetComponent<ThirdPersonController>();
+        playerInventory = o.GetComponent<Inventory>();
+        c = o.GetComponent<Character>();
+
+        //If money, add value to player currency, else store in inventory
+        if(itemType == ItemType.Money)
+        {
+            c.currency += itemValue;
+            Destroy(gameObject);
+        }
+        else
+        {
+            playerInventory.AddItem(this);
+        }
+    }
+
+    public string Description()
+    {
+        if (itemType == ItemType.Money)
+        {
+            return "Pick Up: NY$" + itemValue;
+        }
+        else
+        {
+            return "Pick Up: " + itemName;
+        }
+    }
+
+    public bool CanHoldInteract()
+    {
+        return false;
+    }
+
+    public bool Release()
+    {
+        return true;
+    }
+
+    public void ReleaseAction()
+    {
+
+    }
+
+    public void OnUse()
+    {
+        Destroy(gameObject);
+    }
+}

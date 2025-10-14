@@ -34,7 +34,7 @@ public class Weapon : MonoBehaviour, Interactable
     public Transform shootFromWhere;
 
     public Rigidbody rigidBody;
-    public Collider collider;
+    public Collider col;
 
     //Parents
     private Transform weaponStorage;
@@ -43,7 +43,7 @@ public class Weapon : MonoBehaviour, Interactable
 
     private ThirdPersonController player;
     private Character playerStats;
-    private Transform camera;
+    private Transform cam;
     public Transform chest;
 
     public LayerMask ownerLayer;
@@ -79,6 +79,7 @@ public class Weapon : MonoBehaviour, Interactable
         isReloading = false;
         muzzle = FindDescendants(transform, "Muzzle");
         IfOwnerNPC();
+        col = GetComponent<Collider>();
         rigidBody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
     }
 
@@ -159,7 +160,7 @@ public class Weapon : MonoBehaviour, Interactable
             rigidBody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
             rigidBody.useGravity = false;
             rigidBody.isKinematic = true;
-            collider.enabled = false;
+            col.enabled = false;
             isEquipped = true;
 
         }
@@ -201,7 +202,7 @@ public class Weapon : MonoBehaviour, Interactable
             rigidBody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
             rigidBody.useGravity = false;
             rigidBody.isKinematic = true;
-            collider.enabled = false;
+            col.enabled = false;
             isEquipped = true;
         }
     }
@@ -222,7 +223,7 @@ public class Weapon : MonoBehaviour, Interactable
 
             rigidBody.constraints = RigidbodyConstraints.None;
             rigidBody.isKinematic = false;
-            collider.enabled = true;
+            col.enabled = true;
             rigidBody.useGravity = true;
             isEquipped = false;
             player = null;
@@ -435,7 +436,7 @@ public class Weapon : MonoBehaviour, Interactable
 
     public void SetAimFromCamera()
     {
-        shootFromWhere = camera;
+        shootFromWhere = cam;
     }
 
     public void SetAimFromChest()
@@ -456,7 +457,7 @@ public class Weapon : MonoBehaviour, Interactable
     public void FindCamera()
     {
         Transform owner = transform.root;
-        camera = FindDescendants(owner, "MainCamera");
+        cam = FindDescendants(owner, "MainCamera");
     }
 
     public bool hitTarget = false;

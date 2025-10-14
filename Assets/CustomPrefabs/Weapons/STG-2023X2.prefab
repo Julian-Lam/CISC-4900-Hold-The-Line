@@ -203,7 +203,7 @@ MonoBehaviour:
   fireAnimation: 0
   shootFromWhere: {fileID: 0}
   rigidBody: {fileID: 2662805873293007058}
-  collider: {fileID: 2328757858460954920}
+  col: {fileID: 2328757858460954920}
   chest: {fileID: 0}
   ownerLayer:
     serializedVersion: 2

@@ -167,34 +167,47 @@ namespace StarterAssets
 
             JumpAndGravity();
 
-            if (!Pause.isGamePaused && !isDowned)
+            if (!Pause.isGamePaused && !Pause.isInventoryOpen)
             {
-                OnInteract();
-                if (!isHoldingInteract)
+                if (!isDowned)
                 {
-                    GroundedCheck();
-                    Move();
-                    if (currentWeapon != null)
+                    OnInteract();
+                    if (!isHoldingInteract)
                     {
-                        OnUseWeapon();
+                        GroundedCheck();
+                        Move();
+                        if (currentWeapon != null)
+                        {
+                            OnUseWeapon();
+                        }
+                        SetLookAnimaton();
                     }
-                    SetLookAnimaton();
                 }
+
             }
 
             HealthCheck();
 
-            if (isDowned||Pause.isGamePaused)
+            if (isDowned||Pause.isGamePaused||Pause.isInventoryOpen)
             {
                 _input.fire = false;
                 _input.aim = false;
                 _input.reload = false;
+                _input.sprint = false;
+                _input.selectFireMode = false;
+                _input.strafe = 0;
+                _input.jump = false;
+                _input.move = Vector2.zero;
+                _input.walkBackwards = false;
+                _animator.SetFloat(_animIDSpeed, 0f);
+                _animator.SetFloat(_animIDMotionSpeed, 0f);
+                _animator.SetFloat(strafeState, 0);
             }
         }
 
         private void LateUpdate()
         {
-            if (!Pause.isGamePaused && !isHoldingInteract)
+            if (!Pause.isGamePaused && !Pause.isInventoryOpen && !isHoldingInteract)
             {
                 CameraRotation();
             }
@@ -531,15 +544,16 @@ namespace StarterAssets
         {
             float range = 8.0f;
 
-            Ray inspector = new Ray(_mainCamera.transform.position, _mainCamera.transform.TransformDirection(Vector3.forward));
+            Ray inspector = new Ray(_mainCamera.transform.position, _mainCamera.transform.forward);
             RaycastHit hit;
+
+            Debug.DrawRay(_mainCamera.transform.position, _mainCamera.transform.forward*8, Color.green);
 
             if (Physics.Raycast(inspector,out hit, range))
             {
                 //If aiming at interactable
                 if (hit.collider.TryGetComponent<Interactable>(out Interactable i))
                 {
-                    
                     //Helper function for when you finish or stop interacting
                     void releaseActions()
                     {
@@ -611,6 +625,10 @@ namespace StarterAssets
                     isHoldingInteract = false;
                     interactTextbox.SetActive(false);
                 }
+            }
+            else
+            {
+                interactTextbox.SetActive(false);
             }
         }
 

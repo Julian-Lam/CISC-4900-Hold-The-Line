@@ -10,6 +10,9 @@ public class ReviveAlly : MonoBehaviour, Interactable
 
     private AlliedCharacter c;
     private ThirdPersonController player;
+    private Inventory playerInventory;
+
+    private Item defib;
 
     public GameObject reviveBarParent;
     public Image reviveBar;
@@ -50,14 +53,24 @@ public class ReviveAlly : MonoBehaviour, Interactable
         if (this.enabled)
         {
             player = o.GetComponent<ThirdPersonController>();
+            playerInventory = player.GetComponent<Inventory>();
+            defib = playerInventory.FindItem("Defibrillator");
 
             if (status == "Revive")
             {
-                if (c.health < c.maxHealth)
+
+                if (defib!=null)
                 {
-                    reviveBarParent.SetActive(true);
+                    if (c.health < c.maxHealth)
+                    {
+                        reviveBarParent.SetActive(true);
+                    }
+                    currentPoints++;
                 }
-                currentPoints++;
+                else
+                {
+                    Debug.Log("Cannot revive: Missing Defibrillator");
+                }
             }
             else if (status == "Heal")
             {
@@ -137,6 +150,7 @@ public class ReviveAlly : MonoBehaviour, Interactable
     {
         if (IsDoneReviving())
         {
+            playerInventory.UseItem(defib);
             CancelRevive();
             c.Revive();
             this.enabled = false;

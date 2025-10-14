@@ -8,10 +8,12 @@ Controls:
 - Space - Jump
 - Left-Shift - Sprint
 - F - Interact
-- Left-Click - Fire current weapon
+- Left-Click - Fire current weapon | Use item if inventory is open
 - Right-Click - Aim current weapon
 - R - Reload
 - B - Switch firing mode (if current weapon allows)
+- P or Esc - Pause/Unpause Game
+- G or Tab - Open/Close inventory
 
 CISC 4900, Fall 2025 semester project
 
