@@ -49,8 +49,8 @@ itch.io link: TBA
 - Charlie Gray (Charlie.vrm)
 <img src="/Assets/CustomSprites/CharacterSprites/CharlieThumbnail.png" alt="Portrait of Charlie Gray" style="width:25%; height:auto;">
 
-- Renske Kneijnsberg (Renske.vrm)
-<img src="/Assets/CustomSprites/CharacterSprites/RenskeThumbnail.png" alt="Portrait of Renske Kneijnsberg" style="width:25%; height:auto;">
+- Renske Vanderkleij (Renske.vrm)
+<img src="/Assets/CustomSprites/CharacterSprites/RenskeThumbnail.png" alt="Portrait of Renske Vanderkleij" style="width:25%; height:auto;">
 
 ## Weapons
 

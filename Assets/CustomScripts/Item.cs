@@ -6,11 +6,10 @@ public class Item : MonoBehaviour, Interactable
 
     public enum ItemType
     {
-        Medkit,
+        QuestItem,
+        Static,
         Money,
-        Defibrillator,
-        Key,
-        Intel
+        Consumable
     }
 
     public ItemType itemType;
@@ -82,6 +81,9 @@ public class Item : MonoBehaviour, Interactable
 
     public void OnUse()
     {
-        Destroy(gameObject);
+        if (itemType == ItemType.Consumable)
+        {
+            Destroy(gameObject);
+        }
     }
 }

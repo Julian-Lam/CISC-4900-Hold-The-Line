@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using TMPro;
 
 public class Inventory : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class Inventory : MonoBehaviour
     void Start()
     {
         invnTrns = inventoryObject.transform;
+        DisplayItems();
     }
 
     // Update is called once per frame
@@ -43,8 +45,11 @@ public class Inventory : MonoBehaviour
     {
         Debug.Log("Used Item: "+i);
         i.OnUse();
-        RemoveItem(i);
-        Destroy(i);
+        if (i.itemType == Item.ItemType.Consumable)
+        {
+            RemoveItem(i);
+            Destroy(i);
+        }
     }
     public void RemoveItem(Item i)
     {
@@ -76,20 +81,30 @@ public class Inventory : MonoBehaviour
             //Get the slot's components
             GameObject slotObject = slot.gameObject;
             Image slotImage = slotObject.GetComponent<Image>();
+
+            Transform nameBoxTransform = slot.GetChild(0);
+            TextMeshProUGUI nameBox = nameBoxTransform.GetComponent<TextMeshProUGUI>();
+
             Button b = slotObject.GetComponent<Button>();
             b.onClick.RemoveAllListeners();
             //If iterator goes over list count
-            if (listIterator >= inventory.Count)
+            if (listIterator > inventory.Count-1)
             {
                 slotImage.sprite = null;
-                break;
+                nameBox.text = "Empty";
             }
+            else
+            {
+                Item currentItem = inventory[listIterator];
 
-            Item currentItem = inventory[listIterator];
+                //Replace slot name with item name
+                nameBox.text = currentItem.name;
 
-            //Replace slots with item sprites
-            b.onClick.AddListener(() => UseItem(currentItem));
-            slotImage.sprite = currentItem.itemSprite;
+                //Replace slots with item sprites
+                b.onClick.AddListener(() => UseItem(currentItem));
+                slotImage.sprite = currentItem.itemSprite;
+            }
+            //Go to next slot/item
             listIterator++;
         }
     }
