@@ -78,6 +78,7 @@ public class Pause : MonoBehaviour
 
     public void QuitToMenu()
     {
+        Character.Clearlists();
         SceneManager.LoadSceneAsync(0);
         isGamePaused = false;
         isInventoryOpen = false;

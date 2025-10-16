@@ -13,6 +13,7 @@ public class ReviveAlly : MonoBehaviour, Interactable
     private Inventory playerInventory;
 
     private Item defib;
+    private Medkit medkit;
 
     public GameObject reviveBarParent;
     public Image reviveBar;
@@ -55,6 +56,7 @@ public class ReviveAlly : MonoBehaviour, Interactable
             player = o.GetComponent<ThirdPersonController>();
             playerInventory = player.GetComponent<Inventory>();
             defib = playerInventory.FindItem("Defibrillator");
+            medkit = playerInventory.FindItem<Medkit>();
 
             if (status == "Revive")
             {
@@ -74,7 +76,10 @@ public class ReviveAlly : MonoBehaviour, Interactable
             }
             else if (status == "Heal")
             {
-                Heal();
+                if (medkit != null)
+                {
+                    medkit.HealCharacter(c);
+                }
             }
         }
     }
@@ -154,14 +159,6 @@ public class ReviveAlly : MonoBehaviour, Interactable
             CancelRevive();
             c.Revive();
             this.enabled = false;
-        }
-    }
-
-    public void Heal()
-    {
-        if (c.health <= c.maxHealth || c.health > 0)
-        {
-            c.increaseHealth(10f);
         }
     }
 

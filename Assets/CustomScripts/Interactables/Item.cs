@@ -13,13 +13,12 @@ public class Item : MonoBehaviour, Interactable
     }
 
     public ItemType itemType;
-    public float numOfItem;
     public Sprite itemSprite;
     public string itemName;
     public float itemValue;
-    private ThirdPersonController player;
-    private Inventory playerInventory;
-    private Character c;
+    protected ThirdPersonController player;
+    protected Inventory playerInventory;
+    protected Character c;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -79,11 +78,8 @@ public class Item : MonoBehaviour, Interactable
 
     }
 
-    public void OnUse()
+    virtual public void OnUseInventory()
     {
-        if (itemType == ItemType.Consumable)
-        {
-            Destroy(gameObject);
-        }
+
     }
 }
