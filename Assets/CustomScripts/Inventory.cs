@@ -129,7 +129,7 @@ public class Inventory : MonoBehaviour
                 Item currentItem = inventory[listIterator];
 
                 //Replace slot name with item name
-                nameBox.text = currentItem.name;
+                nameBox.text = currentItem.itemName;
 
                 //Replace slots with item sprites
                 b.onClick.AddListener(() => UseItem(currentItem));

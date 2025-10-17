@@ -23,6 +23,11 @@ public class Character : MonoBehaviour
     public bool isPoisoned = false;
     public float depleteHealthByPoison = 1;
     public bool isInvincible = false;
+    public bool hasSpeedBuff = false;
+
+    [Header("Buff Timers")]
+    public float invincibilityTimer;
+    public float infiniteStaminaTimer;
 
     [Header("Stanima")]
     public float stanima = 100;
@@ -87,6 +92,26 @@ public class Character : MonoBehaviour
             else if(timeUntilStanimaRecovery>-1)
             {
                 timeUntilStanimaRecovery -= Time.deltaTime;
+            }
+
+            if (invincibilityTimer >= 0)
+            {
+                isInvincible = true;
+                invincibilityTimer -= Time.deltaTime;
+            }
+            else
+            {
+                isInvincible = false;
+            }
+
+            if (infiniteStaminaTimer >= 0)
+            {
+                infiniteStaminaTimer -= Time.deltaTime;
+                hasSpeedBuff = true;
+            }
+            else
+            {
+                hasSpeedBuff = false;
             }
         }
 
@@ -202,13 +227,16 @@ public class Character : MonoBehaviour
     public void decreaseStanima(float stanima = 1)
     {
         timeUntilStanimaRecovery = 2;
-        if (this.stanima - stanima <= 0)
+        if (!hasSpeedBuff)
         {
-            this.stanima = 0;
-        }
-        else
-        {
-            this.stanima -= stanima;
+            if (this.stanima - stanima <= 0)
+            {
+                this.stanima = 0;
+            }
+            else
+            {
+                this.stanima -= stanima;
+            }
         }
     }
 

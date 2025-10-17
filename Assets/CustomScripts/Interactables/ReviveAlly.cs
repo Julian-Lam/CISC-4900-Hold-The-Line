@@ -18,6 +18,7 @@ public class ReviveAlly : MonoBehaviour, Interactable
     public GameObject reviveBarParent;
     public Image reviveBar;
 
+    private float reviveCooldown;
     //public Camera reviverCamera;
 
     public string status;
@@ -47,6 +48,11 @@ public class ReviveAlly : MonoBehaviour, Interactable
             CheckForNearbyAlly();
             ManageBars();
         }
+
+        if (reviveCooldown > 0)
+        {
+            reviveCooldown -= Time.deltaTime;
+        }
     }
 
     public void Interact(GameObject o)
@@ -74,7 +80,7 @@ public class ReviveAlly : MonoBehaviour, Interactable
                     Debug.Log("Cannot revive: Missing Defibrillator");
                 }
             }
-            else if (status == "Heal")
+            else if (status == "Heal" && reviveCooldown<=0)
             {
                 if (medkit != null)
                 {
@@ -155,9 +161,10 @@ public class ReviveAlly : MonoBehaviour, Interactable
     {
         if (IsDoneReviving())
         {
-            playerInventory.UseItem(defib);
+            playerInventory.RemoveItem(defib);
             CancelRevive();
             c.Revive();
+            reviveCooldown = 1;
             this.enabled = false;
         }
     }
