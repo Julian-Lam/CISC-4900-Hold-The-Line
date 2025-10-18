@@ -134,5 +134,7 @@ MonoBehaviour:
   itemType: 3
   itemSprite: {fileID: 21300000, guid: a0ac3ef5ff2ec354a80ba1c349d2f798, type: 3}
   itemName: Medic Bag
-  itemValue: 0
+  itemValue: 500
+  useFail: The character you are attempting to heal is at full health.
+  maxAllowed: 3
   healValue: 25

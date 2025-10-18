@@ -77,7 +77,7 @@ public class ReviveAlly : MonoBehaviour, Interactable
                 }
                 else
                 {
-                    Debug.Log("Cannot revive: Missing Defibrillator");
+                    playerInventory.OnUseFail("You do not have a Hefibrillator.");
                 }
             }
             else if (status == "Heal" && reviveCooldown<=0)
@@ -85,6 +85,10 @@ public class ReviveAlly : MonoBehaviour, Interactable
                 if (medkit != null)
                 {
                     medkit.HealCharacter(c);
+                }
+                else
+                {
+                    playerInventory.OnUseFail("You do not have a Medic Bag.");
                 }
             }
         }

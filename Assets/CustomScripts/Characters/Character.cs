@@ -65,7 +65,7 @@ public class Character : MonoBehaviour
     {
         manageBars();
 
-        if(!Pause.isGamePaused)
+        if(!Pause.isAnInterfaceActive)
         {
             while (isOnFire)
             {
@@ -265,17 +265,20 @@ public class Character : MonoBehaviour
         this.currency += currency;
     }
 
-    public void pay(Character c, float currency = 1)
+    public void Pay(float currency, Character c = null)
     {
         //If character can afford, give c the currency
         if (this.currency - currency >= 0)
         {
-            c.currency += currency;
             this.currency -= currency;
+            if (c != null)
+            {
+                c.currency += currency;
+            }
         }
     }
 
-    public bool transaction(ref float currency)
+    public bool CanAfford(float currency)
     {
         if (this.currency - currency < 0)
         {
@@ -283,7 +286,6 @@ public class Character : MonoBehaviour
         }
         else
         {
-            this.currency -= currency;
             return true;
         }
     }
@@ -316,7 +318,7 @@ public class Character : MonoBehaviour
 
         if (currencyText != null)
         {
-            currencyText.text = "NY$" + currency + ".00";
+            currencyText.text = "NY$" + currency.ToString("N2");
         }
     }
 

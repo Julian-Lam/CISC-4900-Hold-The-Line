@@ -13,11 +13,13 @@ public class Pause : MonoBehaviour
     public GameObject pauseMenu;
     public GameObject gameOverMenu;
     public GameObject inventoryMenu;
-    public static bool isGamePaused;
+    public GameObject buyStationMenu;
 
-    public static bool allowFriendlyFire;
+    public static bool isAnInterfaceActive;
 
     public static bool isInventoryOpen;
+
+    public static bool allowFriendlyFire;
 
     public InputActionAsset userInput;
 
@@ -34,6 +36,7 @@ public class Pause : MonoBehaviour
         pause = userInput.FindAction("Pause");
         inventory = userInput.FindAction("Inventory");
         gameOverMenu.SetActive(false);
+        inventoryMenu.SetActive(false);
     }
 
     void Update()
@@ -53,16 +56,11 @@ public class Pause : MonoBehaviour
         allowFriendlyFire = !allowFriendlyFire;
     }
 
-    public void ToggleInventory()
-    {
-        isInventoryOpen = !isInventoryOpen;
-    }
-
     public void PauseGame()
     {
         pauseMenu.SetActive(true);
         Time.timeScale = 0;
-        isGamePaused = true;
+        isAnInterfaceActive = true;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -70,8 +68,11 @@ public class Pause : MonoBehaviour
     public void ResumeGame()
     {
         pauseMenu.SetActive(false);
+        inventoryMenu.SetActive(false);
+        buyStationMenu.SetActive(false);
         Time.timeScale = 1;
-        isGamePaused = false;
+        isAnInterfaceActive = false;
+        isInventoryOpen = false;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -80,54 +81,53 @@ public class Pause : MonoBehaviour
     {
         Character.Clearlists();
         SceneManager.LoadSceneAsync(0);
-        isGamePaused = false;
-        isInventoryOpen = false;
+        isAnInterfaceActive = false;
     }
 
     public void PauseSystem()
     {
         if (pause.WasPressedThisFrame())
         {
-            if (isGamePaused)
+            if (!isAnInterfaceActive)
             {
-                ResumeGame();
+                PauseGame();
             }
             else
             {
-                PauseGame();
+                ResumeGame();
             }
         }
     }
 
     public void InventorySystem()
     {
-        if (!isGamePaused)
+        if (inventory.WasPressedThisFrame())
         {
-            if (inventory.WasPressedThisFrame())
-            {
-                ToggleInventory();
-            }
-            
-            if (isInventoryOpen)
+            if (!isAnInterfaceActive && !isInventoryOpen)
             {
                 Time.timeScale = 0;
                 inventoryMenu.SetActive(true);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                isAnInterfaceActive = true;
+                isInventoryOpen = true;
             }
-            else
+            else if (isInventoryOpen)
             {
-                Time.timeScale = 1;
-                inventoryMenu.SetActive(false);
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
+                CloseInventory();
             }
         }
+    }
+
+    public void CloseInventory()
+    {
+        inventoryMenu.SetActive(false);
+        ResumeGame();
     }
     public void EnableGameOver()
     {
         gameOverMenu.SetActive(true);
-        isGamePaused = true;
+        isAnInterfaceActive = true;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -138,7 +138,7 @@ public class Pause : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         gameOverMenu.SetActive(false);
         Time.timeScale = 1;
-        isGamePaused = false;
+        isAnInterfaceActive = false;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }

@@ -27,10 +27,10 @@ public class ConsumableBuff : Item
         switch (buffType)
         {
             case BuffType.Invincibility:
-                c.invincibilityTimer = 8;
+                c.invincibilityTimer += 8;
                 break;
             case BuffType.SpeedBuff:
-                c.infiniteStaminaTimer = 8;
+                c.infiniteStaminaTimer += 8;
                 break;
         }
         playerInventory.RemoveItem(this);

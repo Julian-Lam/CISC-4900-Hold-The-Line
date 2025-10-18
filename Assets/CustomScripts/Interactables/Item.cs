@@ -19,6 +19,11 @@ public class Item : MonoBehaviour, Interactable
     protected ThirdPersonController player;
     protected Inventory playerInventory;
     protected Character c;
+    public string useFail;
+
+    //Limit of item of this type that can be carried. Set to zero if you want to remove limits.
+    //ABSOLUTLY DO NOT CHANGE PREFABS THAT ARE IN THE SCENE
+    public float maxAllowed;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -76,6 +81,20 @@ public class Item : MonoBehaviour, Interactable
     public void ReleaseAction()
     {
 
+    }
+
+    public void StoreInInventory(Inventory inv)
+    {
+        player = inv.GetComponent<ThirdPersonController>();
+        playerInventory = inv;
+        c = inv.GetComponent<Character>();
+    }
+
+    public void StoreInInventory(Character character)
+    {
+        player = character.GetComponent<ThirdPersonController>();
+        playerInventory = character.GetComponent<Inventory>();
+        c = character;
     }
 
     virtual public void OnUseInventory()

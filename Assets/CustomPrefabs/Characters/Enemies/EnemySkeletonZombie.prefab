@@ -1108,6 +1108,9 @@ MonoBehaviour:
   isPoisoned: 0
   depleteHealthByPoison: 1
   isInvincible: 0
+  hasSpeedBuff: 0
+  invincibilityTimer: 0
+  infiniteStaminaTimer: 0
   stanima: 100
   maxStanima: 100
   timeUntilStanimaRecovery: 2
@@ -2937,7 +2940,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea424eb73dfbfd8488a93297a483fde2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthBar
-  camera: {fileID: 0}
+  cam: {fileID: 0}
 --- !u!1 &7759654639652915423
 GameObject:
   m_ObjectHideFlags: 0

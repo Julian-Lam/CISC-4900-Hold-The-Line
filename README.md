@@ -12,7 +12,7 @@ Controls:
 - Right-Click - Aim current weapon
 - R - Reload
 - B - Switch firing mode (if current weapon allows)
-- P or Esc - Pause/Unpause Game
+- P or Esc - Pause Game/Close interface
 - G or Tab - Open/Close inventory
 
 CISC 4900, Fall 2025 semester project
@@ -56,6 +56,13 @@ itch.io link: TBA
 
 - STG-2023.fbx
 - M1-Garand.fbx
+
+## Other Objects
+- Defibrillator.fbx
+- IceVodka.fbx
+- MedicBag.fbx
+- MoneyStack.fbx
+- SodaCan.fbx
 
 ## Audio
 

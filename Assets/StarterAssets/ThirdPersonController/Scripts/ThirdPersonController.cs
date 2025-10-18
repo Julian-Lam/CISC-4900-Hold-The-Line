@@ -167,7 +167,7 @@ namespace StarterAssets
 
             JumpAndGravity();
 
-            if (!Pause.isGamePaused && !Pause.isInventoryOpen)
+            if (!Pause.isAnInterfaceActive)
             {
                 if (!isDowned)
                 {
@@ -188,7 +188,7 @@ namespace StarterAssets
 
             HealthCheck();
 
-            if (isDowned||Pause.isGamePaused||Pause.isInventoryOpen)
+            if (isDowned|| Pause.isAnInterfaceActive)
             {
                 _input.fire = false;
                 _input.aim = false;
@@ -207,7 +207,7 @@ namespace StarterAssets
 
         private void LateUpdate()
         {
-            if (!Pause.isGamePaused && !Pause.isInventoryOpen && !isHoldingInteract)
+            if (!Pause.isAnInterfaceActive && !isHoldingInteract)
             {
                 CameraRotation();
             }
@@ -549,7 +549,7 @@ namespace StarterAssets
 
             Debug.DrawRay(_mainCamera.transform.position, _mainCamera.transform.forward*8, Color.green);
 
-            if (Physics.Raycast(inspector,out hit, range))
+            if (Physics.Raycast(inspector,out hit, range) && !Pause.isAnInterfaceActive)
             {
                 //If aiming at interactable
                 if (hit.collider.TryGetComponent<Interactable>(out Interactable i))

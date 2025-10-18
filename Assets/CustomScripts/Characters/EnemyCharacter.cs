@@ -94,7 +94,7 @@ public class EnemyCharacter : Character
     {
         base.Update();
 
-        if (!isDead && !Pause.isGamePaused)
+        if (!isDead && !Pause.isAnInterfaceActive)
         {
             if (currentTarget != null)
             {

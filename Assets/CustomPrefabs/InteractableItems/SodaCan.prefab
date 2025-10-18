@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &9109488598372928947
+--- !u!1001 &5199265274639008793
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -58,26 +58,26 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a1faf5c99eb2cbf409f6cc3b4cce956b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -7327140984424374432}
+      addedObject: {fileID: 1097786824561906211}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a1faf5c99eb2cbf409f6cc3b4cce956b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5453496778277707698}
+      addedObject: {fileID: -2740656123697780164}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a1faf5c99eb2cbf409f6cc3b4cce956b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -4864910217950404017}
+      addedObject: {fileID: 2894394011009986070}
   m_SourcePrefab: {fileID: 100100000, guid: a1faf5c99eb2cbf409f6cc3b4cce956b, type: 3}
---- !u!1 &8262432187344777442 stripped
+--- !u!1 &4964912828573874504 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a1faf5c99eb2cbf409f6cc3b4cce956b, type: 3}
-  m_PrefabInstance: {fileID: 9109488598372928947}
+  m_PrefabInstance: {fileID: 5199265274639008793}
   m_PrefabAsset: {fileID: 0}
---- !u!54 &-7327140984424374432
+--- !u!54 &1097786824561906211
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8262432187344777442}
+  m_GameObject: {fileID: 4964912828573874504}
   serializedVersion: 5
   m_Mass: 1
   m_LinearDamping: 0
@@ -98,13 +98,13 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &5453496778277707698
+--- !u!65 &-2740656123697780164
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8262432187344777442}
+  m_GameObject: {fileID: 4964912828573874504}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -119,13 +119,13 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.00087017845, y: 0.0009149596, z: 0.0020210897}
   m_Center: {x: 0, y: -1.4551919e-11, z: 0.0006181183}
---- !u!114 &-4864910217950404017
+--- !u!114 &2894394011009986070
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8262432187344777442}
+  m_GameObject: {fileID: 4964912828573874504}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c8e60b79546684945bcd63cfc3e668a8, type: 3}
@@ -134,5 +134,7 @@ MonoBehaviour:
   itemType: 3
   itemSprite: {fileID: 21300000, guid: eaf3e79e64e64ab42b94fa845f2843bf, type: 3}
   itemName: Soft Drink
-  itemValue: 0
+  itemValue: 500
+  useFail: 
+  maxAllowed: 5
   buffType: 1

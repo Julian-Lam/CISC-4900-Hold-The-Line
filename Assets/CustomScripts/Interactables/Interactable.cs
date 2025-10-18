@@ -20,5 +20,6 @@ public interface Interactable
     //If tap-interact, always return true
     bool Release();
 
+    //If tap-interact, leave empty
     void ReleaseAction();
 }

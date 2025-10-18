@@ -101,7 +101,7 @@ public class AlliedCharacter : Character
         //Allied bot cannot use money, has to give it to human player for use
         if (currency > 0)
         {
-            pay(friendlyChar,currency);
+            Pay(currency,friendlyChar);
         }
 
         if (currentState != AIAllyState.Downed)
@@ -274,7 +274,7 @@ public class AlliedCharacter : Character
         aim = false;
 
         //If close enough to player, look at player
-        if (distanceFromPlayer < 3.5 && !Pause.isGamePaused)
+        if (distanceFromPlayer < 3.5 && !Pause.isAnInterfaceActive)
         {
             Quaternion q = Quaternion.LookRotation((followingCharacterCoords - transform.position).normalized);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);

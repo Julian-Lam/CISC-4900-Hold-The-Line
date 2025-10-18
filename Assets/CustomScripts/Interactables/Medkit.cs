@@ -23,6 +23,12 @@ public class Medkit : Item
             npc.health += healValue;
             playerInventory.RemoveItem(this);
             Destroy(this);
+
+        }
+        else if (npc.health >= npc.maxHealth)
+        {
+            //If character is at full health, it will not be used.
+            playerInventory.OnUseFail(this);
         }
     }
 

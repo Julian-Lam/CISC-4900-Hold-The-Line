@@ -187,7 +187,7 @@ MonoBehaviour:
   ammoLeft: 8
   damagePerBullet: 35
   fireRate: 350
-  weaponRange: 20
+  weaponRange: 30
   reloadTime: 1
   reloadEmptyTime: 1
   canBeAutomatic: 0
@@ -198,6 +198,9 @@ MonoBehaviour:
   isUsingADS: 0
   fireAnimation: 0
   shootFromWhere: {fileID: 0}
+  ignoreLayer:
+    serializedVersion: 2
+    m_Bits: 0
   rigidBody: {fileID: 3429045960091120869}
   col: {fileID: -1000127713273837816}
   chest: {fileID: 0}

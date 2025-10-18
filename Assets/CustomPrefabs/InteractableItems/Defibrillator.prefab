@@ -68,7 +68,7 @@ PrefabInstance:
       addedObject: {fileID: 6964619299960522218}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 31ce46d2974f96c4baf1ae1579e2633d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6340728042448735999}
+      addedObject: {fileID: 5976661821122847468}
   m_SourcePrefab: {fileID: 100100000, guid: 31ce46d2974f96c4baf1ae1579e2633d, type: 3}
 --- !u!1 &579117713866211168 stripped
 GameObject:
@@ -123,7 +123,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.003, y: 0.004169732, z: 0.0012573646}
   m_Center: {x: 0, y: 0.00024683567, z: 0.00032436175}
---- !u!114 &6340728042448735999
+--- !u!114 &5976661821122847468
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -132,10 +132,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 579117713866211168}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fb1a58b594e143448a486d96fbcb8cf, type: 3}
+  m_Script: {fileID: 11500000, guid: ae94585c31adf9c428569a21241efed7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Item
+  m_EditorClassIdentifier: Assembly-CSharp::Defibrillator
   itemType: 1
   itemSprite: {fileID: 21300000, guid: abb02fcfdfc19c749b9aab78665d2585, type: 3}
   itemName: Defibrillator
-  itemValue: 0
+  itemValue: 3000
+  useFail: You are not knocked out.
+  maxAllowed: 2

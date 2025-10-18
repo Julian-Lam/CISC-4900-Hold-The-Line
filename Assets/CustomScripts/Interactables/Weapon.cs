@@ -32,6 +32,7 @@ public class Weapon : MonoBehaviour, Interactable
     public float fireAnimation = 0f;
 
     public Transform shootFromWhere;
+    public LayerMask ignoreLayer;
 
     public Rigidbody rigidBody;
     public Collider col;
@@ -47,6 +48,9 @@ public class Weapon : MonoBehaviour, Interactable
     public Transform chest;
 
     public LayerMask ownerLayer;
+
+    private GameObject hitMarker;
+
     //CHILDREN
 
     private Transform muzzle;
@@ -86,7 +90,7 @@ public class Weapon : MonoBehaviour, Interactable
     // Update is called once per frame
     void Update()
     {
-        if (!Pause.isGamePaused)
+        if (!Pause.isAnInterfaceActive)
         {
             if (secondsUntilInactive>0)
             {
@@ -112,6 +116,11 @@ public class Weapon : MonoBehaviour, Interactable
             {
                 isCoroutineActive = true;
             }
+
+            if (hitMarker != null)
+            {
+                DetermineHitLocation();
+            }
         }
     }
 
@@ -132,9 +141,11 @@ public class Weapon : MonoBehaviour, Interactable
             playerStats = o.GetComponent<Character>();
             weaponStorage = FindDescendants(o.transform, "StorageEmpty");
             brandish = FindDescendants(o.transform, "BrandishEmpty");
+            
+            this.hitMarker = player.hitMarker.transform.parent.gameObject;
 
             //Drops current weapon to make space for this one
-            foreach(Transform weapon in weaponStorage)
+            foreach (Transform weapon in weaponStorage)
             {
                 Weapon weaponToBeReplaced = weapon.GetComponent<Weapon>();
                 if(weaponToBeReplaced !=null && weaponToBeReplaced != this)
@@ -215,6 +226,7 @@ public class Weapon : MonoBehaviour, Interactable
             gameObject.layer = LayerMask.NameToLayer("Ignore Camera");
             gameObject.SetActive(true);
             transform.SetParent(null);
+            this.hitMarker = null;
             /*
             transform.position = brandish.position;
             transform.rotation = brandish.rotation;
@@ -436,7 +448,7 @@ public class Weapon : MonoBehaviour, Interactable
 
     public void SetAimFromCamera()
     {
-        shootFromWhere = cam;
+        shootFromWhere = muzzle;
     }
 
     public void SetAimFromChest()
@@ -460,12 +472,44 @@ public class Weapon : MonoBehaviour, Interactable
         cam = FindDescendants(owner, "MainCamera");
     }
 
+    public void DetermineHitLocation()
+    {
+        Ray camRay = new Ray(shootFromWhere.position, shootFromWhere.forward);
+        RaycastHit hit;
+
+        if(Physics.Raycast(camRay,out hit, weaponRange)&&transform.parent==brandish)
+        {
+            hitMarker.transform.position = Camera.main.WorldToScreenPoint(hit.point);
+            if(hit.collider!=null && hit.collider.TryGetComponent<Character>(out Character c))
+            {
+                if (c.faction != playerStats.faction)
+                {
+                    hitMarker.GetComponent<Image>().color = Color.green;
+                }
+                else
+                {
+                    hitMarker.GetComponent<Image>().color = Color.white;
+                }
+            }
+            else
+            {
+                hitMarker.GetComponent<Image>().color = Color.white;
+            }
+        }
+        else
+        {
+            hitMarker.transform.position = new Vector3(Screen.width/2,Screen.height/2,0);
+            hitMarker.GetComponent<Image>().color = Color.white;
+        }
+    }
+
     public bool hitTarget = false;
 
     public void HitTarget()
     {
         Ray r = new Ray(shootFromWhere.position, shootFromWhere.forward);
         RaycastHit hit;
+
         if (Physics.Raycast(r, out hit, weaponRange))
         {
             //Debug.DrawRay(shootFromWhere.position, shootFromWhere.forward * weaponRange);
@@ -497,7 +541,7 @@ public class Weapon : MonoBehaviour, Interactable
                         //If target dies, give all the target's money to the killer
                         if (c.health <= 0)
                         {
-                            c.pay(playerStats, c.currency);
+                            c.Pay(c.currency, playerStats);
                         }
 
                     }
