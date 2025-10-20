@@ -186,6 +186,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponName: STG-2023X2 Schwert
+  weaponValue: 4000
   isEquipped: 0
   maxAmmo: 30
   ammoLeft: 30
@@ -215,6 +216,7 @@ MonoBehaviour:
   aimAfterFire: 0
   isCoroutineActive: 0
   gunSprite: {fileID: 21300000, guid: b5d48f06b66a9d94da7ab499ae7f4e76, type: 3}
+  shopSprite: {fileID: 21300000, guid: 4243349190b754b4eb12b43786f2d42d, type: 3}
   muzzleFlash: {fileID: 1743301284569550, guid: ad2ab49d0a2a17148bd51c93d977bdbc, type: 3}
   shotFiredSound: {fileID: 8300000, guid: c2dc60a8d191dca43b421804301c47f6, type: 3}
   lastBulletFiredSound: {fileID: 0}

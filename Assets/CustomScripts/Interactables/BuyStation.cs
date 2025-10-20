@@ -6,22 +6,28 @@ using StarterAssets;
 public class BuyStation : MonoBehaviour, Interactable
 {
     public GameObject[] itemsToSell;
-    public Transform stockShelf;
+    private Transform stockShelf;
     public Sprite emptySlotSprite;
-    public GameObject store;
+    private GameObject store;
 
-    public GameObject transactionStatusObject;
-    public TextMeshProUGUI transactionStatusMsg;
+    private GameObject transactionStatusObject;
+    private TextMeshProUGUI transactionStatusMsg;
+
+    private Button exitButton;
 
     protected ThirdPersonController player;
     protected Inventory playerInventory;
     protected Character c;
 
-    public Button exitButton;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        store = GameObject.Find("BuyStationCanvas");
+        stockShelf = FindDescendants(store.transform, "StoreShelf");
+        transactionStatusObject = FindDescendants(store.transform, "TransactionStatusParent").gameObject;
+        transactionStatusMsg = FindDescendants(store.transform, "TransactionStatusText").GetComponent<TextMeshProUGUI>();
+        exitButton = FindDescendants(store.transform, "ExitButton").GetComponent<Button>();
+
         transactionStatusObject.SetActive(false);
         store.SetActive(false);
         FindExitButton();
@@ -99,12 +105,31 @@ public class BuyStation : MonoBehaviour, Interactable
                 GameObject purchasedItemObject = Instantiate(i.gameObject, playerInventory.transform.position, Quaternion.identity, playerInventory.transform);
                 purchasedItemObject.gameObject.SetActive(false);
                 Item purchasedItem = purchasedItemObject.GetComponent<Item>();
-                TransactionStatus("#00961D", "Successfully bought " + purchasedItem.itemName + " for NY$" + purchasedItem.itemValue + ".");
+                TransactionStatus("#00961D", "Thank you for your purchase: " + purchasedItem.itemName + " | NY$" + purchasedItem.itemValue.ToString("N2") + ".");
 
                 //Add item to inventory
                 purchasedItem.StoreInInventory(playerInventory);
                 playerInventory.AddItem(purchasedItem);
             }
+        }
+        else
+        {
+            TransactionStatus("#960000", "You cannot afford this.");
+        }
+    }
+
+    public void AttemptPurchase(Weapon w)
+    {
+        //If player can afford weapon
+        if (c.CanAfford(w.weaponValue))
+        {
+            //Pay
+            c.Pay(w.weaponValue);
+
+            //Spawn weapon on top of buy station
+            GameObject purchasedWeaponObject = Instantiate(w.gameObject, transform.position+ new Vector3(0,1,0.5f), Quaternion.Euler(0,90,0));
+            Weapon purchasedWeapon = purchasedWeaponObject.GetComponent<Weapon>();
+            TransactionStatus("#00961D", "Thank you for your purchase: " + purchasedWeapon.weaponName + " | NY$" + purchasedWeapon.weaponValue.ToString("N2") + ".");
         }
         else
         {
@@ -144,16 +169,46 @@ public class BuyStation : MonoBehaviour, Interactable
             }
             else
             {
-                Item currentItem = itemsToSell[listIterator].GetComponent<Item>();
+                if(itemsToSell[listIterator].TryGetComponent<Item>(out Item currentItem))
+                {
+                    currentItem = itemsToSell[listIterator].GetComponent<Item>();
 
-                //Replace slot name with item name
-                nameBox.text = currentItem.itemName + " | NY$: " + currentItem.itemValue;
+                    //Replace slot name with item name
+                    nameBox.text = currentItem.itemName + " | NY$: " + currentItem.itemValue.ToString("N2");
 
-                //Replace slots with item sprites
-                b.onClick.AddListener(() => AttemptPurchase(currentItem));
-                slotImage.sprite = currentItem.itemSprite;
+                    //Replace slots with item sprites
+                    b.onClick.AddListener(() => AttemptPurchase(currentItem));
+                    slotImage.sprite = currentItem.itemSprite;
+                }else if (itemsToSell[listIterator].TryGetComponent<Weapon>(out Weapon currentWeapon))
+                {
+                    currentWeapon = itemsToSell[listIterator].GetComponent<Weapon>();
+
+                    //Replace slot name with item name
+                    string shortenedName = currentWeapon.weaponName.Length > 10 ? currentWeapon.weaponName.Substring(0, 10) : currentWeapon.weaponName;
+                    nameBox.text = shortenedName + " | NY$: " + currentWeapon.weaponValue.ToString("N2");
+
+                    //Replace slots with item sprites
+                    b.onClick.AddListener(() => AttemptPurchase(currentWeapon));
+                    slotImage.sprite = currentWeapon.shopSprite;
+                }
             }
             listIterator++;
         }
+    }
+
+    public Transform FindDescendants(Transform parent, string name)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name == name)
+            {
+                return child;
+            }
+            else if (FindDescendants(child, name) != null)
+            {
+                return FindDescendants(child, name);
+            }
+        }
+        return null;
     }
 }

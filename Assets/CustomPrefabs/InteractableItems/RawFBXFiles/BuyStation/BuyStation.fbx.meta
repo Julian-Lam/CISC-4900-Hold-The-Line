@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 31ce46d2974f96c4baf1ae1579e2633d
+guid: 9e7ef2a14d5f6fd4b9bbda5b32853339
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -7,23 +7,18 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Defib
-    second: {fileID: 2100000, guid: ba5939d472a6f0948bbf94da7c591a2b, type: 2}
+      name: CmdPrompt
+    second: {fileID: 2100000, guid: 2e49714e5d6cdd849b20d08dca2cb5d8, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Node
-    second: {fileID: 2100000, guid: 769b51445e4cea24fa496551fe783282, type: 2}
+      name: Crate
+    second: {fileID: 2100000, guid: 61ecf5d128a53204d87c1d5d50ff1ec2, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Screen
-    second: {fileID: 2100000, guid: f34fe528bd33b1f43b2095fa16e349dd, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Wires
-    second: {fileID: 2100000, guid: 38bcd0678cf1e3b48b32c963bff9290b, type: 2}
+      name: Lid
+    second: {fileID: 2100000, guid: 06f0dfe659d47574eb61b0f1a7760cbd, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

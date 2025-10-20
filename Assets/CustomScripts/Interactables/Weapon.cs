@@ -10,6 +10,7 @@ public class Weapon : MonoBehaviour, Interactable
 {
     //Weapon stats
     public string weaponName;
+    public float weaponValue;
     
     public bool isEquipped = false;
     public float maxAmmo;
@@ -66,6 +67,7 @@ public class Weapon : MonoBehaviour, Interactable
     //IMAGES
 
     public Sprite gunSprite;
+    public Sprite shopSprite;
     public GameObject muzzleFlash;
 
     //AUDIO
