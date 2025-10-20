@@ -63,6 +63,7 @@ itch.io link: TBA
 - MedicBag.fbx
 - MoneyStack.fbx
 - SodaCan.fbx
+- BuyStation.fbx
 
 ## Audio
 
