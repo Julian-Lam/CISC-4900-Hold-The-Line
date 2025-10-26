@@ -19,6 +19,7 @@ namespace StarterAssets
 		public bool selectFireMode;
 		public float strafe;
 		public bool walkBackwards;
+		public bool callAirStrike;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -86,6 +87,11 @@ namespace StarterAssets
 			WalkBackwardsInput(value.isPressed);
 		}
 
+		public void OnCallAirStrike(InputValue value)
+        {
+			CallAirStrikeInput(value.isPressed);
+        }
+
 #endif
 
 
@@ -143,6 +149,11 @@ namespace StarterAssets
 		{
 			walkBackwards = newWalkBackwardsState;
 		}
+
+		public void CallAirStrikeInput(bool newState)
+        {
+			callAirStrike = newState;
+        }
 
 		private void OnApplicationFocus(bool hasFocus)
 		{

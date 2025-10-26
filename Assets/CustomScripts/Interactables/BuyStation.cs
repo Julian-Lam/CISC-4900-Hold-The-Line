@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using StarterAssets;
+using System.Linq;
 
 public class BuyStation : MonoBehaviour, Interactable
 {
@@ -22,15 +23,7 @@ public class BuyStation : MonoBehaviour, Interactable
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        store = GameObject.Find("BuyStationCanvas");
-        stockShelf = FindDescendants(store.transform, "StoreShelf");
-        transactionStatusObject = FindDescendants(store.transform, "TransactionStatusParent").gameObject;
-        transactionStatusMsg = FindDescendants(store.transform, "TransactionStatusText").GetComponent<TextMeshProUGUI>();
-        exitButton = FindDescendants(store.transform, "ExitButton").GetComponent<Button>();
 
-        transactionStatusObject.SetActive(false);
-        store.SetActive(false);
-        FindExitButton();
     }
 
     // Update is called once per frame
@@ -41,9 +34,18 @@ public class BuyStation : MonoBehaviour, Interactable
 
     public void Interact(GameObject o)
     {
+
         player = o.GetComponent<ThirdPersonController>();
         c = o.GetComponent<Character>();
         playerInventory = o.GetComponent<Inventory>();
+
+        store = player.buyCanvas;
+        stockShelf = FindDescendants(store.transform, "StoreShelf");
+        transactionStatusObject = FindDescendants(store.transform, "TransactionStatusParent").gameObject;
+        transactionStatusMsg = FindDescendants(store.transform, "TransactionStatusText").GetComponent<TextMeshProUGUI>();
+        exitButton = FindDescendants(store.transform, "ExitButton").GetComponent<Button>();
+        FindExitButton();
+
         DisplayStock();
         store.SetActive(true);
         transactionStatusObject.SetActive(false);

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.UI;
 
 public class Pause : MonoBehaviour
 {
@@ -28,6 +29,12 @@ public class Pause : MonoBehaviour
 
     public TextMeshProUGUI friendlyFireText;
 
+    public static float airStrikeCooldown;
+
+    public Image airStrikeCoolDownBar;
+
+    public TextMeshProUGUI pilotStatus;
+
     public Character player;
     void Start()
     {
@@ -49,6 +56,12 @@ public class Pause : MonoBehaviour
         {
             EnableGameOver();
         }
+
+        if (airStrikeCooldown > 0)
+        {
+            airStrikeCooldown -= Time.deltaTime;
+        }
+        UpdateAirTraffic();
     }
 
     public void ToggleFriendlyFire()
@@ -141,5 +154,22 @@ public class Pause : MonoBehaviour
         isAnInterfaceActive = false;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    public void UpdateAirTraffic()
+    {
+        if (airStrikeCooldown > 0)
+        {
+            pilotStatus.text = "Not\nReady";
+        }
+        else
+        {
+            pilotStatus.text = "Strike\nReady";
+        }
+        
+        if (airStrikeCoolDownBar != null)
+        {
+            airStrikeCoolDownBar.fillAmount = 1 - (airStrikeCooldown / 10);
+        }
     }
 }

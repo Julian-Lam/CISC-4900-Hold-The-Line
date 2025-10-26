@@ -72,15 +72,13 @@ public class Inventory : MonoBehaviour
             }
             else
             {
-                useFailText.text = "You cannot carry any more of this type of item.";
-                useFailTextCooldown = 3;
+                OnUseFail("You cannot carry any more of this type of item.");
                 return false;
             }
         }
         else
         {
-            useFailText.text = "Inventory full.";
-            useFailTextCooldown = 3;
+            OnUseFail("Inventory full.");
             return false;
         }
     }

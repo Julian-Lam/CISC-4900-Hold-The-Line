@@ -142,6 +142,7 @@ namespace StarterAssets
             _controller = GetComponent<CharacterController>();
             _input = GetComponent<StarterAssetsInputs>();
             c = GetComponent<Character>();
+            playerInventory = GetComponent<Inventory>();
 
             interactTextbox.SetActive(false);
             hitMarker.SetActive(false);
@@ -180,10 +181,10 @@ namespace StarterAssets
                         {
                             OnUseWeapon();
                         }
+                        OnCallAirStrike();
                         SetLookAnimaton();
                     }
                 }
-
             }
 
             HealthCheck();
@@ -199,6 +200,7 @@ namespace StarterAssets
                 _input.jump = false;
                 _input.move = Vector2.zero;
                 _input.walkBackwards = false;
+                _input.callAirStrike = false;
                 _animator.SetFloat(_animIDSpeed, 0f);
                 _animator.SetFloat(_animIDMotionSpeed, 0f);
                 _animator.SetFloat(strafeState, 0);
@@ -808,6 +810,130 @@ namespace StarterAssets
                 {
                     hitMarker.SetActive(false);
                 }
+            }
+        }
+
+        public GameObject buyCanvas;
+
+        private Inventory playerInventory;
+
+        public GameObject explosionParticle;
+
+        public GameObject airSupport;
+
+        private void OnCallAirStrike()
+        {
+            float range = 15.0f;
+
+            Ray inspector = new Ray(_mainCamera.transform.position, _mainCamera.transform.forward);
+            RaycastHit hit;
+
+            Debug.DrawRay(_mainCamera.transform.position, _mainCamera.transform.forward * 8, Color.green);
+
+            if (Physics.Raycast(inspector, out hit, range) && !Pause.isAnInterfaceActive)
+            {
+                if(_input.callAirStrike)
+                {
+
+                    AirStrikeMarker marker = playerInventory.FindItem<AirStrikeMarker>();
+
+                    if (marker==null)
+                    {
+                        playerInventory.OnUseFail("You do not have an Airstrike Flare on you.");
+                        _input.callAirStrike = false;
+                    }
+                    else
+                    {
+                        if (Pause.airStrikeCooldown > 0)
+                        {
+                            playerInventory.OnUseFail("There is too much air traffic over New Isselville at the moment.");
+                            _input.callAirStrike = false;
+                        }
+                        else
+                        {
+                            //"Ride into the Danger Zone" - https://www.youtube.com/watch?v=siwpn14IE7E (Kenny Loggins - Danger Zone (Official Video - Top Gun))
+                            Collider[] charactersInDangerZone = Physics.OverlapSphere(hit.point, 5.5f);
+
+                            int numOfConfirmedHits = 0;
+                            int numOfConfirmedKills = 0;
+
+                            //Every character in the danger zome will decrease health and armor
+                            foreach(Collider col in charactersInDangerZone)
+                            {
+                                if(col.TryGetComponent<Character>(out Character target))
+                                {
+                                    if(target.health>0 && (target.faction != c.faction || (Pause.allowFriendlyFire && target.faction == c.faction)))
+                                    {
+                                        numOfConfirmedHits++;
+
+                                        if (target.health - marker.splashDamage <= 0)
+                                        {
+                                            numOfConfirmedKills++;
+                                        }
+
+                                        target.decreaseHealthAndArmor(target.armor);
+                                        target.decreaseTrueHealth(marker.splashDamage);
+                                    }
+                                }
+                            }
+
+                            //Random coordinates
+                            float Xpos = Random.Range(-4, 4);
+                            float Zpos = Random.Range(-4, 4);
+
+                            float YPos = hit.point.y;
+
+                            //BOOM F--KING BOOM BABY
+                            Instantiate(explosionParticle, hit.point, Quaternion.identity);
+                            for (int explodeCount = 0; explodeCount < 7; explodeCount++)
+                            {
+                                Instantiate(explosionParticle,hit.point+new Vector3(Xpos,YPos,Zpos),Quaternion.identity);
+                            }
+
+                            if (numOfConfirmedKills >= 5)
+                            {
+                                playerInventory.OnUseFail("Strike successful: " + numOfConfirmedHits + " target(s) hit, " + numOfConfirmedKills + " EKIA. Hell f-*static* yea! Crush them dirtbags!");
+                            }
+                            else if(numOfConfirmedHits >=1)
+                            {
+                                playerInventory.OnUseFail("Strike successful: " + numOfConfirmedHits + " target(s) hit, " + numOfConfirmedKills + " EKIA. Good work!");
+                            }
+                            else if(numOfConfirmedHits==0) {
+                                playerInventory.OnUseFail("Strike unsuccessful: " + numOfConfirmedHits + " target(s) hit, " + numOfConfirmedKills + " EKIA. Mission failed! We'll get 'em next time!");
+                            }
+
+                            //Summon airplane | They spawn in donuts. Not too close to the origin
+                            float innerRadius = 45;
+                            float outerRadius = 50;
+
+                            float randomAngle = Random.Range(0,2*Mathf.PI);
+                            float ratio = innerRadius / outerRadius;
+
+
+                            float donut = Mathf.Sqrt(Random.Range(Mathf.Pow(ratio, 2), 1f)) * outerRadius;
+
+                            float ringX = donut * Mathf.Cos(randomAngle);
+                            float ringZ = donut * Mathf.Sin(randomAngle);
+
+                            float skies = YPos + 13;
+
+                            Vector3 aircraftSpawnPoint = new Vector3(ringX+hit.point.x,skies,ringZ+hit.point.z);
+
+                            Vector3 origin = new Vector3(hit.point.x, skies, hit.point.z);
+
+                            Instantiate(airSupport, aircraftSpawnPoint, Quaternion.LookRotation(origin-aircraftSpawnPoint));
+
+                            //Reset
+                            Pause.airStrikeCooldown = 10;
+                            playerInventory.RemoveItem(marker);
+                            _input.callAirStrike = false;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                _input.callAirStrike = false;
             }
         }
     }

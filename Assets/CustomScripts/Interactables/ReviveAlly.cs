@@ -77,7 +77,7 @@ public class ReviveAlly : MonoBehaviour, Interactable
                 }
                 else
                 {
-                    playerInventory.OnUseFail("You do not have a Hefibrillator.");
+                    playerInventory.OnUseFail("You do not have a Defibrillator.");
                 }
             }
             else if (status == "Heal" && reviveCooldown<=0)

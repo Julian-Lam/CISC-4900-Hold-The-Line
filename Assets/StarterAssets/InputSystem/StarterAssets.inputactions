@@ -104,6 +104,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Call AirStrike",
+                    "type": "Button",
+                    "id": "391e45fa-5437-4074-a05d-6df2a004ee6e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -467,6 +476,28 @@
                     "processors": "",
                     "groups": ";Gamepad;Xbox Controller;PS4 Controller",
                     "action": "Walk Backwards",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "82d7a427-44ec-4326-ae68-d9bc0d59b595",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyboardMouse",
+                    "action": "Call AirStrike",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "13e387af-2e73-44be-b5a3-5aba2fc8f5ff",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad;Xbox Controller;PS4 Controller",
+                    "action": "Call AirStrike",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
