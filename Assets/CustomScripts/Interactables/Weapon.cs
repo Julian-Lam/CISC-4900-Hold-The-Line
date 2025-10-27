@@ -119,7 +119,7 @@ public class Weapon : MonoBehaviour, Interactable
                 isCoroutineActive = true;
             }
 
-            if (hitMarker != null)
+            if (isEquipped && hitMarker != null)
             {
                 DetermineHitLocation();
             }
@@ -476,17 +476,24 @@ public class Weapon : MonoBehaviour, Interactable
 
     public void DetermineHitLocation()
     {
-        Ray camRay = new Ray(shootFromWhere.position, shootFromWhere.forward);
-        RaycastHit hit;
-
-        if(Physics.Raycast(camRay,out hit, weaponRange)&&transform.parent==brandish)
+        if (isEquipped)
         {
-            hitMarker.transform.position = Camera.main.WorldToScreenPoint(hit.point);
-            if(hit.collider!=null && hit.collider.TryGetComponent<Character>(out Character c))
+            Ray camRay = new Ray(shootFromWhere.position, shootFromWhere.forward);
+            RaycastHit hit;
+
+            if (Physics.Raycast(camRay, out hit, weaponRange) && transform.parent == brandish)
             {
-                if (c.faction != playerStats.faction)
+                hitMarker.transform.position = Camera.main.WorldToScreenPoint(hit.point);
+                if (hit.collider != null && hit.collider.TryGetComponent<Character>(out Character c))
                 {
-                    hitMarker.GetComponent<Image>().color = Color.green;
+                    if (c.faction != playerStats.faction)
+                    {
+                        hitMarker.GetComponent<Image>().color = Color.green;
+                    }
+                    else
+                    {
+                        hitMarker.GetComponent<Image>().color = Color.white;
+                    }
                 }
                 else
                 {
@@ -495,13 +502,9 @@ public class Weapon : MonoBehaviour, Interactable
             }
             else
             {
+                hitMarker.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, 0);
                 hitMarker.GetComponent<Image>().color = Color.white;
             }
-        }
-        else
-        {
-            hitMarker.transform.position = new Vector3(Screen.width/2,Screen.height/2,0);
-            hitMarker.GetComponent<Image>().color = Color.white;
         }
     }
 
@@ -539,13 +542,6 @@ public class Weapon : MonoBehaviour, Interactable
                         }
                         
                         hitTarget = true;
-
-                        //If target dies, give all the target's money to the killer
-                        if (c.health <= 0)
-                        {
-                            c.Pay(c.currency, playerStats);
-                        }
-
                     }
                 }
             }

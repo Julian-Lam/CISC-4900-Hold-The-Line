@@ -140,4 +140,5 @@ MonoBehaviour:
   itemName: Defibrillator
   itemValue: 3000
   useFail: You are not knocked out.
+  weight: 1
   maxAllowed: 2

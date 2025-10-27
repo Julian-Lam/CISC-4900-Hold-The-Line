@@ -136,5 +136,6 @@ MonoBehaviour:
   itemName: Medic Bag
   itemValue: 500
   useFail: The character you are attempting to heal is at full health.
+  weight: 1
   maxAllowed: 3
   healValue: 25

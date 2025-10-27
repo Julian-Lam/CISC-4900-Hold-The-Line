@@ -98,12 +98,6 @@ public class AlliedCharacter : Character
             distanceFromCurrentTarget = Mathf.Infinity;
         }
 
-        //Allied bot cannot use money, has to give it to human player for use
-        if (currency > 0)
-        {
-            Pay(currency,friendlyChar);
-        }
-
         if (currentState != AIAllyState.Downed)
         {
             CalculateDecisions();
@@ -303,6 +297,15 @@ public class AlliedCharacter : Character
         {
             agent.isStopped = true;
             //animator.SetFloat(animationSpeed, agent.velocity.magnitude);
+        }
+
+        //Teleport to player if stuck somewhere
+        if (distanceFromPlayer > 15)
+        {
+            float RandomX = Random.Range(-2, 2);
+            float RandomZ = Random.Range(-2, 2);
+
+            transform.position = characterToFollow.position + new Vector3(RandomX,1,RandomZ);
         }
     }
 

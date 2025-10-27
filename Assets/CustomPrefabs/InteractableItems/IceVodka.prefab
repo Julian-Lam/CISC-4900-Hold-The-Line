@@ -136,5 +136,6 @@ MonoBehaviour:
   itemName: Ice Vodka
   itemValue: 1000
   useFail: 
+  weight: 10
   maxAllowed: 5
   buffType: 0

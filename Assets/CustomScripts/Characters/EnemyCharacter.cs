@@ -27,6 +27,8 @@ public class EnemyCharacter : Character
 
     private float defaultSpeed;
 
+    public Item[] lootTable;
+
     public static List<EnemyCharacter> enemyList = new List<EnemyCharacter>();
     public static List<EnemyCharacter> enemyCorpseList = new List<EnemyCharacter>();
 
@@ -196,6 +198,7 @@ public class EnemyCharacter : Character
             return;
         }
         isDead = true;
+        DropLoot();
         animator.SetBool(animationDeath, true);
         agent.isStopped = true;
         controller.height = 0.6f;
@@ -207,6 +210,31 @@ public class EnemyCharacter : Character
         enemyCorpseList.Add(this);
 
         Destroy(enemyHealthBar);
+    }
+
+    public void DropLoot()
+    {
+        Transform dropLocation = transform.Find("LootDropLocation");
+        float totalWeight = 0;
+        foreach (Item iw in lootTable)
+        {
+            totalWeight += iw.weight;
+        }
+
+        for(int i = 0; i < 3; i++)
+        {
+            float randomNumber = Random.Range(0, totalWeight);
+            float currentWeight = 0;
+            foreach (Item item in lootTable)
+            {
+                currentWeight += item.weight;
+                if (randomNumber < currentWeight)
+                {
+                    Instantiate(item.gameObject, dropLocation.position, Quaternion.identity);
+                    break;
+                }
+            }
+        }
     }
 
     public void HandleSpeed()

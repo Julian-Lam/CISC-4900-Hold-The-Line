@@ -518,7 +518,7 @@ namespace StarterAssets
         private int aimOnlyAnimation;
         private int knockOutAnimation;
 
-        private Weapon currentWeapon;
+        public Weapon currentWeapon;
 
         public bool isHoldingInteract;
 

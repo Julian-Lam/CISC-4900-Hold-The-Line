@@ -135,3 +135,6 @@ MonoBehaviour:
   itemSprite: {fileID: 0}
   itemName: 
   itemValue: 1000
+  useFail: 
+  weight: 40
+  maxAllowed: 0

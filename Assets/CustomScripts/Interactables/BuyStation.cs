@@ -20,6 +20,8 @@ public class BuyStation : MonoBehaviour, Interactable
     protected Inventory playerInventory;
     protected Character c;
 
+    private float weaponsBoughtThisSession;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -78,6 +80,7 @@ public class BuyStation : MonoBehaviour, Interactable
 
     public void ExitBuyStation()
     {
+        weaponsBoughtThisSession = 0;
         store.SetActive(false);
         transactionStatusObject.SetActive(false);
         Pause.isAnInterfaceActive = false;
@@ -123,19 +126,31 @@ public class BuyStation : MonoBehaviour, Interactable
     public void AttemptPurchase(Weapon w)
     {
         //If player can afford weapon
-        if (c.CanAfford(w.weaponValue))
+        if (weaponsBoughtThisSession == 0)
         {
-            //Pay
-            c.Pay(w.weaponValue);
+            if (c.CanAfford(w.weaponValue))
+            {
+                //Pay
+                c.Pay(w.weaponValue);
 
-            //Spawn weapon on top of buy station
-            GameObject purchasedWeaponObject = Instantiate(w.gameObject, transform.position+ new Vector3(0,1,0.5f), Quaternion.Euler(0,90,0));
-            Weapon purchasedWeapon = purchasedWeaponObject.GetComponent<Weapon>();
-            TransactionStatus("#00961D", "Thank you for your purchase: " + purchasedWeapon.weaponName + " | NY$" + purchasedWeapon.weaponValue.ToString("N2") + ".");
+                //Spawn weapon on top of buy station
+                GameObject purchasedWeaponObject = Instantiate(w.gameObject, transform.position + new Vector3(0, 1, 0.5f), Quaternion.Euler(0, 90, 0));
+                Weapon purchasedWeapon = purchasedWeaponObject.GetComponent<Weapon>();
+
+                player.currentWeapon = purchasedWeapon;
+                purchasedWeapon.Interact(player.gameObject);
+
+                weaponsBoughtThisSession++;
+                TransactionStatus("#00961D", "Thank you for your purchase: " + purchasedWeapon.weaponName + " | NY$" + purchasedWeapon.weaponValue.ToString("N2") + ".");
+            }
+            else
+            {
+                TransactionStatus("#960000", "You cannot afford this.");
+            }
         }
         else
         {
-            TransactionStatus("#960000", "You cannot afford this.");
+            TransactionStatus("#960000", "You already bought a weapon, try again later.");
         }
     }
 

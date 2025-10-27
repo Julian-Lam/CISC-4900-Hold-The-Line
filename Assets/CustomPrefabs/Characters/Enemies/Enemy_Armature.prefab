@@ -959,6 +959,37 @@ Transform:
   - {fileID: 3223325179342382275}
   m_Father: {fileID: 8591837799214136000}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3534431091496536922
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3289876914936305464}
+  m_Layer: 6
+  m_Name: LootDropLocation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3289876914936305464
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3534431091496536922}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.464, z: -0.322}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3726812136309482456}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3564336713202895172
 GameObject:
   m_ObjectHideFlags: 0
@@ -1263,6 +1294,7 @@ Transform:
   - {fileID: 5554800669517014909}
   - {fileID: 2437152497406074166}
   - {fileID: 6705086849169981603}
+  - {fileID: 3289876914936305464}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!95 &7302700255868008866
@@ -1385,6 +1417,11 @@ MonoBehaviour:
   fire: 0
   aim: 0
   reload: 0
+  lootTable:
+  - {fileID: 5405619686486756795, guid: c86e66b01780b7943aefd22f4df4f675, type: 3}
+  - {fileID: 4119773769031842374, guid: 9c40e384d7e5e2d42ac1f6cc90114185, type: 3}
+  - {fileID: 2894394011009986070, guid: 6f0892201a83bb749b4c0b9987596253, type: 3}
+  - {fileID: 7899704002660051682, guid: f1e6e01d7b7a5294680c7ca471868310, type: 3}
   enemyType: 0
   currentState: 0
   LandingAudioClip: {fileID: 8300000, guid: ff697d3070687ce4583faa0561a145a2, type: 3}
