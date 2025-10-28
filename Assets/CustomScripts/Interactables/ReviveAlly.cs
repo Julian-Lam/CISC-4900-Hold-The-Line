@@ -66,18 +66,20 @@ public class ReviveAlly : MonoBehaviour, Interactable
 
             if (status == "Revive")
             {
-
-                if (defib!=null)
+                if (c.currentState==AlliedCharacter.AIAllyState.Downed)
                 {
-                    if (c.health < c.maxHealth)
+                    if (defib != null)
                     {
-                        reviveBarParent.SetActive(true);
+                        if (c.health < c.maxHealth)
+                        {
+                            reviveBarParent.SetActive(true);
+                        }
+                        currentPoints++;
                     }
-                    currentPoints++;
-                }
-                else
-                {
-                    playerInventory.OnUseFail("You do not have a Defibrillator.");
+                    else
+                    {
+                        playerInventory.OnUseFail("You do not have a Defibrillator.");
+                    }
                 }
             }
             else if (status == "Heal" && reviveCooldown<=0)
@@ -98,7 +100,7 @@ public class ReviveAlly : MonoBehaviour, Interactable
     {
         if (status == "Revive")
         {
-            return "Revive";
+            return "Hold to revive";
         }
         else if (status == "Heal")
         {

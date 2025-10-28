@@ -137,5 +137,6 @@ MonoBehaviour:
   itemValue: 500
   useFail: The character you are attempting to heal is at full health.
   weight: 1
+  destroyTimer: 60
   maxAllowed: 3
-  healValue: 25
+  healValue: 100

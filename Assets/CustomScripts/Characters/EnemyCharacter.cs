@@ -32,6 +32,8 @@ public class EnemyCharacter : Character
     public static List<EnemyCharacter> enemyList = new List<EnemyCharacter>();
     public static List<EnemyCharacter> enemyCorpseList = new List<EnemyCharacter>();
 
+    private CorpseDisposal disposalScript;
+
     public enum EnemyType
     {
         Melee,
@@ -71,7 +73,10 @@ public class EnemyCharacter : Character
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
+        disposalScript = GetComponent<CorpseDisposal>();
 
+        disposalScript.enabled = false;
+        
         if (enemyType == EnemyType.Ranged)
         {
             distanceToStopAndAttack = 4f;
@@ -117,6 +122,7 @@ public class EnemyCharacter : Character
             distanceFromSpawn = Vector3.Distance(transform.position, spawnCoords);
 
             CalculateDecisions();
+            OnUseWeapon();
         }
     }
 
@@ -198,11 +204,22 @@ public class EnemyCharacter : Character
             return;
         }
         isDead = true;
-        DropLoot();
-        animator.SetBool(animationDeath, true);
+        disposalScript.enabled = true;
         agent.isStopped = true;
         controller.height = 0.6f;
         controller.center = new Vector3(0, 0.2f, 0);
+        aim = false;
+        fire = false;
+        reload = false;
+        animator.SetBool(animationAim, false);
+        animator.SetBool(animationAimOnly, false);
+        animator.SetFloat(animationFire, 0);
+        if (currentWeapon != null)
+        {
+            currentWeapon.gameObject.SetActive(false);
+        }
+
+        animator.SetBool(animationDeath, true);
 
         enemyList.Remove(this);
         charList.Remove(this);
@@ -230,7 +247,10 @@ public class EnemyCharacter : Character
                 currentWeight += item.weight;
                 if (randomNumber < currentWeight)
                 {
-                    Instantiate(item.gameObject, dropLocation.position, Quaternion.identity);
+                    Vector3 offset = new Vector3(Random.Range(-0.5f,0.5f),0, Random.Range(-0.5f, 0.5f));
+                    
+                    GameObject newItem = Instantiate(item.gameObject, dropLocation.position+offset, Quaternion.Euler(-90,0,0));
+                    Physics.IgnoreCollision(newItem.GetComponent<Collider>(),GetComponent<Collider>());
                     break;
                 }
             }
@@ -293,7 +313,7 @@ public class EnemyCharacter : Character
     {
         if (currentTarget != null)
         {
-            agent.stoppingDistance = 1.5f;
+            agent.stoppingDistance = 2f;
 
             //If close enough to target, look at target
             if (distanceFromCurrentTarget < 5)
@@ -386,6 +406,26 @@ public class EnemyCharacter : Character
                 meleeCooldown = 1f;
             }
         }
+        else if (enemyType == EnemyType.Ranged && currentWeapon != null)
+        {
+            Quaternion q = Quaternion.LookRotation((currentTargetCoords - transform.position).normalized);
+
+            //If target is invalid, too far, or dead, return
+            if (currentTarget == null || distanceFromCurrentTarget >= 4.5 || !IsTargetAlive())
+            {
+                fire = false;
+                aim = false;
+                //Debug.Log("Canceled Attack");
+                return;
+            }
+            else if (currentTarget != null)
+            {
+                //Look at target and use weapon on target
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
+                aim = true;
+                fire = true;
+            }
+        }
     }
 
     private void OnPunch()
@@ -457,6 +497,88 @@ public class EnemyCharacter : Character
                 break;
             default:
                 break;
+        }
+    }
+
+    private void OnUseWeapon()
+    {
+        if (currentWeapon != null)
+        {
+            //AI must use automatic weapons
+            currentWeapon.isAutomatic = true;
+
+            currentWeapon.isTriggerHeld = fire;
+            currentWeapon.isUsingADS = aim;
+            OnFire();
+            OnAim();
+            OnReload();
+        }
+    }
+
+    private void OnFire()
+    {
+        if (currentWeapon != null)
+        {
+            if (fire || aim)
+            {
+                animator.SetBool(animationAim, true);
+            }
+
+            if (fire && !currentWeapon.isReloading)
+            {
+                //Debug.Log("Firing");
+                currentWeapon.Fire();
+                animator.SetFloat(animationFire, currentWeapon.fireAnimation);
+            }
+            else if (!aim && currentWeapon.isReloading)
+            {
+                //Debug.Log("Firing");
+                currentWeapon.LeaveAim();
+                animator.SetFloat(animationFire, currentWeapon.fireAnimation);
+            }
+            else
+            {
+                animator.SetFloat(animationFire, currentWeapon.fireAnimation);
+            }
+        }
+    }
+
+    private void OnAim()
+    {
+        if (currentWeapon != null)
+        {
+            if (currentWeapon != null && aim && !currentWeapon.isReloading)
+            {
+                //Debug.Log("Aiming");
+                currentWeapon.Aim();
+                currentWeapon.SetAimFromChest();
+                animator.SetBool(animationAim, true);
+                animator.SetBool(animationAimOnly, true);
+            }
+            else if (currentWeapon != null && (!aim || currentWeapon.isReloading))
+            {
+                //Debug.Log("Leaving Aim");
+                currentWeapon.LeaveAim();
+                currentWeapon.SetAimFromBarrel();
+                animator.SetBool(animationAimOnly, false);
+            }
+
+            if ((!aim && !fire && !currentWeapon.aimAfterFire) || currentWeapon.isReloading)
+            {
+                //Debug.Log("Leaving Aim");
+                animator.SetBool(animationAim, false);
+            }
+        }
+    }
+
+    private void OnReload()
+    {
+        if (currentWeapon != null && reload)
+        {
+            //Debug.Log("Reloading");
+            aim = false;
+            currentWeapon.Reload();
+            reload = false;
         }
     }
 }

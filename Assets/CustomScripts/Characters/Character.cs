@@ -29,10 +29,10 @@ public class Character : MonoBehaviour
     public float invincibilityTimer;
     public float infiniteStaminaTimer;
 
-    [Header("Stanima")]
-    public float stanima = 100;
-    public float maxStanima = 100;
-    public float timeUntilStanimaRecovery;
+    [Header("Stamina")]
+    public float stamina = 100;
+    public float maxStamina = 100;
+    public float timeUntilStaminaRecovery;
 
     [Header("Currency Stats")]
     public float currency = 0;
@@ -85,13 +85,13 @@ public class Character : MonoBehaviour
                 timeUntilArmorRecovery -= Time.deltaTime;
             }
 
-            if (timeUntilStanimaRecovery<=0 && stanima<maxStanima)
+            if (timeUntilStaminaRecovery<=0 && stamina<maxStamina)
             {
-                increaseStanima(1);
+                increaseStamina(1);
             }
-            else if(timeUntilStanimaRecovery>-1)
+            else if(timeUntilStaminaRecovery>-1)
             {
-                timeUntilStanimaRecovery -= Time.deltaTime;
+                timeUntilStaminaRecovery -= Time.deltaTime;
             }
 
             if (invincibilityTimer >= 0)
@@ -212,30 +212,30 @@ public class Character : MonoBehaviour
         }
     }
 
-    public void increaseStanima(float stanima = 1)
+    public void increaseStamina(float stamina = 1)
     {
-        if (this.stanima + stanima > maxStanima)
+        if (this.stamina + stamina > maxStamina)
         {
-            this.stanima = maxStanima;
+            this.stamina = maxStamina;
         }
         else
         {
-            this.stanima += stanima;
+            this.stamina += stamina;
         }
     }
 
-    public void decreaseStanima(float stanima = 1)
+    public void decreaseStamina(float stamina = 1)
     {
-        timeUntilStanimaRecovery = 2;
+        timeUntilStaminaRecovery = 2;
         if (!hasSpeedBuff)
         {
-            if (this.stanima - stanima <= 0)
+            if (this.stamina - stamina <= 0)
             {
-                this.stanima = 0;
+                this.stamina = 0;
             }
             else
             {
-                this.stanima -= stanima;
+                this.stamina -= stamina;
             }
         }
     }
@@ -250,9 +250,9 @@ public class Character : MonoBehaviour
         this.maxArmor = maxArmor;
     }
 
-    public void setMaxStanima(float maxStanima = 100)
+    public void setMaxStamina(float maxStamina = 100)
     {
-        this.maxStanima = maxStanima;
+        this.maxStamina = maxStamina;
     }
 
     public void setCurrency(float currency)
@@ -313,7 +313,7 @@ public class Character : MonoBehaviour
         }
 
         if (staminaBar != null){
-            staminaBar.fillAmount = stanima / maxStanima;
+            staminaBar.fillAmount = stamina / maxStamina;
         }
 
         if (currencyText != null)

@@ -273,7 +273,7 @@ namespace StarterAssets
         private void Move()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = c.hasSpeedBuff ? 7f : (_input.sprint ? (c.stanima>0? (_input.aim? MoveSpeed : SprintSpeed) : MoveSpeed) : MoveSpeed);
+            float targetSpeed = c.hasSpeedBuff ? 7f : (_input.sprint ? (c.stamina>0? (_input.aim? MoveSpeed : SprintSpeed) : MoveSpeed) : MoveSpeed);
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
@@ -329,7 +329,7 @@ namespace StarterAssets
 
             if(_input.sprint && !_input.aim && _input.move!=Vector2.zero)
             {
-                c.decreaseStanima(0.25f);
+                c.decreaseStamina(0.25f);
             }
 
             //While aiming, character rotation == camera rotation
@@ -759,7 +759,7 @@ namespace StarterAssets
                 _animator.SetBool(knockOutAnimation, true);
                 _controller.height = 0.6f;
                 _controller.center = new Vector3(0, 0.2f, 0);
-                c.decreaseStanima(c.maxStanima);
+                c.decreaseStamina(c.maxStamina);
             }
         }
 
@@ -902,7 +902,12 @@ namespace StarterAssets
                                 playerInventory.OnUseFail("Strike unsuccessful: " + numOfConfirmedHits + " target(s) hit, " + numOfConfirmedKills + " EKIA. Mission failed! We'll get 'em next time!");
                             }
 
-                            //Summon airplane | They spawn in donuts. Not too close to the origin
+                            //Summon airplane | Not too close to the hitorigin
+
+                            /*
+                             
+                            //The original plan was to get them to spawn in donuts, but the plane is often harder to see that way 
+                            
                             float innerRadius = 45;
                             float outerRadius = 50;
 
@@ -914,10 +919,12 @@ namespace StarterAssets
 
                             float ringX = donut * Mathf.Cos(randomAngle);
                             float ringZ = donut * Mathf.Sin(randomAngle);
-
+                            */
                             float skies = YPos + 13;
 
-                            Vector3 aircraftSpawnPoint = new Vector3(ringX+hit.point.x,skies,ringZ+hit.point.z);
+                            //Vector3 aircraftSpawnPoint = new Vector3(ringX+hit.point.x,skies,ringZ+hit.point.z);
+
+                            Vector3 aircraftSpawnPoint = new Vector3(hit.point.x , skies, hit.point.z) + (-transform.forward*5);
 
                             Vector3 origin = new Vector3(hit.point.x, skies, hit.point.z);
 

@@ -21,21 +21,28 @@ public class Item : MonoBehaviour, Interactable
     protected Character c;
     public string useFail;
     public float weight; //Used for drop chance
+    public float destroyTimer;
 
     //Limit of item of this type that can be carried. Set to zero if you want to remove limits.
     //ABSOLUTLY DO NOT CHANGE PREFABS THAT ARE IN THE SCENE
     public float maxAllowed;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    virtual public void Start()
     {
         GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        destroyTimer = 60f;
     }
 
     // Update is called once per frame
-    void Update()
+    virtual public void Update()
     {
-        
+        destroyTimer -= Time.deltaTime;
+
+        if (destroyTimer <= 0)
+        {
+            DestroyIfTimedOut();
+        }
     }
 
     public void Interact(GameObject o)
@@ -101,5 +108,13 @@ public class Item : MonoBehaviour, Interactable
     virtual public void OnUseInventory()
     {
 
+    }
+
+    public void DestroyIfTimedOut()
+    {
+        if (itemType != ItemType.QuestItem && transform.parent==null)
+        {
+            Destroy(gameObject);
+        }
     }
 }

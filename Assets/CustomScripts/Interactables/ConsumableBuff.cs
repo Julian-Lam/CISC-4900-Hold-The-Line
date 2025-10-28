@@ -9,17 +9,18 @@ public class ConsumableBuff : Item
     }
 
     public BuffType buffType;
-    
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override void Start()
     {
+        base.Start();
         itemType = ItemType.Consumable;
     }
 
     // Update is called once per frame
-    void Update()
+    public override void Update()
     {
-        
+        base.Update();
     }
 
     public override void OnUseInventory()
@@ -30,6 +31,7 @@ public class ConsumableBuff : Item
                 c.invincibilityTimer += 8;
                 break;
             case BuffType.SpeedBuff:
+                c.stamina = c.maxStamina;
                 c.infiniteStaminaTimer += 8;
                 break;
         }

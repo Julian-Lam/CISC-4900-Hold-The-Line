@@ -119,10 +119,12 @@ public class Weapon : MonoBehaviour, Interactable
                 isCoroutineActive = true;
             }
 
+            /*
             if (isEquipped && hitMarker != null)
             {
                 DetermineHitLocation();
             }
+            */
         }
     }
 
@@ -314,7 +316,7 @@ public class Weapon : MonoBehaviour, Interactable
                     AudioSource.PlayClipAtPoint(lastBulletFiredSound, transform.position, 1f);
                 }
 
-                HitTarget();
+                HitTarget(player!=null);
                 isReadyToShoot = false;
                 ammoLeft--;
                 StartCoroutine(ResetShot());
@@ -450,7 +452,7 @@ public class Weapon : MonoBehaviour, Interactable
 
     public void SetAimFromCamera()
     {
-        shootFromWhere = muzzle;
+        shootFromWhere = cam;
     }
 
     public void SetAimFromChest()
@@ -474,80 +476,69 @@ public class Weapon : MonoBehaviour, Interactable
         cam = FindDescendants(owner, "MainCamera");
     }
 
-    public void DetermineHitLocation()
-    {
-        if (isEquipped)
-        {
-            Ray camRay = new Ray(shootFromWhere.position, shootFromWhere.forward);
-            RaycastHit hit;
-
-            if (Physics.Raycast(camRay, out hit, weaponRange) && transform.parent == brandish)
-            {
-                hitMarker.transform.position = Camera.main.WorldToScreenPoint(hit.point);
-                if (hit.collider != null && hit.collider.TryGetComponent<Character>(out Character c))
-                {
-                    if (c.faction != playerStats.faction)
-                    {
-                        hitMarker.GetComponent<Image>().color = Color.green;
-                    }
-                    else
-                    {
-                        hitMarker.GetComponent<Image>().color = Color.white;
-                    }
-                }
-                else
-                {
-                    hitMarker.GetComponent<Image>().color = Color.white;
-                }
-            }
-            else
-            {
-                hitMarker.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, 0);
-                hitMarker.GetComponent<Image>().color = Color.white;
-            }
-        }
-    }
-
     public bool hitTarget = false;
 
-    public void HitTarget()
+    public void HitTarget(bool isOwnerPlayer)
     {
         Ray r = new Ray(shootFromWhere.position, shootFromWhere.forward);
         RaycastHit hit;
 
-        if (Physics.Raycast(r, out hit, weaponRange))
+        LayerMask ownerLayer = ~(1 << transform.root.gameObject.layer);
+
+        Vector3 shootFromWhereTargetPoint;
+
+        Ray sfwRay;
+
+        if (isOwnerPlayer)
+        {
+            if (Physics.Raycast(r, out RaycastHit hitPoint, weaponRange, ownerLayer))
+            {
+                shootFromWhereTargetPoint = hitPoint.point;
+            }
+            else
+            {
+                shootFromWhereTargetPoint = r.origin + r.direction * weaponRange;
+            }
+
+            Vector3 direction = (shootFromWhereTargetPoint - muzzle.position).normalized;
+
+            sfwRay = new Ray(muzzle.position, direction);
+        }
+        else
+        {
+            sfwRay = r;
+        }
+
+        if (Physics.Raycast(sfwRay, out hit, weaponRange))
         {
             //Debug.DrawRay(shootFromWhere.position, shootFromWhere.forward * weaponRange);
-
             if (hit.collider != null)
             {
                 //If the target is a character
                 if (hit.collider.TryGetComponent<Character>(out Character c))
                 {
+                    Debug.Log("Hit: " + c);
+
                     //Spawn the target's particles at the hit point
-                    if(c.hitParticle!=null)
+                    if (c.hitParticle != null)
                     {
                         Instantiate(c.hitParticle, hit.point, Quaternion.Euler(0, 180, 0));
                     }
-                    
+
                     //This is to avoid friendly fire
-                    if (c.faction != playerStats.faction || (c.faction==playerStats.faction && Pause.allowFriendlyFire))
+                    if (c.faction != playerStats.faction || (c.faction == playerStats.faction && Pause.allowFriendlyFire))
                     {
-                        c.decreaseHealthAndArmor(damagePerBullet/2,damagePerBullet);
-                        
+                        c.decreaseHealthAndArmor(damagePerBullet / 2, damagePerBullet);
+
                         //Owner is now the attacker if target wasn't a friendly
                         if (c.faction != playerStats.faction)
                         {
                             c.RegisterAttacker(playerStats);
                         }
-                        
+
                         hitTarget = true;
                     }
                 }
-            }
-            else
-            {
-                //Debug.Log("Hit nothing");
             }
         }
     }

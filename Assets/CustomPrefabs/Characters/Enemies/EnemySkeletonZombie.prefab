@@ -988,6 +988,7 @@ GameObject:
   - component: {fileID: 4909564564172395950}
   - component: {fileID: 490896987614538120}
   - component: {fileID: 5643293534608476112}
+  - component: {fileID: 8806176738316203418}
   m_Layer: 6
   m_Name: EnemySkeletonZombie
   m_TagString: Untagged
@@ -1103,7 +1104,7 @@ MonoBehaviour:
   maxHealth: 250
   armor: 10
   maxArmor: 10
-  timeUntilArmorRecovery: 5
+  timeUntilArmorRecovery: 200
   isOnFire: 0
   depleteHealthByFire: 1
   isPoisoned: 0
@@ -1112,9 +1113,9 @@ MonoBehaviour:
   hasSpeedBuff: 0
   invincibilityTimer: 0
   infiniteStaminaTimer: 0
-  stanima: 100
-  maxStanima: 100
-  timeUntilStanimaRecovery: 2
+  stamina: 100
+  maxStamina: 100
+  timeUntilStaminaRecovery: 0
   currency: 1000
   faction: OpFor
   staminaBar: {fileID: 0}
@@ -1181,6 +1182,18 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &8806176738316203418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2253463028101840356}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ab5d19540f65804bb766f012f23053c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CorpseDisposal
 --- !u!1 &2518958108609288207
 GameObject:
   m_ObjectHideFlags: 0

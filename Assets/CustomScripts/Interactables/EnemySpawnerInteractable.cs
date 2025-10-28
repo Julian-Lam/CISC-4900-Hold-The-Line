@@ -27,7 +27,7 @@ public class EnemySpawnerInteractable : MonoBehaviour, Interactable
 
     public string Description()
     {
-        return "Spawn random enemy.";
+        return "Spawn random enemy";
     }
 
     public bool CanHoldInteract()

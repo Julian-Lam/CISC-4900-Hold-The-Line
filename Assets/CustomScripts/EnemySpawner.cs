@@ -24,7 +24,7 @@ public class EnemySpawner : MonoBehaviour
             stopWatch += Time.deltaTime;
         }
 
-        if (stopWatch>=2.5f)
+        if (stopWatch>=5f)
         {
             CleanOutDeadEnemies();
             SpawnEnemy();

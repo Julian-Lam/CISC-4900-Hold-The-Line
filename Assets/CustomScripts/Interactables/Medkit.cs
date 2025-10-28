@@ -5,15 +5,16 @@ public class Medkit : Item
     public float healValue;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override void Start()
     {
+        base.Start();
         itemType = ItemType.Consumable;
     }
 
     // Update is called once per frame
-    void Update()
+    public override void Update()
     {
-        
+        base.Update();
     }
 
     public void HealCharacter(Character npc)
