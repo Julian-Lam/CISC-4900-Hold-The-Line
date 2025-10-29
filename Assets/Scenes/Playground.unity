@@ -6410,6 +6410,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BuyStation
       objectReference: {fileID: 0}
+    - target: {fileID: 7461516503092887047, guid: 595a3256043f7874ab153ead219915ac, type: 3}
+      propertyPath: 'itemsToSell.Array.data[0]'
+      value: 
+      objectReference: {fileID: 6302835603321181167, guid: f87e9c10955addb4faa6faa8a76309ce, type: 3}
     m_RemovedComponents:
     - {fileID: 0}
     m_RemovedGameObjects: []
@@ -8710,6 +8714,7 @@ MonoBehaviour:
   - {fileID: 490896987614538120, guid: 87d146828e952954c862c66643651813, type: 3}
   maxNumberOfSpawns: 5
   stopWatch: 0
+  isSpawnerEnabled: 1
 --- !u!1 &1002440974
 GameObject:
   m_ObjectHideFlags: 0
@@ -11417,15 +11422,11 @@ MonoBehaviour:
   attackerDistance: Infinity
   attackedCooldown: 0
   goodHealth: '#72FF78'
-  characterToFollow: {fileID: 1762682261}
-  status: Following
-  distanceFromPlayer: 0
-  currentTarget: {fileID: 0}
-  distanceFromCurrentTarget: Infinity
-  gracePeriod: 0
   currentWeapon: {fileID: 801600971}
-  isFollowing: 1
-  currentState: 0
+  fire: 0
+  aim: 0
+  reload: 0
+  distanceFromCurrentTarget: Infinity
   LandingAudioClip: {fileID: 8300000, guid: ff697d3070687ce4583faa0561a145a2, type: 3}
   FootstepAudioClips:
   - {fileID: 8300000, guid: 72f526a6a9890f643a88e85a61c86c8a, type: 3}
@@ -11439,9 +11440,12 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 274649b0e221539409070ebf6c18918b, type: 3}
   - {fileID: 8300000, guid: a3194b8bbc96ef84fab1f98f4b7dae3e, type: 3}
   FootstepAudioVolume: 0.5
-  fire: 0
-  aim: 0
-  reload: 0
+  characterToFollow: {fileID: 1762682261}
+  status: Following
+  distanceFromPlayer: 0
+  gracePeriod: 0
+  isFollowing: 1
+  currentState: 0
 --- !u!195 &1253871371
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -13437,7 +13441,7 @@ RectTransform:
   m_GameObject: {fileID: 1407421207}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.2, y: 2.2, z: 2.2}
+  m_LocalScale: {x: 1.6600001, y: 1.6600001, z: 1.6600001}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 26748647}
@@ -13445,7 +13449,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 466.1, y: -45}
+  m_AnchoredPosition: {x: 532, y: -45}
   m_SizeDelta: {x: 234.4, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1407421209

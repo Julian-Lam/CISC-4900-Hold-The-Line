@@ -10,25 +10,30 @@ public class EnemySpawner : MonoBehaviour
     public float maxNumberOfSpawns;
     public float stopWatch;
 
+    public bool isSpawnerEnabled=true;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+ 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (spawnedEnemies.Count < maxNumberOfSpawns)
+        if (isSpawnerEnabled)
         {
-            stopWatch += Time.deltaTime;
-        }
+            if (spawnedEnemies.Count < maxNumberOfSpawns)
+            {
+                stopWatch += Time.deltaTime;
+            }
 
-        if (stopWatch>=5f)
-        {
-            CleanOutDeadEnemies();
-            SpawnEnemy();
-            stopWatch = 0;
+            if (stopWatch >= 2.5f)
+            {
+                CleanOutDeadEnemies();
+                SpawnEnemy();
+                stopWatch = 0;
+            }
         }
     }
 

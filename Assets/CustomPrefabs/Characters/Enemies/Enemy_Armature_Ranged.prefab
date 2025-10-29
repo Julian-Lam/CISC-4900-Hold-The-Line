@@ -1933,9 +1933,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: STG-2023X2 Schwert
   weaponValue: 0
-  isEquipped: 0
+  isEquipped: 1
   maxAmmo: 30
   ammoLeft: 30
+  maxReserveAmmo: 180
+  reserveAmmoLeft: 0
   damagePerBullet: 20
   fireRate: 800
   weaponRange: 20
@@ -3703,20 +3705,11 @@ MonoBehaviour:
   attackerDistance: Infinity
   attackedCooldown: 0
   goodHealth: '#ff4d4d'
-  distanceFromCurrentTarget: Infinity
   currentWeapon: {fileID: 2789547798562658880}
-  distanceToStopAndAttack: 0
-  distanceFromSpawn: 0
   fire: 0
   aim: 0
   reload: 0
-  lootTable:
-  - {fileID: 5405619686486756795, guid: c86e66b01780b7943aefd22f4df4f675, type: 3}
-  - {fileID: 4119773769031842374, guid: 9c40e384d7e5e2d42ac1f6cc90114185, type: 3}
-  - {fileID: 2894394011009986070, guid: 6f0892201a83bb749b4c0b9987596253, type: 3}
-  - {fileID: 7899704002660051682, guid: f1e6e01d7b7a5294680c7ca471868310, type: 3}
-  enemyType: 1
-  currentState: 0
+  distanceFromCurrentTarget: Infinity
   LandingAudioClip: {fileID: 8300000, guid: ff697d3070687ce4583faa0561a145a2, type: 3}
   FootstepAudioClips:
   - {fileID: 8300000, guid: 72f526a6a9890f643a88e85a61c86c8a, type: 3}
@@ -3730,6 +3723,15 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 274649b0e221539409070ebf6c18918b, type: 3}
   - {fileID: 8300000, guid: a3194b8bbc96ef84fab1f98f4b7dae3e, type: 3}
   FootstepAudioVolume: 1
+  distanceToStopAndAttack: 0
+  distanceFromSpawn: 0
+  lootTable:
+  - {fileID: 5405619686486756795, guid: c86e66b01780b7943aefd22f4df4f675, type: 3}
+  - {fileID: 4119773769031842374, guid: 9c40e384d7e5e2d42ac1f6cc90114185, type: 3}
+  - {fileID: 2894394011009986070, guid: 6f0892201a83bb749b4c0b9987596253, type: 3}
+  - {fileID: 7899704002660051682, guid: f1e6e01d7b7a5294680c7ca471868310, type: 3}
+  enemyType: 1
+  currentState: 0
   isDead: 0
   enemyHealthBar: {fileID: 9186561148746123238}
   returningToBase: 0

@@ -21,6 +21,7 @@ public class BuyStation : MonoBehaviour, Interactable
     protected Character c;
 
     private float weaponsBoughtThisSession;
+    private float weaponBuyCooldown;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -31,7 +32,14 @@ public class BuyStation : MonoBehaviour, Interactable
     // Update is called once per frame
     void Update()
     {
-
+        if (weaponBuyCooldown <= 0)
+        {
+            weaponsBoughtThisSession = 0;
+        }
+        else
+        {
+            weaponBuyCooldown -= Time.deltaTime;
+        }
     }
 
     public void Interact(GameObject o)
@@ -100,6 +108,24 @@ public class BuyStation : MonoBehaviour, Interactable
         //If player can afford item
         if (c.CanAfford(i.itemValue))
         {
+            if(i.itemName=="Refill Ammo")
+            {
+                if (player.currentWeapon == null)
+                {
+                    TransactionStatus("#960000", "You do not have a weapon equipped.");
+                }
+                else if(player.currentWeapon.reserveAmmoLeft>=player.currentWeapon.maxReserveAmmo)
+                {
+                    TransactionStatus("#960000", "You are full on ammo.");
+                }
+                else
+                {
+                    player.currentWeapon.reserveAmmoLeft = player.currentWeapon.maxReserveAmmo;
+                    TransactionStatus("#00961D", "Thank you for your purchase: Refilled ammo for " + player.currentWeapon.weaponName + " | NY$" + i.itemValue.ToString("N2") + ".");
+                }
+                return;
+            }
+            
             //Check for inventory space
             if (playerInventory.CheckForSpace(i))
             {
@@ -128,7 +154,11 @@ public class BuyStation : MonoBehaviour, Interactable
         //If player can afford weapon
         if (weaponsBoughtThisSession == 0)
         {
-            if (c.CanAfford(w.weaponValue))
+            if (player.currentWeapon != null && w.weaponName == player.currentWeapon.weaponName)
+            {
+                TransactionStatus("#960000", "You already have a weapon of this type.");
+            }
+            else if (c.CanAfford(w.weaponValue))
             {
                 //Pay
                 c.Pay(w.weaponValue);
@@ -136,12 +166,11 @@ public class BuyStation : MonoBehaviour, Interactable
                 //Spawn weapon on top of buy station
                 GameObject purchasedWeaponObject = Instantiate(w.gameObject, transform.position + new Vector3(0, 1, 0.5f), Quaternion.Euler(0, 90, 0));
                 Weapon purchasedWeapon = purchasedWeaponObject.GetComponent<Weapon>();
-
-                player.currentWeapon = purchasedWeapon;
                 purchasedWeapon.Interact(player.gameObject);
 
                 weaponsBoughtThisSession++;
-                TransactionStatus("#00961D", "Thank you for your purchase: " + purchasedWeapon.weaponName + " | NY$" + purchasedWeapon.weaponValue.ToString("N2") + ".");
+                weaponBuyCooldown = 5;
+                TransactionStatus("#00961D", "Thank you for your purchase: " + w.weaponName + " | NY$" + w.weaponValue.ToString("N2") + ".");
             }
             else
             {

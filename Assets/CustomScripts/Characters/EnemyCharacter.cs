@@ -3,27 +3,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyCharacter : Character
+public class EnemyCharacter : CharacterAI
 {
-    private NavMeshAgent agent;
-    private Animator animator;
-    private CharacterController controller;
-
     private Vector3 spawnCoords;
-
-    private Character currentTarget;
-    public float distanceFromCurrentTarget = Mathf.Infinity;
-    private Vector3 currentTargetCoords;
-
-    public Weapon currentWeapon;
 
     public float distanceToStopAndAttack;
 
     public float distanceFromSpawn;
-
-    public bool fire;
-    public bool aim;
-    public bool reload;
 
     private float defaultSpeed;
 
@@ -33,6 +19,8 @@ public class EnemyCharacter : Character
     public static List<EnemyCharacter> enemyCorpseList = new List<EnemyCharacter>();
 
     private CorpseDisposal disposalScript;
+
+    private float oldWeaponDamage;
 
     public enum EnemyType
     {
@@ -55,15 +43,8 @@ public class EnemyCharacter : Character
     public AIEnemyState currentState;
 
     //Animations
-    private int animationSpeed;
-    private int animationMotionSpeed;
     private int animationDeath;
     private int animationPunch;
-
-    //Animations to be used in future enemy types
-    private int animationAim;
-    private int animationAimOnly;
-    private int animationFire;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void Start()
@@ -89,11 +70,18 @@ public class EnemyCharacter : Character
             distanceToStopAndAttack = Mathf.Infinity;
         }
 
+        if (currentWeapon != null)
+        {
+            oldWeaponDamage = currentWeapon.damagePerBullet;
+            currentWeapon.damagePerBullet *= 0.67f;
+        }
+
         spawnCoords = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 
         defaultSpeed = agent.speed;
 
-        GetAnimations();
+        animationDeath = Animator.StringToHash("IsDead");
+        animationPunch = Animator.StringToHash("Punching");
     }
 
     // Update is called once per frame
@@ -126,45 +114,6 @@ public class EnemyCharacter : Character
         }
     }
 
-    public void GetAnimations()
-    {
-        animationSpeed = Animator.StringToHash("Speed");
-        animationMotionSpeed = Animator.StringToHash("MotionSpeed");
-        animationAim = Animator.StringToHash("Aim");
-        animationAimOnly = Animator.StringToHash("AimOnly");
-        animationFire = Animator.StringToHash("Fire");
-        animationDeath = Animator.StringToHash("IsDead");
-        animationPunch = Animator.StringToHash("Punching");
-    }
-
-    //TAKEN FROM ThirdPersonController.cs
-
-    public AudioClip LandingAudioClip;
-    public AudioClip[] FootstepAudioClips;
-    [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
-
-    private void OnFootstep(AnimationEvent animationEvent)
-    {
-        if (animationEvent.animatorClipInfo.weight > 0.5f)
-        {
-            if (FootstepAudioClips.Length > 0)
-            {
-                var index = Random.Range(0, FootstepAudioClips.Length);
-                AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(controller.center), FootstepAudioVolume);
-            }
-        }
-    }
-
-    private void OnLand(AnimationEvent animationEvent)
-    {
-        if (animationEvent.animatorClipInfo.weight > 0.5f)
-        {
-            AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(controller.center), FootstepAudioVolume);
-        }
-    }
-
-    //BELOW IS CUSTOM
-
     public static void DeleteCorpses()
     {
         if (enemyCorpseList.Count > 3)
@@ -177,26 +126,6 @@ public class EnemyCharacter : Character
     public bool isDead;
     public GameObject enemyHealthBar;
 
-    //Return true if the charcter that it is hunting down is alive
-    public bool IsTargetAlive()
-    {
-        if (currentTarget != null)
-        {
-            if (currentTarget.health > 0)
-            {
-                return true;
-            }
-            else
-            {
-
-                return false;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
     public void OnDeath()
     {
         if (isDead)
@@ -216,7 +145,10 @@ public class EnemyCharacter : Character
         animator.SetFloat(animationFire, 0);
         if (currentWeapon != null)
         {
-            currentWeapon.gameObject.SetActive(false);
+            currentWeapon.damagePerBullet = oldWeaponDamage;
+            currentWeapon.reserveAmmoLeft = Mathf.Round(Random.Range(0, currentWeapon.maxReserveAmmo));
+            currentWeapon.Drop();
+            currentWeapon = null;
         }
 
         animator.SetBool(animationDeath, true);
@@ -292,21 +224,7 @@ public class EnemyCharacter : Character
             distanceFromCurrentTarget = closest;
         }
 
-        //If target is dead or too far, forget about attacking it
-        if (distanceFromCurrentTarget > 6 || !IsTargetAlive())
-        {
-            distanceFromCurrentTarget = Mathf.Infinity;
-            attackerDistance = Mathf.Infinity;
-            attacker = null;
-            currentTarget = null;
-        }
-    }
-
-    //Set current target to attacker
-    public void PrioritizeAttacker(float distance)
-    {
-        currentTarget = attacker;
-        distanceFromCurrentTarget = attackerDistance;
+        CancelTargeting();
     }
 
     public void MoveTowardsTarget()
@@ -363,6 +281,7 @@ public class EnemyCharacter : Character
 
     public void Patrol()
     {
+        agent.isStopped = false;
         if (!returningToBase)
         {
             if (!destinationSet && moveCooldown <=0)
@@ -408,23 +327,7 @@ public class EnemyCharacter : Character
         }
         else if (enemyType == EnemyType.Ranged && currentWeapon != null)
         {
-            Quaternion q = Quaternion.LookRotation((currentTargetCoords - transform.position).normalized);
-
-            //If target is invalid, too far, or dead, return
-            if (currentTarget == null || distanceFromCurrentTarget >= 4.5 || !IsTargetAlive())
-            {
-                fire = false;
-                aim = false;
-                //Debug.Log("Canceled Attack");
-                return;
-            }
-            else if (currentTarget != null)
-            {
-                //Look at target and use weapon on target
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
-                aim = true;
-                fire = true;
-            }
+            ShootTarget();
         }
     }
 
@@ -497,88 +400,6 @@ public class EnemyCharacter : Character
                 break;
             default:
                 break;
-        }
-    }
-
-    private void OnUseWeapon()
-    {
-        if (currentWeapon != null)
-        {
-            //AI must use automatic weapons
-            currentWeapon.isAutomatic = true;
-
-            currentWeapon.isTriggerHeld = fire;
-            currentWeapon.isUsingADS = aim;
-            OnFire();
-            OnAim();
-            OnReload();
-        }
-    }
-
-    private void OnFire()
-    {
-        if (currentWeapon != null)
-        {
-            if (fire || aim)
-            {
-                animator.SetBool(animationAim, true);
-            }
-
-            if (fire && !currentWeapon.isReloading)
-            {
-                //Debug.Log("Firing");
-                currentWeapon.Fire();
-                animator.SetFloat(animationFire, currentWeapon.fireAnimation);
-            }
-            else if (!aim && currentWeapon.isReloading)
-            {
-                //Debug.Log("Firing");
-                currentWeapon.LeaveAim();
-                animator.SetFloat(animationFire, currentWeapon.fireAnimation);
-            }
-            else
-            {
-                animator.SetFloat(animationFire, currentWeapon.fireAnimation);
-            }
-        }
-    }
-
-    private void OnAim()
-    {
-        if (currentWeapon != null)
-        {
-            if (currentWeapon != null && aim && !currentWeapon.isReloading)
-            {
-                //Debug.Log("Aiming");
-                currentWeapon.Aim();
-                currentWeapon.SetAimFromChest();
-                animator.SetBool(animationAim, true);
-                animator.SetBool(animationAimOnly, true);
-            }
-            else if (currentWeapon != null && (!aim || currentWeapon.isReloading))
-            {
-                //Debug.Log("Leaving Aim");
-                currentWeapon.LeaveAim();
-                currentWeapon.SetAimFromBarrel();
-                animator.SetBool(animationAimOnly, false);
-            }
-
-            if ((!aim && !fire && !currentWeapon.aimAfterFire) || currentWeapon.isReloading)
-            {
-                //Debug.Log("Leaving Aim");
-                animator.SetBool(animationAim, false);
-            }
-        }
-    }
-
-    private void OnReload()
-    {
-        if (currentWeapon != null && reload)
-        {
-            //Debug.Log("Reloading");
-            aim = false;
-            currentWeapon.Reload();
-            reload = false;
         }
     }
 }

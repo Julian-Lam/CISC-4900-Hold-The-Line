@@ -3,7 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class AlliedCharacter : Character
+public class AlliedCharacter : CharacterAI
 {
 
     [Header("Allied-Specific Stats")]
@@ -15,29 +15,15 @@ public class AlliedCharacter : Character
     public string status;
     public float distanceFromPlayer;
     private Vector3 followingCharacterCoords;
-    private NavMeshAgent agent;
-    private Animator animator;
-    private CharacterController controller;
-
-    public Character currentTarget;
-    public float distanceFromCurrentTarget = Mathf.Infinity;
-    private Vector3 currentTargetCoords;
 
     private ReviveAlly reviveScript;
 
     public float gracePeriod;
 
-    public Weapon currentWeapon;
-
     public bool isFollowing;
 
     //Animations
-    private int animationSpeed;
-    private int animationMotionSpeed;
     private int animationKnockedOut;
-    private int animationAim;
-    private int animationAimOnly;
-    private int animationFire;
 
     public enum AIAllyState
     {
@@ -62,7 +48,7 @@ public class AlliedCharacter : Character
 
         potentialEnemyColliders = new Collider[15];
 
-        GetAnimations();
+        animationKnockedOut = Animator.StringToHash("IsDowned");
     }
 
     public override void Update()
@@ -91,13 +77,6 @@ public class AlliedCharacter : Character
             reviveScript.enabled = false;
         }
 
-        //If target is dead, reset targeting
-        if (currentTarget != null && !IsTargetAlive())
-        {
-            currentTarget = null;
-            distanceFromCurrentTarget = Mathf.Infinity;
-        }
-
         if (currentState != AIAllyState.Downed)
         {
             CalculateDecisions();
@@ -105,63 +84,6 @@ public class AlliedCharacter : Character
         }
     }
 
-    public void GetAnimations()
-    {
-        animationSpeed = Animator.StringToHash("Speed");
-        animationMotionSpeed = Animator.StringToHash("MotionSpeed");
-        animationKnockedOut = Animator.StringToHash("IsDowned");
-        animationAim = Animator.StringToHash("Aim");
-        animationAimOnly = Animator.StringToHash("AimOnly");
-        animationFire = Animator.StringToHash("Fire");
-    }
-
-    //TAKEN FROM ThirdPersonController.cs
-
-    public AudioClip LandingAudioClip;
-    public AudioClip[] FootstepAudioClips;
-    [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
-
-    private void OnFootstep(AnimationEvent animationEvent)
-    {
-        if (animationEvent.animatorClipInfo.weight > 0.5f)
-        {
-            if (FootstepAudioClips.Length > 0)
-            {
-                var index = Random.Range(0, FootstepAudioClips.Length);
-                AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(controller.center), FootstepAudioVolume);
-            }
-        }
-    }
-
-    private void OnLand(AnimationEvent animationEvent)
-    {
-        if (animationEvent.animatorClipInfo.weight > 0.5f)
-        {
-            AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(controller.center), FootstepAudioVolume);
-        }
-    }
-
-    //BELOW IS CUSTOM
-
-    //Return true if the charcter that it is hunting down is alive
-    public bool IsTargetAlive()
-    {
-        if(currentTarget != null)
-        {
-            if (currentTarget.health > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
     public void KnockOut()
     {
         //Make sure the character cannot do anything in this state.
@@ -245,22 +167,9 @@ public class AlliedCharacter : Character
             distanceFromCurrentTarget = closest;
         }
 
-        //If target is dead or too far, forget about attacking it
-        if (distanceFromCurrentTarget > 4.5 || !IsTargetAlive())
-        {
-            distanceFromCurrentTarget = Mathf.Infinity;
-            attackerDistance = Mathf.Infinity;
-            attacker = null;
-            currentTarget = null;
-        }
+        CancelTargeting();
     }
 
-    //Set current target to attacker
-    public void PrioritizeAttacker(float distance)
-    {
-        currentTarget = attacker;
-        distanceFromCurrentTarget = attackerDistance;
-    }
 
     public void MoveTowardsPlayer()
     {
@@ -317,9 +226,8 @@ public class AlliedCharacter : Character
 
     public void Attack()
     {
-        //Look at enemy
+        agent.stoppingDistance = 2;
         Quaternion q = Quaternion.LookRotation((currentTargetCoords - transform.position).normalized);
-        agent.stoppingDistance = 2; 
 
         //If pointing weapon at player, try to find another away around player
         if (IsMuzzleSweeping() && currentTarget!=null)
@@ -327,23 +235,9 @@ public class AlliedCharacter : Character
             agent.destination = currentTarget.transform.position;
             transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
         }
-        else
+        else // if(gracePeriod<0)
         {
-            //If target is invalid, too far, or dead, return
-            if (currentTarget == null || distanceFromCurrentTarget >= 4.5 || !IsTargetAlive() || gracePeriod > 0)
-            {
-                fire = false;
-                aim = false;
-                //Debug.Log("Canceled Attack");
-                return;
-            }
-            else if (currentTarget != null)
-            {
-                //Look at target and use weapon on target
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
-                aim = true;
-                fire = true;
-            }
+            ShootTarget();
         }
     }
 
@@ -447,92 +341,6 @@ public class AlliedCharacter : Character
             default:
                 Idle();
                 break;
-        }
-    }
-
-    public bool fire;
-    public bool aim;
-    public bool reload;
-
-    private void OnUseWeapon()
-    {
-        if (currentWeapon != null)
-        {
-            //AI must use automatic weapons
-            currentWeapon.isAutomatic = true;
-
-            currentWeapon.isTriggerHeld = fire;
-            currentWeapon.isUsingADS = aim;
-            OnFire();
-            OnAim();
-            OnReload();
-        }
-    }
-
-    private void OnFire()
-    {
-        if (currentWeapon != null)
-        {
-            if (fire||aim)
-            {
-                animator.SetBool(animationAim, true);
-            }
-
-            if (fire && !currentWeapon.isReloading)
-            {
-                //Debug.Log("Firing");
-                currentWeapon.Fire();
-                animator.SetFloat(animationFire, currentWeapon.fireAnimation);
-            }
-            else if (!aim && currentWeapon.isReloading)
-            {
-                //Debug.Log("Firing");
-                currentWeapon.LeaveAim();
-                animator.SetFloat(animationFire, currentWeapon.fireAnimation);
-            }
-            else
-            {
-                animator.SetFloat(animationFire, currentWeapon.fireAnimation);
-            }
-        }
-    }
-
-    private void OnAim()
-    {
-        if (currentWeapon != null)
-        {
-            if (currentWeapon != null && aim && !currentWeapon.isReloading)
-            {
-                //Debug.Log("Aiming");
-                currentWeapon.Aim();
-                currentWeapon.SetAimFromChest();
-                animator.SetBool(animationAim, true);
-                animator.SetBool(animationAimOnly, true);
-            }
-            else if (currentWeapon != null && (!aim || currentWeapon.isReloading))
-            {
-                //Debug.Log("Leaving Aim");
-                currentWeapon.LeaveAim();
-                currentWeapon.SetAimFromBarrel();
-                animator.SetBool(animationAimOnly, false);
-            }
-
-            if ((!aim && !fire && !currentWeapon.aimAfterFire) || currentWeapon.isReloading)
-            {
-                //Debug.Log("Leaving Aim");
-                animator.SetBool(animationAim, false);
-            }
-        }
-    }
-
-    private void OnReload()
-    {
-        if (currentWeapon != null && reload)
-        {
-            //Debug.Log("Reloading");
-            aim = false;
-            currentWeapon.Reload();
-            reload = false;
         }
     }
 }

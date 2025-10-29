@@ -182,10 +182,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponName: M1 Garand
-  weaponValue: 3500
+  weaponValue: 3000
   isEquipped: 0
   maxAmmo: 8
   ammoLeft: 8
+  maxReserveAmmo: 48
+  reserveAmmoLeft: 48
   damagePerBullet: 40
   fireRate: 350
   weaponRange: 30
@@ -218,6 +220,8 @@ MonoBehaviour:
   lastBulletFiredSound: {fileID: 8300000, guid: 841ee914498dd914a9e10c6a5e9cbb32, type: 3}
   reloadSound: {fileID: 8300000, guid: 841ee914498dd914a9e10c6a5e9cbb32, type: 3}
   reloadEmptySound: {fileID: 8300000, guid: d9fef064089dc0b48b299994be4ce9d2, type: 3}
+  destroyTimer: 60
+  startDestroyTimer: 0
   hitTarget: 0
 --- !u!4 &4185169728402191180 stripped
 Transform:

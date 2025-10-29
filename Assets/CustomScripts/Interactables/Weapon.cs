@@ -15,6 +15,8 @@ public class Weapon : MonoBehaviour, Interactable
     public bool isEquipped = false;
     public float maxAmmo;
     public float ammoLeft;
+    public float maxReserveAmmo;
+    public float reserveAmmoLeft;
     public float damagePerBullet;
     [Tooltip("Rounds per minute")]
     public float fireRate;
@@ -50,8 +52,6 @@ public class Weapon : MonoBehaviour, Interactable
 
     public LayerMask ownerLayer;
 
-    private GameObject hitMarker;
-
     //CHILDREN
 
     private Transform muzzle;
@@ -76,6 +76,10 @@ public class Weapon : MonoBehaviour, Interactable
     public AudioClip lastBulletFiredSound;
     public AudioClip reloadSound;
     public AudioClip reloadEmptySound;
+
+    public float destroyTimer = 60f;
+    private float currentDestroyTimer;
+    public bool startDestroyTimer = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -119,6 +123,18 @@ public class Weapon : MonoBehaviour, Interactable
                 isCoroutineActive = true;
             }
 
+            if (startDestroyTimer)
+            {
+                if (currentDestroyTimer <= 0)
+                {
+                    Destroy(gameObject);
+                }
+                else
+                {
+                    currentDestroyTimer -= Time.deltaTime;
+                }
+            }
+
             /*
             if (isEquipped && hitMarker != null)
             {
@@ -142,48 +158,43 @@ public class Weapon : MonoBehaviour, Interactable
         {
             //Set owner
             player = o.GetComponent<ThirdPersonController>();
-            playerStats = o.GetComponent<Character>();
-            weaponStorage = FindDescendants(o.transform, "StorageEmpty");
-            brandish = FindDescendants(o.transform, "BrandishEmpty");
-            
-            this.hitMarker = player.hitMarker.transform.parent.gameObject;
 
-            //Drops current weapon to make space for this one
-            foreach (Transform weapon in weaponStorage)
+            if (player.currentWeapon!=null && player.currentWeapon.weaponName == weaponName)
             {
-                Weapon weaponToBeReplaced = weapon.GetComponent<Weapon>();
-                if(weaponToBeReplaced !=null && weaponToBeReplaced != this)
-                {
-                    weaponToBeReplaced.Drop();
-                }
+                player.currentWeapon.IncreaseReserve(ref reserveAmmoLeft);
             }
-
-            foreach (Transform weapon in brandish)
+            else
             {
-                Weapon weaponToBeReplaced = weapon.GetComponent<Weapon>();
-                if (weaponToBeReplaced != null && weaponToBeReplaced != this)
-                {
-                    weaponToBeReplaced.Drop();
-                }
+                playerStats = o.GetComponent<Character>();
+                weaponStorage = FindDescendants(o.transform, "StorageEmpty");
+                brandish = FindDescendants(o.transform, "BrandishEmpty");
+
+                //Drops current weapon to make space for this one
+                CheckForCurrentWeapons(weaponStorage);
+                CheckForCurrentWeapons(brandish);
+
+                player.currentWeapon = this;
+
+                EquipActions();
             }
+        }
+    }
 
-            //Make sure weapon is connected to owner
-            gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-            gameObject.SetActive(true);
-            HideItem(false);
-            ChangeParent(weaponStorage);
-            rigidBody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
-            rigidBody.useGravity = false;
-            rigidBody.isKinematic = true;
-            col.enabled = false;
-            isEquipped = true;
-
+    public void CheckForCurrentWeapons(Transform t)
+    {
+        foreach (Transform weapon in t)
+        {
+            Weapon weaponToBeReplaced = weapon.GetComponent<Weapon>();
+            if (weaponToBeReplaced != null && weaponToBeReplaced != this)
+            {
+                weaponToBeReplaced.Drop();
+            }
         }
     }
 
     public string Description()
     {
-        return "Switch to " + weaponName+" ("+ammoLeft+"/"+maxAmmo+")";
+        return "Switch to " + weaponName+" ("+ammoLeft+"|"+reserveAmmoLeft+")";
     }
 
     public bool CanHoldInteract()
@@ -207,42 +218,63 @@ public class Weapon : MonoBehaviour, Interactable
         {
             weaponStorage = FindDescendants(transform.root, "StorageEmpty");
             brandish = FindDescendants(transform.root, "BrandishEmpty");
-            playerStats = transform.root.gameObject.GetComponent<Character>();
-            //Debug.Log(playerStats);
+            playerStats = transform.root.GetComponent<Character>();
             SetAimFromChest();
-            gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-            gameObject.SetActive(true);
-            HideItem(false);
-            ChangeParent(weaponStorage);
-            rigidBody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
-            rigidBody.useGravity = false;
-            rigidBody.isKinematic = true;
-            col.enabled = false;
-            isEquipped = true;
+            EquipActions();
         }
     }
 
-    //Disconnect weapon from player
+    public void EquipActions()
+    {
+        startDestroyTimer = false;
+        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+        gameObject.SetActive(true);
+        HideItem(false);
+        ChangeParent(weaponStorage);
+        rigidBody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
+        rigidBody.useGravity = false;
+        rigidBody.isKinematic = true;
+        col.enabled = false;
+        isEquipped = true;
+    }
+
+    //Disconnect weapon from owner
     public void Drop()
     {
         if (isEquipped)
         {
-            gameObject.layer = LayerMask.NameToLayer("Ignore Camera");
-            gameObject.SetActive(true);
-            transform.SetParent(null);
-            this.hitMarker = null;
-            /*
-            transform.position = brandish.position;
-            transform.rotation = brandish.rotation;
-            */
-            transform.rotation = Quaternion.identity;
+            if (ammoLeft==0&&reserveAmmoLeft==0)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                gameObject.layer = LayerMask.NameToLayer("Ignore Camera");
+                gameObject.SetActive(true);
 
-            rigidBody.constraints = RigidbodyConstraints.None;
-            rigidBody.isKinematic = false;
-            col.enabled = true;
-            rigidBody.useGravity = true;
-            isEquipped = false;
-            player = null;
+                if (player != null)
+                {
+                    player.currentWeapon = null;
+                }
+                else if (transform.root.TryGetComponent<CharacterAI>(out CharacterAI charAI))
+                {
+                    charAI.currentWeapon = null;
+                }
+
+                transform.SetParent(null);
+                transform.rotation = Quaternion.identity;
+
+                rigidBody.constraints = RigidbodyConstraints.None;
+                rigidBody.isKinematic = false;
+                col.enabled = true;
+                rigidBody.useGravity = true;
+                shootFromWhere = null;
+                chest = null;
+                isEquipped = false;
+                player = null;
+                currentDestroyTimer = destroyTimer;
+                startDestroyTimer = true;
+            }
         }
     }
 
@@ -321,11 +353,15 @@ public class Weapon : MonoBehaviour, Interactable
                 ammoLeft--;
                 StartCoroutine(ResetShot());
             }
-            else if (ammoLeft == 0 && isReadyToShoot)
+            else if (ammoLeft == 0 && reserveAmmoLeft>0 && isReadyToShoot)
             {
                 //Debug.Log("Calling ReloadEmpty After Attempting to Shoot");
                 isReloading = true;
                 ReloadEmpty();
+            }
+            else if(player!=null && ammoLeft == 0 && reserveAmmoLeft==0)
+            {
+                player.GetComponent<Inventory>().OnUseFail("Out of ammo! Find more!");
             }
         }
     }
@@ -376,11 +412,36 @@ public class Weapon : MonoBehaviour, Interactable
 
     public void RefillAmmo()
     {
-        //Debug.Log("Refilling Ammo");
-        ammoLeft = maxAmmo;
+        float ammoNeededForMagRefill = (maxAmmo - ammoLeft);
+
+        if (reserveAmmoLeft >= ammoNeededForMagRefill)
+        {
+            reserveAmmoLeft -= ammoNeededForMagRefill;
+            ammoLeft += ammoNeededForMagRefill;
+        }
+        else
+        {
+            ammoLeft += reserveAmmoLeft;
+            reserveAmmoLeft = 0;
+        }
 
         //No longer reloading
         isReloading = false;
+    }
+
+    public void IncreaseReserve(ref float ammo)
+    {
+        if (ammo + reserveAmmoLeft >= maxReserveAmmo)
+        {
+            ammo = (reserveAmmoLeft + ammo) - maxReserveAmmo;
+            
+            reserveAmmoLeft = maxReserveAmmo;
+        }
+        else
+        {
+            reserveAmmoLeft += ammo;
+            ammo = 0;
+        }
     }
 
     public void SwitchFireMode()
@@ -517,8 +578,6 @@ public class Weapon : MonoBehaviour, Interactable
                 //If the target is a character
                 if (hit.collider.TryGetComponent<Character>(out Character c))
                 {
-                    Debug.Log("Hit: " + c);
-
                     //Spawn the target's particles at the hit point
                     if (c.hitParticle != null)
                     {

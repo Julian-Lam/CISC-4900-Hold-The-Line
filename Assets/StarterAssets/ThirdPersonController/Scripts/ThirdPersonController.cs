@@ -578,12 +578,6 @@ namespace StarterAssets
 
                             //Debug.Log("Interacted with interactable: " + i);
 
-                            //Equip the weapon if interactable is weapon
-                            if (i is Weapon weapon)
-                            {
-                                currentWeapon = weapon;
-                            }
-
                             //If on ground and you have to hold to interact
                             if (i.CanHoldInteract() && Grounded)
                             {
@@ -656,7 +650,7 @@ namespace StarterAssets
         {
             if(currentWeapon != null)
             {
-                if (_input.fire || _input.aim)
+                if ((_input.fire && currentWeapon.ammoLeft>0 && currentWeapon.reserveAmmoLeft>0)|| _input.aim)
                 {
                     _animator.SetBool(aimAnimation, true);
                 }
@@ -780,10 +774,11 @@ namespace StarterAssets
 
                 if (!currentWeapon.isReloading)
                 {
-                    weaponAmmoText.text = "Ammo: "+currentWeapon.ammoLeft.ToString();
-                }else if (currentWeapon.isReloading)
+                    weaponAmmoText.text = "Ammo: "+currentWeapon.ammoLeft.ToString()+" | "+currentWeapon.reserveAmmoLeft.ToString();
+                }
+                else if (currentWeapon.isReloading)
                 {
-                    weaponAmmoText.text = "Reloading...";
+                    weaponAmmoText.text = "Reloading... | " + currentWeapon.reserveAmmoLeft.ToString();
                 }
 
                 if (!currentWeapon.canBeAutomatic)

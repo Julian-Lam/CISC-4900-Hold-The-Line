@@ -282,6 +282,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuyStation
   itemsToSell:
+  - {fileID: 6302835603321181167, guid: f87e9c10955addb4faa6faa8a76309ce, type: 3}
   - {fileID: 4964912828573874504, guid: 6f0892201a83bb749b4c0b9987596253, type: 3}
   - {fileID: 4898502136997948812, guid: 9c40e384d7e5e2d42ac1f6cc90114185, type: 3}
   - {fileID: 8109863931049862282, guid: c86e66b01780b7943aefd22f4df4f675, type: 3}
