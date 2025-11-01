@@ -1,9 +1,34 @@
 fileFormatVersion: 2
 guid: f5d938015a1ae5b4783e670de6295bd9
 ModelImporter:
-  serializedVersion: 22200
+  serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Barrel
+    second: {fileID: 2800000, guid: 6ee584ebf16bfcb45b9d1fe9bc7f2671, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Lower
+    second: {fileID: 2800000, guid: 941309493e163a847802640c774e63fe, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Magazine
+    second: {fileID: 2800000, guid: 26a16e5d750c56f4aad24697af6d69cb, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Stock
+    second: {fileID: 2800000, guid: 1ae7e991b5b0daf4f8c5b7ac1fe8a5dc, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Upper
+    second: {fileID: 2800000, guid: e859999a5051ea1499dba7f21e56c8a6, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -56,6 +81,9 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8

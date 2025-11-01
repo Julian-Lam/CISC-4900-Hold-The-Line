@@ -1,9 +1,29 @@
 fileFormatVersion: 2
 guid: 6b44ee0b4c9f1a64890968d489adb9f2
 ModelImporter:
-  serializedVersion: 22200
+  serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Barrel
+    second: {fileID: 2800000, guid: 803c78265b3b5274ca8992759976a164, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: ChargingHandle
+    second: {fileID: 2800000, guid: 772a781a5d5f28e4f9e79b126bf29faf, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Stock
+    second: {fileID: 2800000, guid: 6d59508732cc91640b9c7ec86a8fd1b2, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Upper
+    second: {fileID: 2800000, guid: 86eb21e128259f24faac594b9e3c2f67, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -56,6 +76,9 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
