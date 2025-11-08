@@ -16,7 +16,7 @@ Controls:
 - Right-Click - Aim current weapon
 - R - Reload
 - B - Switch firing mode (if current weapon allows)
-- 3 - Request air strike at where the player is aiming at
+- Q - Request air strike at where the player is aiming at
 - P or Esc - Pause Game/Close interface
 - G or Tab - Open/Close inventory
 
@@ -27,11 +27,15 @@ itch.io link: TBA
 
 # Unity and Third-Party Assets
 
-[StarterAssets - ThirdPerson](https://assetstore.unity.com/packages/essentials/starter-assets-thirdperson-updates-in-new-charactercontroller-pa-196526#content)
+[StarterAssets - ThirdPerson](https://assetstore.unity.com/packages/essentials/starter-assets-thirdperson-updates-in-new-charactercontroller-pa-196526)
 
-[Particle Pack](https://assetstore.unity.com/packages/vfx/particles/particle-pack-127325#content)
+[Particle Pack](https://assetstore.unity.com/packages/vfx/particles/particle-pack-127325)
 
 [UniVRM](https://vrm.dev/en/univrm/)
+
+[Idyllic Fantasy Nature](https://assetstore.unity.com/packages/3d/environments/fantasy/idyllic-fantasy-nature-260042)
+
+[Handpainted Grass & Ground Textures] (https://assetstore.unity.com/packages/2d/textures-materials/nature/handpainted-grass-ground-textures-187634)
 
 [Animations (StrafeLeft, StrafeRight, Walking Backward, Falling Down, Dying, Punching)](https://www.mixamo.com/#/?page=1&type=Motion%2CMotionPack)
 
@@ -60,6 +64,8 @@ itch.io link: TBA
 
 - STG-2023.fbx
 - M1-Garand.fbx
+- L85A2.fbx
+- M14-EBR.fbx
 
 ## Other Objects
 

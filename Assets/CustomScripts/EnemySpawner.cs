@@ -23,6 +23,8 @@ public class EnemySpawner : MonoBehaviour
     {
         if (isSpawnerEnabled)
         {
+            CleanOutDeadEnemies();
+
             if (spawnedEnemies.Count < maxNumberOfSpawns)
             {
                 stopWatch += Time.deltaTime;
@@ -30,13 +32,11 @@ public class EnemySpawner : MonoBehaviour
 
             if (stopWatch >= 2.5f)
             {
-                CleanOutDeadEnemies();
                 SpawnEnemy();
                 stopWatch = 0;
             }
         }
     }
-
     public void SpawnEnemy()
     {
         if (spawnedEnemies.Count < maxNumberOfSpawns)

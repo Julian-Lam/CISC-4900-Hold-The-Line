@@ -818,7 +818,7 @@ namespace StarterAssets
 
         private void OnCallAirStrike()
         {
-            float range = 15.0f;
+            float range = 30.0f;
 
             Ray inspector = new Ray(_mainCamera.transform.position, _mainCamera.transform.forward);
             RaycastHit hit;

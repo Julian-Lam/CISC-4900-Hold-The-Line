@@ -270,6 +270,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Basil
       objectReference: {fileID: 0}
+    - target: {fileID: 7862101024789640882, guid: 5dfd8a0dde11ae34fa0d0771fec7a3a4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.034
+      objectReference: {fileID: 0}
+    - target: {fileID: 7862101024789640882, guid: 5dfd8a0dde11ae34fa0d0771fec7a3a4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.006
+      objectReference: {fileID: 0}
+    - target: {fileID: 7862101024789640882, guid: 5dfd8a0dde11ae34fa0d0771fec7a3a4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.0499
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
