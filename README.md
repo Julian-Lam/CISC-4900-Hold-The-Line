@@ -37,6 +37,8 @@ itch.io link: TBA
 
 [Handpainted Grass & Ground Textures] (https://assetstore.unity.com/packages/2d/textures-materials/nature/handpainted-grass-ground-textures-187634)
 
+[Low-poly Medieval Free Pack](https://assetstore.unity.com/packages/3d/environments/low-poly-medieval-free-pack-253520)
+
 [Animations (StrafeLeft, StrafeRight, Walking Backward, Falling Down, Dying, Punching)](https://www.mixamo.com/#/?page=1&type=Motion%2CMotionPack)
 
 ## Characters
@@ -77,6 +79,10 @@ itch.io link: TBA
 - BuyStation.fbx
 - SpatzAanvaller.fbx
 - Flare.fbx
+- RenskesHouse.fbx
+- IJsseldorpChurch.fbx
+- FlagpoleNY.fbx
+- FlagpoleNL.fbx
 
 ## Audio
 
