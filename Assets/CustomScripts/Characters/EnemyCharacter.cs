@@ -263,6 +263,7 @@ public class EnemyCharacter : CharacterAI
         if (distanceFromSpawn > 12)
         {
             //Debug.Log("Returning to base");
+            destinationSet = false;
             returningToBase = true;
             agent.isStopped = false;
             agent.destination = spawnCoords;
@@ -287,12 +288,17 @@ public class EnemyCharacter : CharacterAI
             if (!destinationSet && moveCooldown <=0)
             {
                 //Random coordinates
-                float destinationX = Random.Range(-8, 8);
-                float destinationZ = Random.Range(-8, 8);
+                Vector3 rawDestinationCoords = EnemySpawner.GetNewSpawnCoordinates(8);
 
                 //Set new destination
-                newDestination = new Vector3(transform.position.x + destinationX, transform.position.y, transform.position.z + destinationZ);
-                //Debug.Log("Set new destination at: "+ newDestination);
+                newDestination = new Vector3(transform.position.x + rawDestinationCoords.x, transform.position.y, transform.position.z + rawDestinationCoords.z);
+
+                while (!EnemySpawner.CheckIfCoordsAreNavMesh(rawDestinationCoords))
+                {
+                    rawDestinationCoords = EnemySpawner.GetNewSpawnCoordinates(8);
+                    newDestination = new Vector3(transform.position.x + rawDestinationCoords.x, transform.position.y, transform.position.z + rawDestinationCoords.z);
+                }
+
                 destinationSet = true;
             }
             else if(destinationSet)

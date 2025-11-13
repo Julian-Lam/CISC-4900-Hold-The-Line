@@ -35,7 +35,7 @@ itch.io link: TBA
 
 [Idyllic Fantasy Nature](https://assetstore.unity.com/packages/3d/environments/fantasy/idyllic-fantasy-nature-260042)
 
-[Handpainted Grass & Ground Textures] (https://assetstore.unity.com/packages/2d/textures-materials/nature/handpainted-grass-ground-textures-187634)
+[Handpainted Grass & Ground Textures](https://assetstore.unity.com/packages/2d/textures-materials/nature/handpainted-grass-ground-textures-187634)
 
 [Low-poly Medieval Free Pack](https://assetstore.unity.com/packages/3d/environments/low-poly-medieval-free-pack-253520)
 

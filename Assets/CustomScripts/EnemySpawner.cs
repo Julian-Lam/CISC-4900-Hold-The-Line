@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.AI;
 
 
 public class EnemySpawner : MonoBehaviour
@@ -43,11 +44,15 @@ public class EnemySpawner : MonoBehaviour
         {
             if (enemiesToSpawn.Length > 0)
             {
-                float RandomX = Random.Range(-4,4);
-                float RandomZ = Random.Range(-4, 4);
+                Vector3 spawncoords = GetNewSpawnCoordinates(4);
+
+                while (!CheckIfCoordsAreNavMesh(spawncoords))
+                {
+                    spawncoords = GetNewSpawnCoordinates(4);
+                }
 
                 int index = Random.Range(0, enemiesToSpawn.Length);
-                GameObject newEnemy = Instantiate(enemiesToSpawn[index].gameObject,transform.position+new Vector3(RandomX,0,RandomZ),Quaternion.identity);
+                GameObject newEnemy = Instantiate(enemiesToSpawn[index].gameObject,transform.position+spawncoords,Quaternion.identity);
                 spawnedEnemies.Add(newEnemy.GetComponent<EnemyCharacter>());
             }
 
@@ -55,6 +60,26 @@ public class EnemySpawner : MonoBehaviour
             {
                 stopWatch = 0;
             }
+        }
+    }
+
+    public static Vector3 GetNewSpawnCoordinates(float radius)
+    {
+        float RandomX = Random.Range(-radius, radius);
+        float RandomZ = Random.Range(-radius, radius);
+
+        return new Vector3(RandomX, 0, RandomZ);
+    }
+
+    public static bool CheckIfCoordsAreNavMesh(Vector3 coords)
+    {
+        if(NavMesh.SamplePosition(coords,out NavMeshHit hit, 1, NavMesh.AllAreas))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
