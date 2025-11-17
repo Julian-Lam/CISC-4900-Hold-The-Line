@@ -8,12 +8,12 @@ ModelImporter:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: Barracks
-    second: {fileID: 2800000, guid: 18523fba337f19347bd67295c20a887a, type: 3}
+    second: {fileID: 2800000, guid: cf44b55ca8b06014a9c36e151567607d, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: Roof
-    second: {fileID: 2800000, guid: 5517dd9af9b4090409f4c0393325af8e, type: 3}
+    second: {fileID: 2800000, guid: 56f068fe17e2c8c40a0158e58c7a1379, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0

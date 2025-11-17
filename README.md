@@ -1,4 +1,4 @@
-# CISC-4900-Hold-The-Line
+# CISC-4900-Operation-Jager
 
 A game built in Unity that takes place near New York City about 100 years in the future where you fight enemies and support allies.
 
@@ -38,6 +38,8 @@ itch.io link: TBA
 [Handpainted Grass & Ground Textures](https://assetstore.unity.com/packages/2d/textures-materials/nature/handpainted-grass-ground-textures-187634)
 
 [Low-poly Medieval Free Pack](https://assetstore.unity.com/packages/3d/environments/low-poly-medieval-free-pack-253520)
+
+[Furniture Mega Pack - Free](https://assetstore.unity.com/packages/3d/props/furniture/furniture-mega-pack-free-330002)
 
 [Animations (StrafeLeft, StrafeRight, Walking Backward, Falling Down, Dying, Punching)](https://www.mixamo.com/#/?page=1&type=Motion%2CMotionPack)
 
@@ -83,6 +85,10 @@ itch.io link: TBA
 - IJsseldorpChurch.fbx
 - FlagpoleNY.fbx
 - FlagpoleNL.fbx
+- PuntEchoBarracks.fbx
+- WelcomeSignNIJ.fbx
+- WelcomeSignNL.fbx
+- WillysMB.fbx
 
 ## Audio
 
