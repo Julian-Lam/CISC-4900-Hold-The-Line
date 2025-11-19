@@ -66,7 +66,8 @@ itch.io link: TBA
 
 ## Weapons
 
-- STG-2023.fbx
+- STG-2023X2.fbx
+- STG-2023H9.fbx
 - M1-Garand.fbx
 - L85A2.fbx
 - M14-EBR.fbx
@@ -89,6 +90,8 @@ itch.io link: TBA
 - WelcomeSignNIJ.fbx
 - WelcomeSignNL.fbx
 - WillysMB.fbx
+- R36Redbird.fbx
+- ProjectorScreen.fbx
 
 ## Audio
 
