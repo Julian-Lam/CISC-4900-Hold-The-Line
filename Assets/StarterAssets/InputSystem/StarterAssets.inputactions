@@ -594,6 +594,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Dialogue",
+            "id": "7a29ff05-fd2f-4174-a395-a987778382b2",
+            "actions": [
+                {
+                    "name": "Continue Text",
+                    "type": "Button",
+                    "id": "010e2a3c-51a6-4665-8d2f-920838b2e4e3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "27faf687-43b5-4f40-a5f3-6edb9b8bd4a7",
+                    "path": "<Keyboard>/anyKey",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyboardMouse;Xbox Controller;Gamepad;PS4 Controller",
+                    "action": "Continue Text",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

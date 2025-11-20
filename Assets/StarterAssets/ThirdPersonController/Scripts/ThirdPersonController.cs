@@ -146,6 +146,7 @@ namespace StarterAssets
 
             interactTextbox.SetActive(false);
             hitMarker.SetActive(false);
+            dialogueTextBox.SetActive(false);
 
 #if ENABLE_INPUT_SYSTEM
             _playerInput = GetComponent<PlayerInput>();
@@ -419,7 +420,7 @@ namespace StarterAssets
                 }
 
                 // Jump
-                if (_input.jump && _jumpTimeoutDelta <= 0.0f && !isDowned && !_input.interact)
+                if (_input.jump && _jumpTimeoutDelta <= 0.0f && !isDowned && !_input.interact && !Pause.isAnInterfaceActive)
                 {
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
@@ -811,6 +812,10 @@ namespace StarterAssets
         public GameObject buyCanvas;
 
         private Inventory playerInventory;
+
+        public GameObject playerHUDs;
+
+        public GameObject dialogueTextBox;
 
         public GameObject explosionParticle;
 

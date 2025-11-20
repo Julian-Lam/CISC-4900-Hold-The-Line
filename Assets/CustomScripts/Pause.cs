@@ -99,7 +99,7 @@ public class Pause : MonoBehaviour
 
     public void PauseSystem()
     {
-        if (pause.WasPressedThisFrame())
+        if (pause.WasPressedThisFrame()&&!Dialogue.dialogueLocked)
         {
             if (!isAnInterfaceActive)
             {
