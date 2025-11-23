@@ -10,13 +10,14 @@ public class EnemySpawner : MonoBehaviour
     private List<EnemyCharacter> spawnedEnemies = new List<EnemyCharacter>();
     public float maxNumberOfSpawns;
     public float stopWatch;
+    public Camera cam;
 
     public bool isSpawnerEnabled=true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
- 
+        cam = Camera.main;
     }
 
     // Update is called once per frame
@@ -33,7 +34,10 @@ public class EnemySpawner : MonoBehaviour
 
             if (stopWatch >= 2.5f)
             {
-                SpawnEnemy();
+                if (Vector3.Distance(transform.position,cam.transform.position)<=35)
+                {
+                    SpawnEnemy();
+                }
                 stopWatch = 0;
             }
         }

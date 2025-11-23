@@ -214,7 +214,8 @@ public class AlliedCharacter : CharacterAI
             float RandomX = Random.Range(-2, 2);
             float RandomZ = Random.Range(-2, 2);
 
-            transform.position = characterToFollow.position + new Vector3(RandomX,1,RandomZ);
+            transform.position = characterToFollow.position + new Vector3(RandomX,0,RandomZ);
+            distanceFromPlayer = Vector3.Distance(followingCharacterCoords, transform.position);
         }
     }
 

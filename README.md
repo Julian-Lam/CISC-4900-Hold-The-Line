@@ -28,24 +28,20 @@ itch.io link: TBA
 # Unity and Third-Party Assets
 
 [StarterAssets - ThirdPerson](https://assetstore.unity.com/packages/essentials/starter-assets-thirdperson-updates-in-new-charactercontroller-pa-196526)
-
 [Particle Pack](https://assetstore.unity.com/packages/vfx/particles/particle-pack-127325)
-
 [UniVRM](https://vrm.dev/en/univrm/)
-
 [Idyllic Fantasy Nature](https://assetstore.unity.com/packages/3d/environments/fantasy/idyllic-fantasy-nature-260042)
-
 [Handpainted Grass & Ground Textures](https://assetstore.unity.com/packages/2d/textures-materials/nature/handpainted-grass-ground-textures-187634)
-
 [Low-poly Medieval Free Pack](https://assetstore.unity.com/packages/3d/environments/low-poly-medieval-free-pack-253520)
-
 [Furniture Mega Pack - Free](https://assetstore.unity.com/packages/3d/props/furniture/furniture-mega-pack-free-330002)
-
+[Playground Low Poly](https://assetstore.unity.com/packages/3d/environments/playground-low-poly-191533)
 [Animations (StrafeLeft, StrafeRight, Walking Backward, Falling Down, Dying, Punching)](https://www.mixamo.com/#/?page=1&type=Motion%2CMotionPack)
 
 ## Characters
 
 [SkeletonZombie](https://www.mixamo.com/#/?page=1&type=Character)
+
+[SWATGuy](https://www.mixamo.com/#/?page=1&type=Character)
 
 ## Audio
 
@@ -56,13 +52,13 @@ itch.io link: TBA
 ## Characters
 
 - Charlie Gray (Charlie.vrm)
-<img src="/Assets/CustomSprites/CharacterSprites/CharlieThumbnail.png" alt="Portrait of Charlie Gray" style="width:25%; height:auto;">
+<img src="/Assets/CustomSprites/CharacterSprites/CharlieThumbnail.png" alt="Portrait of Charlie Gray" style="width:15%; height:auto;">
 
 - Renske Vanderkleij (Renske.vrm)
-<img src="/Assets/CustomSprites/CharacterSprites/RenskeThumbnail.png" alt="Portrait of Renske Vanderkleij" style="width:25%; height:auto;">
+<img src="/Assets/CustomSprites/CharacterSprites/RenskeThumbnail.png" alt="Portrait of Renske Vanderkleij" style="width:15%; height:auto;">
 
 - Basil Avery (Basil.vrm)
-<img src="/Assets/CustomSprites/CharacterSprites/BasilThumbnail.png" alt="Portrait of Basil Avery" style="width:25%; height:auto;">
+<img src="/Assets/CustomSprites/CharacterSprites/BasilThumbnail.png" alt="Portrait of Basil Avery" style="width:15%; height:auto;">
 
 ## Weapons
 

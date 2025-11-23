@@ -91,6 +91,7 @@ public class Weapon : MonoBehaviour, Interactable
         IfOwnerNPC();
         col = GetComponent<Collider>();
         rigidBody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        FindCamera();
     }
 
     // Update is called once per frame
@@ -106,12 +107,6 @@ public class Weapon : MonoBehaviour, Interactable
             if (isEquipped && secondsUntilInactive<=0)
             {
                 gameObject.SetActive(false);
-            }
-
-            FindCamera();
-            if (shootFromWhere != null)
-            {
-                Debug.DrawRay(shootFromWhere.position, shootFromWhere.forward * weaponRange, Color.green);
             }
 
             if (storeWeapon == null)
@@ -134,13 +129,6 @@ public class Weapon : MonoBehaviour, Interactable
                     currentDestroyTimer -= Time.deltaTime;
                 }
             }
-
-            /*
-            if (isEquipped && hitMarker != null)
-            {
-                DetermineHitLocation();
-            }
-            */
         }
     }
 

@@ -3,47 +3,7 @@ guid: ea2f829e65e565c419520015857dd8e8
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Doors
-    second: {fileID: 2100000, guid: b827b7354f8a11541bedb5fae7dc2a5d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Headlamps
-    second: {fileID: 2100000, guid: dba54ed277d987f44848d14f03e3d2ed, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Rollsigns
-    second: {fileID: 2100000, guid: 565951fe49b6c234ea6789e10c226277, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: TrainCar
-    second: {fileID: 2100000, guid: 21a877950be2cef4089e0f6f53d28cd1, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Wheels
-    second: {fileID: 2100000, guid: 608a6604210562449af1937d6f8373cc, type: 2}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Doors
-    second: {fileID: 2800000, guid: fc47d4e5cb4f85c409a8908871744e96, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: TrainCar
-    second: {fileID: 2800000, guid: e6e77410268e5b5448e2e8fa9ad6d52b, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Wheels
-    second: {fileID: 2800000, guid: 3489efb5f5fe9ba49bc8f29dde0a02b7, type: 3}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0

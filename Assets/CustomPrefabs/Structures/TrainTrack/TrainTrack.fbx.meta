@@ -3,12 +3,7 @@ guid: 293284d1870ebe2489aa777f62d90106
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: TrainTrack
-    second: {fileID: 2800000, guid: da2114a5646102043914e40ebac950b6, type: 3}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0

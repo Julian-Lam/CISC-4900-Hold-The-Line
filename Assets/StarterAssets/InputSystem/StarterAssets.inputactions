@@ -620,6 +620,17 @@
                     "action": "Continue Text",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "91f2a488-64bf-4748-b457-cd337fb36a60",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyboardMouse;Gamepad;PS4 Controller;Xbox Controller",
+                    "action": "Continue Text",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

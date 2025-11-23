@@ -9,9 +9,8 @@ public class Dialogue : MonoBehaviour, Interactable
 {
     public string charName;
     public string firstTimeInteractionName;
-    public static bool dialogueLocked;
-    public static bool isDialogueCooldown;
-    private float timesInteractedWith;
+    private bool dialogueLocked;
+    public float timesInteractedWith;
     private int index;
     private GameObject playerHUD;
     private GameObject playerDialogueBox;
@@ -19,6 +18,7 @@ public class Dialogue : MonoBehaviour, Interactable
     private TextMeshProUGUI DBCharText;
     private Image DBCharPFP;
     private Transform playerModel;
+    
     public DialogueLine[] dialogueLines;
 
     public bool isHumanoidOrAnimal;
@@ -28,6 +28,11 @@ public class Dialogue : MonoBehaviour, Interactable
     private InputAction continueText;
 
     private Quaternion oldRotation;
+    private Quaternion playerRotation;
+
+    public static bool lockInput=false;
+
+    public static Dialogue activeDialogue;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -39,12 +44,14 @@ public class Dialogue : MonoBehaviour, Interactable
     // Update is called once per frame
     void Update()
     {
-        if (userInput!=null && userInput.enabled && continueText.WasPressedThisFrame())
+        if (activeDialogue != this) return;
+
+        if (userInput!=null && userInput.enabled && continueText.WasPressedThisFrame() && !lockInput)
         {
             NextLine();
         }
 
-        if (playerModel!=null && dialogueLocked)
+        if (playerModel != null && dialogueLocked)
         {
             LookAt(playerModel, transform);
             if (isHumanoidOrAnimal)
@@ -55,8 +62,17 @@ public class Dialogue : MonoBehaviour, Interactable
     }
     public void Interact(GameObject o)
     {
+        StopAllCoroutines();
+
+        if(activeDialogue!=null && activeDialogue != this)
+        {
+            activeDialogue.StopAllCoroutines();
+            activeDialogue.ExitDialogue();
+        }
+
+        activeDialogue = this;
+
         dialogueLocked = true;
-        timesInteractedWith++;
         if (!Pause.isAnInterfaceActive)
         {
             Pause.isAnInterfaceActive = true;
@@ -67,6 +83,7 @@ public class Dialogue : MonoBehaviour, Interactable
         DBCharText = playerDialogueBox.transform.Find("DialogueText").GetComponent<TextMeshProUGUI>();
         DBCharPFP = playerDialogueBox.transform.Find("CharacterPFP").GetComponent<Image>();
         playerModel = o.GetComponent<ThirdPersonController>().playerModel;
+        playerRotation = playerModel.rotation;
 
         playerHUD.SetActive(false);
         playerDialogueBox.SetActive(true);
@@ -75,8 +92,6 @@ public class Dialogue : MonoBehaviour, Interactable
 
         userInput.FindActionMap("Dialogue").Enable();
         continueText = userInput.FindAction("Continue Text");
-
-        isDialogueCooldown = true;
 
         NextLine();
     }
@@ -94,20 +109,16 @@ public class Dialogue : MonoBehaviour, Interactable
         }
     }
 
-    //The bottom is only worth messing with if the interaction requires holding.
-
     public bool CanHoldInteract()
     {
         return false;
     }
 
-    //If tap-interact, always return true
     public bool Release()
     {
         return true;
     }
 
-    //If tap-interact, leave empty
     public void ReleaseAction()
     {
 
@@ -118,11 +129,11 @@ public class Dialogue : MonoBehaviour, Interactable
         //Debug.Log("Going to Line: " + index);
         if (index < dialogueLines.Length)
         {
-            if (dialogueLines[index].appearOnlyInFirstInteraction && timesInteractedWith > 1)
+            if (dialogueLines[index].appearOnlyInFirstInteraction && timesInteractedWith > 0)
             {
                 while (index<dialogueLines.Length)
                 {
-                    if (dialogueLines[index].appearOnlyInFirstInteraction && timesInteractedWith > 1)
+                    if (dialogueLines[index].appearOnlyInFirstInteraction && timesInteractedWith > 0)
                     {
                         index++;
                         continue;
@@ -154,23 +165,34 @@ public class Dialogue : MonoBehaviour, Interactable
     {
         ResetText();
         StopAllCoroutines();
+        lockInput = true;
         StartCoroutine(Type());
     }
 
     public void ExitDialogue()
     {
         //Debug.Log("Exiting Dialogue");
+        StopAllCoroutines();
+        timesInteractedWith++;
+        DBCharName.text = "";
+        DBCharText.text = "";
+        DBCharPFP.sprite = null;
         playerDialogueBox.SetActive(false);
         playerHUD.SetActive(true);
-        if (playerModel != null)
-        {
-            playerModel.localRotation = Quaternion.identity;
-        }
+        playerModel.localRotation = Quaternion.identity;
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, oldRotation, 5f);
         playerModel = null;
         transform.rotation = oldRotation;
         index = 0;
-        StopAllCoroutines();
-        StartCoroutine(CooldownDialogue());
+        userInput.FindActionMap("Dialogue").Disable();
+        dialogueLocked = false;
+        Pause.isAnInterfaceActive = false;
+        if (activeDialogue == this)
+        {
+            activeDialogue = null;
+        }
+        lockInput = true;
+        StartCoroutine(WaitForReleaseKeys());
     }
 
     public void ResetText()
@@ -188,22 +210,38 @@ public class Dialogue : MonoBehaviour, Interactable
         }
     }
 
+    public IEnumerator WaitForReleaseKeys()
+    {
+        var inputs = userInput.FindActionMap("GameSystem");
+
+        bool IsAnyKeyPressed()
+        {
+            foreach (var action in inputs.actions)
+            {
+                if (action.IsPressed())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        while (IsAnyKeyPressed()) yield return null;
+
+        yield return null;
+
+        lockInput = false;
+    }
+
     public IEnumerator Type()
     {
         foreach(char c in dialogueLines[index].dialogue.ToCharArray())
         {
             DBCharText.text += c;
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForSeconds(0.001f);
         }
-    }
 
-    public IEnumerator CooldownDialogue()
-    {
-        userInput.FindActionMap("Dialogue").Disable();
-        yield return new WaitForSeconds(0.5f);
-        isDialogueCooldown = false;
-        dialogueLocked = false;
-        Pause.isAnInterfaceActive = false;
+        lockInput = false;
     }
 
     public void LookAt(Transform whoIsLooking,Transform target)

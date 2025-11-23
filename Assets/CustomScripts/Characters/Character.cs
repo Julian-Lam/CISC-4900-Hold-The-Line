@@ -226,7 +226,7 @@ public class Character : MonoBehaviour
 
     public void decreaseStamina(float stamina = 1)
     {
-        timeUntilStaminaRecovery = 2;
+        timeUntilStaminaRecovery = 1;
         if (!hasSpeedBuff)
         {
             if (this.stamina - stamina <= 0)

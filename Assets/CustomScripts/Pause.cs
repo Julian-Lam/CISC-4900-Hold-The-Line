@@ -99,7 +99,7 @@ public class Pause : MonoBehaviour
 
     public void PauseSystem()
     {
-        if (pause.WasPressedThisFrame()&&!Dialogue.dialogueLocked)
+        if (pause.WasPressedThisFrame())
         {
             if (!isAnInterfaceActive)
             {
@@ -107,7 +107,10 @@ public class Pause : MonoBehaviour
             }
             else
             {
-                ResumeGame();
+                if (!Dialogue.activeDialogue)
+                {
+                    ResumeGame();
+                }
             }
         }
     }

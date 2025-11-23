@@ -169,7 +169,7 @@ namespace StarterAssets
 
             JumpAndGravity();
 
-            if (!Pause.isAnInterfaceActive)
+            if (!Pause.isAnInterfaceActive && Dialogue.activeDialogue == null && !Dialogue.lockInput)
             {
                 if (!isDowned)
                 {
@@ -190,7 +190,7 @@ namespace StarterAssets
 
             HealthCheck();
 
-            if (isDowned|| Pause.isAnInterfaceActive)
+            if (isDowned|| Pause.isAnInterfaceActive || Dialogue.activeDialogue!= null || Dialogue.lockInput)
             {
                 _input.fire = false;
                 _input.aim = false;
@@ -202,6 +202,7 @@ namespace StarterAssets
                 _input.move = Vector2.zero;
                 _input.walkBackwards = false;
                 _input.callAirStrike = false;
+                _input.interact = false;
                 _animator.SetFloat(_animIDSpeed, 0f);
                 _animator.SetFloat(_animIDMotionSpeed, 0f);
                 _animator.SetFloat(strafeState, 0);
@@ -539,7 +540,10 @@ namespace StarterAssets
 
         public void ResetRotation()
         {
-            playerModel.localRotation = Quaternion.identity;
+            if (!Pause.isAnInterfaceActive)
+            {
+                playerModel.localRotation = Quaternion.identity;
+            }
             isHoldingInteract = false;
         }
 
@@ -552,7 +556,7 @@ namespace StarterAssets
 
             Debug.DrawRay(_mainCamera.transform.position, _mainCamera.transform.forward*8, Color.green);
 
-            if (Physics.Raycast(inspector,out hit, range) && !Pause.isAnInterfaceActive)
+            if (Physics.Raycast(inspector,out hit, range) && !Pause.isAnInterfaceActive && Dialogue.activeDialogue==null)
             {
                 //If aiming at interactable
                 if (hit.collider.TryGetComponent<Interactable>(out Interactable i))
@@ -614,6 +618,7 @@ namespace StarterAssets
                     {
                         interactTextbox.SetActive(false);
                         _input.interact = false;
+                        ResetRotation();
                         isHoldingInteract = false;
                     }
                 }
@@ -622,6 +627,7 @@ namespace StarterAssets
                     //Safety check if aiming away from interactable
                     _input.interact = false;
                     isHoldingInteract = false;
+                    ResetRotation();
                     interactTextbox.SetActive(false);
                 }
             }
@@ -629,6 +635,7 @@ namespace StarterAssets
             {
                 _input.interact = false;
                 isHoldingInteract = false;
+                ResetRotation();
                 interactTextbox.SetActive(false);
             }
         }
