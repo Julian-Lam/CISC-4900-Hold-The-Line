@@ -41,7 +41,7 @@ itch.io link: TBA
 
 [SkeletonZombie](https://www.mixamo.com/#/?page=1&type=Character)
 
-[SWATGuy](https://www.mixamo.com/#/?page=1&type=Character)
+[Soldier](https://assetstore.unity.com/packages/3d/characters/low-poly-soldiers-demo-73611)
 
 ## Audio
 
@@ -59,6 +59,9 @@ itch.io link: TBA
 
 - Basil Avery (Basil.vrm)
 <img src="/Assets/CustomSprites/CharacterSprites/BasilThumbnail.png" alt="Portrait of Basil Avery" style="width:15%; height:auto;">
+
+- Irene Vanderkleij (Irene.vrm)
+<img src="/Assets/CustomSprites/CharacterSprites/IreneThumbnail.png" alt="Portrait of Irene Vanderkleij" style="width:15%; height:auto;">
 
 ## Weapons
 
