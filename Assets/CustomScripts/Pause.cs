@@ -15,6 +15,7 @@ public class Pause : MonoBehaviour
     public GameObject gameOverMenu;
     public GameObject inventoryMenu;
     public GameObject buyStationMenu;
+    public GameObject controlMenu;
 
     public static bool isAnInterfaceActive;
 
@@ -44,6 +45,7 @@ public class Pause : MonoBehaviour
         inventory = userInput.FindAction("Inventory");
         gameOverMenu.SetActive(false);
         inventoryMenu.SetActive(false);
+        controlMenu.SetActive(false);
     }
 
     void Update()
@@ -83,11 +85,18 @@ public class Pause : MonoBehaviour
         pauseMenu.SetActive(false);
         inventoryMenu.SetActive(false);
         buyStationMenu.SetActive(false);
+        controlMenu.SetActive(false);
         Time.timeScale = 1;
         isAnInterfaceActive = false;
         isInventoryOpen = false;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    public void OpenControlMenu()
+    {
+        pauseMenu.SetActive(false);
+        controlMenu.SetActive(true);
     }
 
     public void QuitToMenu()
