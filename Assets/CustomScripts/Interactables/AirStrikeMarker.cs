@@ -4,6 +4,7 @@ public class AirStrikeMarker : Item
 {
 
     public float splashDamage;
+    public AudioClip explosionSound;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void Start()

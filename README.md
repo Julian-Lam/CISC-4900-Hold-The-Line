@@ -46,6 +46,10 @@ itch.io link: TBA
 ## Audio
 
 [M1 Garand Ping](https://www.myinstants.com/en/instant/m1-garand-ping-11528/)
+[Gunfire](https://tuna.voicemod.net/sound/59a7efae-97d5-4e01-9774-746714fbf852)
+[Gun Reload](https://tuna.voicemod.net/sound/376fcecc-7fa2-4e4e-b8f6-b694254a53e1)
+[Explosion](https://tuna.voicemod.net/sound/05b3770c-e4be-4e02-b9a6-9befee677640)
+[Plane](https://tuna.voicemod.net/sound/dc403ccd-74a9-48d4-a0ea-c67274ea90b8)
 
 # Custom-made avatars and models
 
@@ -91,6 +95,7 @@ itch.io link: TBA
 - WillysMB.fbx
 - R36Redbird.fbx
 - ProjectorScreen.fbx
+- Laptop.fbx
 
 ## Audio
 

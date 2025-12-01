@@ -79,9 +79,9 @@ public class Dialogue : MonoBehaviour, Interactable
         }
         playerHUD = o.GetComponent<ThirdPersonController>().playerHUDs;
         playerDialogueBox = o.GetComponent<ThirdPersonController>().dialogueTextBox;
-        DBCharName = playerDialogueBox.transform.Find("CharacterNameText").GetComponent<TextMeshProUGUI>();
-        DBCharText = playerDialogueBox.transform.Find("DialogueText").GetComponent<TextMeshProUGUI>();
-        DBCharPFP = playerDialogueBox.transform.Find("CharacterPFP").GetComponent<Image>();
+        DBCharName = FindDescendants(playerDialogueBox.transform, "CharacterNameText").GetComponent<TextMeshProUGUI>();
+        DBCharText = FindDescendants(playerDialogueBox.transform, "DialogueText").GetComponent<TextMeshProUGUI>();
+        DBCharPFP = FindDescendants(playerDialogueBox.transform, "CharacterPFP").GetComponent<Image>();
         playerModel = o.GetComponent<ThirdPersonController>().playerModel;
         playerRotation = playerModel.rotation;
 
@@ -250,5 +250,21 @@ public class Dialogue : MonoBehaviour, Interactable
         q.x = 0;
         q.z = 0;
         whoIsLooking.rotation = Quaternion.RotateTowards(whoIsLooking.rotation, q, 5f);
+    }
+
+    public Transform FindDescendants(Transform parent, string name)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name == name)
+            {
+                return child;
+            }
+            else if (FindDescendants(child, name) != null)
+            {
+                return FindDescendants(child, name);
+            }
+        }
+        return null;
     }
 }

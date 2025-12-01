@@ -892,6 +892,7 @@ namespace StarterAssets
 
                             //BOOM F--KING BOOM BABY
                             Instantiate(explosionParticle, hit.point, Quaternion.identity);
+                            AudioSource.PlayClipAtPoint(marker.explosionSound, transform.TransformPoint(_controller.center), 1);
                             for (int explodeCount = 0; explodeCount < 7; explodeCount++)
                             {
                                 Instantiate(explosionParticle,hit.point+new Vector3(Xpos,YPos,Zpos),Quaternion.identity);

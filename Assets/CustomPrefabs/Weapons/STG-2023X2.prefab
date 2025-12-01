@@ -753,9 +753,9 @@ MonoBehaviour:
   gunSprite: {fileID: 21300000, guid: b5d48f06b66a9d94da7ab499ae7f4e76, type: 3}
   shopSprite: {fileID: 21300000, guid: 4243349190b754b4eb12b43786f2d42d, type: 3}
   muzzleFlash: {fileID: 1743301284569550, guid: ad2ab49d0a2a17148bd51c93d977bdbc, type: 3}
-  shotFiredSound: {fileID: 8300000, guid: c2dc60a8d191dca43b421804301c47f6, type: 3}
+  shotFiredSound: {fileID: 8300000, guid: 6283b22ad79fac24982e8dbace56e5a9, type: 3}
   lastBulletFiredSound: {fileID: 0}
-  reloadSound: {fileID: 8300000, guid: d9fef064089dc0b48b299994be4ce9d2, type: 3}
+  reloadSound: {fileID: 8300000, guid: 994596e8ab25bf44690b1c6a7de36ece, type: 3}
   reloadEmptySound: {fileID: 0}
   destroyTimer: 60
   startDestroyTimer: 0

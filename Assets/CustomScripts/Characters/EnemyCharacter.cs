@@ -60,7 +60,7 @@ public class EnemyCharacter : CharacterAI
         
         if (enemyType == EnemyType.Ranged)
         {
-            distanceToStopAndAttack = 4f;
+            distanceToStopAndAttack = 6.5f;
         }
         else if (enemyType == EnemyType.Melee)
         {
@@ -234,7 +234,7 @@ public class EnemyCharacter : CharacterAI
             agent.stoppingDistance = 2f;
 
             //If close enough to target, look at target
-            if (distanceFromCurrentTarget < 5)
+            if (distanceFromCurrentTarget < 6.5)
             {
                 Quaternion q = Quaternion.LookRotation((currentTargetCoords - transform.position).normalized);
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);

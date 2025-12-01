@@ -3,11 +3,11 @@ using UnityEngine;
 public class AirSupport : MonoBehaviour
 {
     public float timeUntilDisappearance = 10.5f;
-    
+    public AudioClip planeSound;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        AudioSource.PlayClipAtPoint(planeSound, transform.position, 0.75f);
     }
 
     // Update is called once per frame

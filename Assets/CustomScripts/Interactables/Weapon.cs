@@ -91,7 +91,6 @@ public class Weapon : MonoBehaviour, Interactable
         IfOwnerNPC();
         col = GetComponent<Collider>();
         rigidBody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-        FindCamera();
     }
 
     // Update is called once per frame
@@ -162,8 +161,8 @@ public class Weapon : MonoBehaviour, Interactable
                 CheckForCurrentWeapons(brandish);
 
                 player.currentWeapon = this;
-
                 EquipActions();
+                FindCamera();
             }
         }
     }

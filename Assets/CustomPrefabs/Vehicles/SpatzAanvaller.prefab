@@ -894,6 +894,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AirSupport
   timeUntilDisappearance: 10.5
+  planeSound: {fileID: 8300000, guid: bc94d950aaa4fd34baa628e279d724bc, type: 3}
 --- !u!1 &3996383181985938727 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8029859496329108347, guid: 1228bbb8a192d8247b27b0c0d09ab64b, type: 3}

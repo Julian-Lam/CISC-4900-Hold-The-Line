@@ -162,3 +162,4 @@ MonoBehaviour:
   destroyTimer: 60
   maxAllowed: 2
   splashDamage: 150
+  explosionSound: {fileID: 8300000, guid: 246f61e15f0bd0d4abf07ef04f7d3769, type: 3}

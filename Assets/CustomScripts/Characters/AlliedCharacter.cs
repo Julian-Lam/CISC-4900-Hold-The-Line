@@ -138,7 +138,7 @@ public class AlliedCharacter : CharacterAI
         else if (currentTarget == null && EnemyCharacter.enemyList.Count > 0)
         {
             //Using a "OverlapSphere", find how many possible enemies there are from a certain radius
-            int numOfPotentialEnemies = Physics.OverlapSphereNonAlloc(transform.position, 4.5f, potentialEnemyColliders, LayerMask.GetMask("Enemy"));
+            int numOfPotentialEnemies = Physics.OverlapSphereNonAlloc(transform.position, 6.5f, potentialEnemyColliders, LayerMask.GetMask("Enemy"));
             float closest = Mathf.Infinity;
 
             //Debug.Log("Number of potential enemies: "+numOfPotentialEnemies);
@@ -157,7 +157,7 @@ public class AlliedCharacter : CharacterAI
                     }
 
                     float distance = Vector3.Distance(c.transform.position, transform.position);
-                    if (c is EnemyCharacter && distance < closest && distance < 4.5 && c.health > 0)
+                    if (c is EnemyCharacter && distance < closest && distance < 6.5 && c.health > 0)
                     {
                         currentTarget = c;
                         closest = distance;
@@ -209,7 +209,7 @@ public class AlliedCharacter : CharacterAI
         }
 
         //Teleport to player if stuck somewhere
-        if (distanceFromPlayer > 15)
+        if (distanceFromPlayer > 15 && currentState!=AIAllyState.Downed)
         {
             float RandomX = Random.Range(-2, 2);
             float RandomZ = Random.Range(-2, 2);
@@ -302,11 +302,11 @@ public class AlliedCharacter : CharacterAI
             {
                 currentState = AIAllyState.Reloading;
             }
-            else if (isFollowing && (distanceFromPlayer > 5.5f || currentWeapon.isReloading || currentTarget == null))
+            else if (isFollowing && (distanceFromPlayer > 6.6f || currentWeapon.isReloading || currentTarget == null))
             {
                 currentState = AIAllyState.Following;
             } 
-            else if (currentTarget != null && distanceFromCurrentTarget < 4.5f && IsTargetAlive() && gracePeriod <= 0)
+            else if (currentTarget != null && distanceFromCurrentTarget < 6.5f && IsTargetAlive() && gracePeriod <= 0)
             {
                 currentState = AIAllyState.Attacking;
             }
