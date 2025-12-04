@@ -6581,7 +6581,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3567362009391680029, guid: 78cc8bf0472190d47a8f2a73131d01af, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.232
+      value: 4.631
       objectReference: {fileID: 0}
     - target: {fileID: 3567362009391680029, guid: 78cc8bf0472190d47a8f2a73131d01af, type: 3}
       propertyPath: m_LocalRotation.w
@@ -41189,7 +41189,7 @@ GameObject:
   - component: {fileID: 1137622464}
   - component: {fileID: 1137622463}
   m_Layer: 5
-  m_Name: Background
+  m_Name: Bios
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42658,8 +42658,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New York Air National Guard pilot. Knowledgable on aircraft. Lives on the
-    NYMS Orange aircraft carrier. Is docile. Will attack if given the order.
+  m_text: New York Air National Guard pilot. Young but experienced. Knowledgable
+    on aircraft. Stationed at Newark or the NYMS Orange aircraft carrier. Will attack
+    if given the order.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -45796,8 +45797,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Revived late girl from New Netherlands. Friends with people from New Isselville
-    except for one crazy farmer. In military custody. Will not attack unless threatened.
+  m_text: Revived spirit of a girl from New Netherland. Friends with people from
+    New Isselville except for one crazy farmer. In military custody. Will not attack
+    unless feeling threatened.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -54601,11 +54603,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 746351002772371651, guid: 188ea6ba08e7ba346ae2789802cdd18a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.096
+      value: 6.738
       objectReference: {fileID: 0}
     - target: {fileID: 746351002772371651, guid: 188ea6ba08e7ba346ae2789802cdd18a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.277
+      value: 5.676
       objectReference: {fileID: 0}
     - target: {fileID: 746351002772371651, guid: 188ea6ba08e7ba346ae2789802cdd18a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -63129,6 +63131,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3695203144869859252, guid: d6a9da203f8613745af6e3d0e3c20d2c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1964086745}
+    - targetCorrespondingSourceObject: {fileID: 3695203144869859252, guid: d6a9da203f8613745af6e3d0e3c20d2c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1964086746}
   m_SourcePrefab: {fileID: 100100000, guid: d6a9da203f8613745af6e3d0e3c20d2c, type: 3}
 --- !u!4 &1964086743 stripped
 Transform:
@@ -63162,6 +63167,37 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 6320482713778602341, guid: 890e0bec7f39c164d914e6d5a0e780bd, type: 3}
+--- !u!114 &1964086746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1964086744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e455bdf3ce136ca4a81ea5f925dc5178, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Dialogue
+  charName: Sink
+  firstTimeInteractionName: 
+  timesInteractedWith: 0
+  dialogueLines:
+  - speakerName: Charlie
+    dialogue: I keep having to reminding Renske that we gotta wash our hands before
+      eating.
+    appearOnlyInFirstInteraction: 0
+    speakerPFP: {fileID: 21300000, guid: 812f1a892b8cf294a9b69afdab8a83a1, type: 3}
+  - speakerName: Charlie
+    dialogue: Turns out people from her time didn't... Yea.
+    appearOnlyInFirstInteraction: 0
+    speakerPFP: {fileID: 21300000, guid: 812f1a892b8cf294a9b69afdab8a83a1, type: 3}
+  - speakerName: Renske
+    dialogue: Ehe...
+    appearOnlyInFirstInteraction: 0
+    speakerPFP: {fileID: 21300000, guid: c9817088143128f4092e0bb66063a170, type: 3}
+  isHumanoidOrAnimal: 0
+  scriptToActivate: {fileID: 0}
 --- !u!1 &1971126926
 GameObject:
   m_ObjectHideFlags: 0
@@ -66798,12 +66834,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Netherlands (1621-1627)
+  m_text: 'United Seven Netherlands (1621-1627)
 
     New Netherland (1627-1628)
 
-    New York
-    (2124-Present)'
+    New
+    York (2124-Present)'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -73400,7 +73436,7 @@ MonoBehaviour:
     dialogue: The screen fills up with the chat history between Charlie and Aleksey.
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 0}
-  - speakerName: Aleksey Lijn @VladMakarov
+  - speakerName: Aleksey Lijn @MakarovsInnerCircle
     dialogue: Privyet.
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 21300000, guid: e223d2baa41ebc94393b7e7b202ed5d3, type: 3}
@@ -73413,7 +73449,7 @@ MonoBehaviour:
     dialogue: Anyways... Ya made it to Staten Island yet?
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 21300000, guid: 812f1a892b8cf294a9b69afdab8a83a1, type: 3}
-  - speakerName: Aleksey @VladMakarov
+  - speakerName: Aleksey @MakarovsInnerCircle
     dialogue: Da. Just docked at Fort Wadsworth. You sure you'll be fine? I can come
       back if needed, I don't mind smashing more heads if necessary. Can't let New
       York fall to these bastards.
@@ -73421,8 +73457,8 @@ MonoBehaviour:
     speakerPFP: {fileID: 21300000, guid: e223d2baa41ebc94393b7e7b202ed5d3, type: 3}
   - speakerName: Charlie @LastBigRed1
     dialogue: Ha! This is child's play compared to what I encountered on those French
-      beaches. But I appreciate you and your team's help liberating this damn place.
-      At least my baby sister is happy about it and is also grateful.
+      beaches. But I appreciate you and your team's help liberating this place. At
+      least my baby sister is happy about it and is also grateful.
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 21300000, guid: 812f1a892b8cf294a9b69afdab8a83a1, type: 3}
   - speakerName: Charlie @LastBigRed1
@@ -73430,7 +73466,7 @@ MonoBehaviour:
       for you to club.
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 21300000, guid: 812f1a892b8cf294a9b69afdab8a83a1, type: 3}
-  - speakerName: Aleksey @VladMakarov
+  - speakerName: Aleksey @MakarovsInnerCircle
     dialogue: Spasibo. Good luck to you too.
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 21300000, guid: e223d2baa41ebc94393b7e7b202ed5d3, type: 3}
@@ -74229,7 +74265,7 @@ MonoBehaviour:
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 21300000, guid: e625e696e814a2148945002fcbaccf1d, type: 3}
   - speakerName: 
-    dialogue: The blessing of the plane and its pilot resonates with you.
+    dialogue: The blessings of the plane and its pilot resonates with you.
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 0}
   isHumanoidOrAnimal: 0
@@ -74434,7 +74470,7 @@ MonoBehaviour:
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 21300000, guid: e625e696e814a2148945002fcbaccf1d, type: 3}
   - speakerName: 
-    dialogue: The blessing of the plane and its pilot resonates with you.
+    dialogue: The blessings of the plane and its pilot resonates with you.
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 0}
   isHumanoidOrAnimal: 0
@@ -75450,8 +75486,7 @@ MonoBehaviour:
     speakerPFP: {fileID: 21300000, guid: e625e696e814a2148945002fcbaccf1d, type: 3}
   - speakerName: Charlie
     dialogue: Neat, reminds me of the planes back in the day. Damn, maybe I should
-      get one, a P-47 perhaps. I wonder if Wagner can replicate some World War II
-      American equipment...
+      get one, a P-47 perhaps...
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 21300000, guid: 812f1a892b8cf294a9b69afdab8a83a1, type: 3}
   - speakerName: Basil
@@ -75618,7 +75653,7 @@ MonoBehaviour:
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 21300000, guid: e625e696e814a2148945002fcbaccf1d, type: 3}
   - speakerName: 
-    dialogue: The blessing of the plane and its pilot resonates with you.
+    dialogue: The blessings of the plane and its pilot resonates with you.
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 0}
   isHumanoidOrAnimal: 0
@@ -75838,7 +75873,7 @@ MonoBehaviour:
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 21300000, guid: e625e696e814a2148945002fcbaccf1d, type: 3}
   - speakerName: 
-    dialogue: The blessing of the plane and its pilot resonates with you.
+    dialogue: The blessings of the plane and its pilot resonates with you.
     appearOnlyInFirstInteraction: 0
     speakerPFP: {fileID: 0}
   isHumanoidOrAnimal: 0

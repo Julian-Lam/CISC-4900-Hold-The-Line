@@ -25,7 +25,7 @@ Plot:\
 
 Timelog: https://docs.google.com/spreadsheets/d/109ex205_oBW_TKuvGFMlU-v0Wa0YKkBxdnXb1Em_cWo/edit?usp=sharing
 
-itch.io link: TBA
+itch.io link: https://fighterwolfmc.itch.io/opjager
 
 # Unity and Third-Party Assets
 
