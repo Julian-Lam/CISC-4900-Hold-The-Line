@@ -34,6 +34,8 @@ public class Dialogue : MonoBehaviour, Interactable
 
     public static Dialogue activeDialogue;
 
+    public MonoBehaviour scriptToActivate;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -190,6 +192,10 @@ public class Dialogue : MonoBehaviour, Interactable
         if (activeDialogue == this)
         {
             activeDialogue = null;
+        }
+        if (scriptToActivate != null)
+        {
+            scriptToActivate.enabled = true;
         }
         lockInput = true;
         StartCoroutine(WaitForReleaseKeys());

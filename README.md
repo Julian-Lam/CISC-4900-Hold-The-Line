@@ -51,6 +51,7 @@ itch.io link: TBA
 - [Gun Reload](https://tuna.voicemod.net/sound/376fcecc-7fa2-4e4e-b8f6-b694254a53e1)
 - [Explosion](https://tuna.voicemod.net/sound/05b3770c-e4be-4e02-b9a6-9befee677640)
 - [Plane](https://tuna.voicemod.net/sound/dc403ccd-74a9-48d4-a0ea-c67274ea90b8)
+- [Hit Marker](https://tuna.voicemod.net/sound/6f2def39-4b0b-4828-ad25-f44d2317cd20)
 
 # Custom-made avatars and models
 

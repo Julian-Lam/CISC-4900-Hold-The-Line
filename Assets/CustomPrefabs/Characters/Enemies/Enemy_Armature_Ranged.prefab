@@ -2433,6 +2433,7 @@ MonoBehaviour:
   healthBar: {fileID: 6444168228411529568}
   currencyText: {fileID: 0}
   hitParticle: {fileID: 1096893136476370, guid: 24b82347924701148a13c746edfb6b22, type: 3}
+  hitSound: {fileID: 8300000, guid: ba1a040514afdd744a271e6c5bc6c9ac, type: 3}
   attacker: {fileID: 0}
   attackerDistance: Infinity
   attackedCooldown: 0

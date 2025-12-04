@@ -138,7 +138,7 @@ public class AlliedCharacter : CharacterAI
         else if (currentTarget == null && EnemyCharacter.enemyList.Count > 0)
         {
             //Using a "OverlapSphere", find how many possible enemies there are from a certain radius
-            int numOfPotentialEnemies = Physics.OverlapSphereNonAlloc(transform.position, 6.5f, potentialEnemyColliders, LayerMask.GetMask("Enemy"));
+            int numOfPotentialEnemies = Physics.OverlapSphereNonAlloc(transform.position, 10f, potentialEnemyColliders, LayerMask.GetMask("Enemy"));
             float closest = Mathf.Infinity;
 
             //Debug.Log("Number of potential enemies: "+numOfPotentialEnemies);
@@ -306,7 +306,7 @@ public class AlliedCharacter : CharacterAI
             {
                 currentState = AIAllyState.Following;
             } 
-            else if (currentTarget != null && distanceFromCurrentTarget < 6.5f && IsTargetAlive() && gracePeriod <= 0)
+            else if (currentTarget != null && distanceFromCurrentTarget < 10f && IsTargetAlive() && gracePeriod <= 0)
             {
                 currentState = AIAllyState.Attacking;
             }

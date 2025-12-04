@@ -60,7 +60,7 @@ public class EnemyCharacter : CharacterAI
         
         if (enemyType == EnemyType.Ranged)
         {
-            distanceToStopAndAttack = 6.5f;
+            distanceToStopAndAttack = 10f;
         }
         else if (enemyType == EnemyType.Melee)
         {

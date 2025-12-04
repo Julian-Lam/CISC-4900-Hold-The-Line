@@ -184,6 +184,14 @@ namespace StarterAssets
                         }
                         OnCallAirStrike();
                         SetLookAnimaton();
+                        if (!ActivateAirstrikes.areAirstrikesActive)
+                        {
+                            airStrikeHUD.SetActive(false);
+                        }
+                        else
+                        {
+                            airStrikeHUD.SetActive(true);
+                        }
                     }
                 }
             }
@@ -828,6 +836,8 @@ namespace StarterAssets
 
         public GameObject airSupport;
 
+        public GameObject airStrikeHUD;
+
         private void OnCallAirStrike()
         {
             float range = 30.0f;
@@ -847,6 +857,11 @@ namespace StarterAssets
                     if (marker==null)
                     {
                         playerInventory.OnUseFail("You do not have an Airstrike Flare on you.");
+                        _input.callAirStrike = false;
+                    }
+                    else if(!ActivateAirstrikes.areAirstrikesActive)
+                    {
+                        playerInventory.OnUseFail("There is no designated aircraft supporting you. It is not a wise idea to waste this.");
                         _input.callAirStrike = false;
                     }
                     else

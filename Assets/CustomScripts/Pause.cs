@@ -16,6 +16,7 @@ public class Pause : MonoBehaviour
     public GameObject inventoryMenu;
     public GameObject buyStationMenu;
     public GameObject controlMenu;
+    public GameObject bioMenu;
 
     public static bool isAnInterfaceActive;
 
@@ -46,6 +47,7 @@ public class Pause : MonoBehaviour
         gameOverMenu.SetActive(false);
         inventoryMenu.SetActive(false);
         controlMenu.SetActive(false);
+        bioMenu.SetActive(false);
     }
 
     void Update()
@@ -86,6 +88,7 @@ public class Pause : MonoBehaviour
         inventoryMenu.SetActive(false);
         buyStationMenu.SetActive(false);
         controlMenu.SetActive(false);
+        bioMenu.SetActive(false);
         Time.timeScale = 1;
         isAnInterfaceActive = false;
         isInventoryOpen = false;
@@ -96,7 +99,15 @@ public class Pause : MonoBehaviour
     public void OpenControlMenu()
     {
         pauseMenu.SetActive(false);
+        bioMenu.SetActive(false);
         controlMenu.SetActive(true);
+    }
+
+    public void OpenCharacterBios()
+    {
+        pauseMenu.SetActive(false);
+        controlMenu.SetActive(false);
+        bioMenu.SetActive(true);
     }
 
     public void QuitToMenu()

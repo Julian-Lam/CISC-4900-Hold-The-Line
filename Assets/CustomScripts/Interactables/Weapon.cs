@@ -582,6 +582,11 @@ public class Weapon : MonoBehaviour, Interactable
                             c.RegisterAttacker(playerStats);
                         }
 
+                        if (c.hitSound != null)
+                        {
+                            AudioSource.PlayClipAtPoint(c.hitSound, transform.position, 1);
+                        }
+
                         hitTarget = true;
                     }
                 }

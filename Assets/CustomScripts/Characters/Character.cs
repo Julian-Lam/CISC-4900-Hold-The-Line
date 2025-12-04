@@ -48,6 +48,7 @@ public class Character : MonoBehaviour
     public TextMeshProUGUI currencyText;
 
     public GameObject hitParticle;
+    public AudioClip hitSound;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public virtual void Start()
