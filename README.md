@@ -2,9 +2,9 @@
 
 A game built in Unity that takes place near New York City about 100 years in the future where you fight enemies and support allies.
 
-CISC 4900, Fall 2025 semester project
+\[REDACTED\], Fall 2025 semester project
 
-Made by Julian Lam (aka FighterWolf_MC)
+Made by \[REDACTED\] \[REDACTED\] (aka FighterWolf_MC)
 
 Controls:
 - WASD - Move around
